@@ -1,6 +1,6 @@
 # MyTrip
 This is an Android Application that can help users generate a road trip based on the location the user entered.  
-Created by UCSD Triple C Android Dev Team Memebrs: Mingqi Zhang.
+Created by UCSD Triple C Android Dev Team Memebrs: Qingran Li, Mingqi Zhang.  
 
 ## Installation
 Clone this repository and import into **Android Studio**
