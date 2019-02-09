@@ -1,4 +1,4 @@
-package com.triplec.mytrip;
+package com.triplec.triway;
 
 import org.junit.Test;
 

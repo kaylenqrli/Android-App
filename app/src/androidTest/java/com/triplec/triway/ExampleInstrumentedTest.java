@@ -1,4 +1,4 @@
-package com.triplec.mytrip;
+package com.triplec.triway;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;

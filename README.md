@@ -1,11 +1,11 @@
-# MyTrip
+# Android App - TriWay
 This is an Android Application that can help users generate a road trip based on the location the user entered.  
-Created by UCSD Triple C Android Dev Team Memebrs: Qingran Li, Mingqi Zhang.  
+Created by UCSD Triple C Android Dev Team Memebrs: Qingran Li, Mingqi Zhang, Mingqi Chen, and Mingjie Zhu.  
 
 ## Installation
 Clone this repository and import into **Android Studio**
 ```bash
-git clone git@github.com:ucsdtriplec/Android-App.git
+git clone git@github.com:ucsdtriplec/Android---TriWay.git
 ```
 ## Contributing
 1. Fork it
