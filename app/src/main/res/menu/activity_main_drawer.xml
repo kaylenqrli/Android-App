@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/test_menu"
     xmlns:tools="http://schemas.android.com/tools"
     tools:showIn="navigation_view">
 
@@ -13,7 +14,6 @@
             android:id="@+id/nav_plan2"
             android:icon="@drawable/ic_menu_trip"
             android:title="My Plan 2"/>
-
         <item
             android:id="@+id/nav_plan3"
             android:icon="@drawable/ic_menu_trip"

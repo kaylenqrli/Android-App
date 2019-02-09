@@ -69,7 +69,7 @@ public class AutoSlideViewPager<T extends PagerAdapter> extends FrameLayout {
         // set up ViewPager layout to match parent with 0 margin
         viewPager = new ViewPager(mContext);
         LayoutParams vparams = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT);
+                680);
         viewPager.setLayoutParams(vparams);
         addView(viewPager);
 
@@ -198,7 +198,6 @@ public class AutoSlideViewPager<T extends PagerAdapter> extends FrameLayout {
         AutoSlideViewPager.autoPlay = autoPlay;
         if (!autoPlay){
             cancel();
-            //handler.removeCallbacks(runnable);
         }
     }
 }

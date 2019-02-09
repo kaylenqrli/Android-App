@@ -1,6 +1,8 @@
 package com.triplec.mytrip;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.PagerAdapter;
@@ -10,12 +12,21 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.SearchView;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    // Views, Layouts, and Adapters
+    Toolbar toolbar;
+    DrawerLayout drawer;
+    ActionBarDrawerToggle toggle;
+    NavigationView navigationView;
     AutoSlideViewPager viewPager;
     PagerAdapter adapter;
+    SearchView searchView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,18 +34,22 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
 
         // set up toolbar
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         // set up drawer
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        toggle = new ActionBarDrawerToggle(
+                        this, drawer, toolbar, R.string.navigation_drawer_open,
+                         R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
+        // change toolbar icon
+        toolbar.setNavigationIcon(R.drawable.ic_toolbar_avatar);
+
         // set up navigation
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
         // set up album
@@ -42,12 +57,32 @@ public class MainActivity extends AppCompatActivity
         adapter = new ViewPagerAdapter(this);
         viewPager.setAdapter(adapter);
         viewPager.setAutoPlay(true);
+
+        // set up searchView
+        searchView = (SearchView) findViewById(R.id.searchView);
+        searchView.setSubmitButtonEnabled(true);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener(){
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                System.out.println("submit: " + query); // TODO: delete after done testing
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText){
+                System.out.println(newText); // TODO: delete after done testing
+                return false;
+            }
+        });
+
+        //TODO: delete after done testing
+        //removeItem(R.id.nav_plan2);
+        //addItem("New plan");
     }
 
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
@@ -95,8 +130,17 @@ public class MainActivity extends AppCompatActivity
             // go to saved plan 5
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        // close drawer
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    // test adding menu item
+    public void removeItem(int itemId) {
+        navigationView.getMenu().removeItem(itemId);
+    }
+
+    public void addItem(String title) {
+        navigationView.getMenu().add(title);
     }
 }
