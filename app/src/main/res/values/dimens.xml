@@ -5,4 +5,20 @@
     <dimen name="nav_header_vertical_spacing">8dp</dimen>
     <dimen name="nav_header_height">176dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
+
+    <!-- Home page text -->
+    <dimen name="home_text_width">319dp</dimen>
+    <dimen name="home_text_height">130dp</dimen>
+    <dimen name="home_text_top_margin">120dp</dimen><!-- Need to change after considering the album-->
+    <dimen name="home_text_left_margin">46dp</dimen>
+    <dimen name="home_text_size">37sp</dimen>
+
+    <!-- Home page edit text -->
+    <dimen name="home_search_width">225dp</dimen>
+    <dimen name="home_search_top_margin">250dp</dimen>
+    <dimen name="home_search_left_margin">79dp</dimen>
+
+    <!-- Home page album  -->
+    <dimen name="home_album_top_margin">320dp</dimen>
+    <dimen name="home_album_height">240dp</dimen>
 </resources>

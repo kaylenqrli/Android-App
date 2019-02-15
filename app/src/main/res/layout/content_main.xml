@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -8,48 +8,50 @@
     tools:context="com.triplec.triway.MainActivity"
     tools:showIn="@layout/app_bar_main">
 
-    <SearchView
+    <TextView
+        android:id="@+id/search_hint"
+        android:layout_width="@dimen/home_text_width"
+        android:layout_height="@dimen/home_text_height"
+        android:layout_marginLeft="@dimen/home_text_left_margin"
+        android:layout_marginTop="@dimen/home_text_top_margin"
+        android:fontFamily="@font/karla"
+        android:text="@string/home_search"
+        android:textAlignment="viewStart"
+        android:textColor="@color/lightGreen"
+        android:textFontWeight="bold"
+        android:textSize="@dimen/home_text_size"
+        android:textStyle="normal" />
+
+
+    <EditText
         android:id="@+id/searchView"
+        android:layout_width="@dimen/home_search_width"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/home_search_left_margin"
+        android:layout_marginTop="@dimen/home_search_top_margin"
+        app:backgroundTint="@color/lineGreen"/>
+    <!--SearchView
+
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
-        android:layout_marginTop="150dp"
+        android:layout_marginTop="232dp"
         android:layout_marginEnd="10dp"
         android:background="@android:color/white"
         android:iconifiedByDefault="false"
-        android:submitBackground="@android:color/white"
         android:queryBackground="@android:color/white"
         android:queryHint="Where to go"
+        android:submitBackground="@android:color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent" /-->
 
     <com.triplec.triway.AutoSlideViewPager
         android:id="@+id/viewPager"
-        android:layout_width="0dp"
-        android:layout_height="280dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/searchView"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/searchView"
-        app:layout_constraintTop_toBottomOf="@+id/searchView"
-        app:layout_constraintVertical_bias="0.597" />
+        android:layout_width="@dimen/home_text_width"
+        android:layout_height="@dimen/home_album_height"
+        android:layout_marginLeft="@dimen/home_text_left_margin"
+        android:layout_marginTop="@dimen/home_album_top_margin" />
 
-    <TextView
-        android:id="@+id/testLogo"
-        android:layout_width="326dp"
-        android:layout_height="70dp"
-        android:layout_marginTop="40dp"
-        android:text="LOGO"
-        android:textSize="60dp"
-        android:textAlignment="center"
-        app:layout_constraintEnd_toEndOf="@+id/searchView"
-        app:layout_constraintHorizontal_bias="0.484"
-        app:layout_constraintStart_toStartOf="@+id/searchView"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/album_background" />
-
-</android.support.constraint.ConstraintLayout>
+</RelativeLayout>

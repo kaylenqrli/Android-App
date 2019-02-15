@@ -1,5 +1,6 @@
 package com.triplec.triway;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -8,9 +9,13 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.EditText;
 import android.widget.SearchView;
+import android.widget.TextView;
 
 public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -22,7 +27,7 @@ public class HomeActivity extends AppCompatActivity
     NavigationView navigationView;
     AutoSlideViewPager viewPager;
     PagerAdapter adapter;
-    SearchView searchView;
+    EditText editText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,8 +46,14 @@ public class HomeActivity extends AppCompatActivity
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        // change toolbar icon
+        // change toolbar icon and event
         toolbar.setNavigationIcon(R.drawable.ic_toolbar_avatar);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                gotoSavedPlan(v);
+            }
+        });
 
         // set up navigation
         navigationView = (NavigationView) findViewById(R.id.nav_view);
@@ -55,18 +66,12 @@ public class HomeActivity extends AppCompatActivity
         viewPager.setAutoPlay(true);
 
         // set up searchView
-        searchView = (SearchView) findViewById(R.id.searchView);
-        searchView.setSubmitButtonEnabled(true);
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener(){
+        editText = (EditText) findViewById(R.id.searchView);
+        //editText.setSubmitButtonEnabled(true);
+        editText.setOnEditorActionListener(new TextView.OnEditorActionListener(){
             @Override
-            public boolean onQueryTextSubmit(String query) {
-                System.out.println("submit: " + query); // TODO: delete after done testing
-                return true;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText){
-                System.out.println(newText); // TODO: delete after done testing
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event){
+                //System.out.println(newText); // TODO: delete after done testing
                 return false;
             }
         });
@@ -138,5 +143,11 @@ public class HomeActivity extends AppCompatActivity
 
     public void addItem(String title) {
         navigationView.getMenu().add(title);
+    }
+
+    public void gotoSavedPlan(View v){
+        Intent intent = new Intent(this, SavedPlanActivity.class);
+        intent.putExtra("name", "item 3");
+        startActivity(intent);
     }
 }
