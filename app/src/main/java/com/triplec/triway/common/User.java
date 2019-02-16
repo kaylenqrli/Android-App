@@ -1,4 +1,4 @@
-package common;
+package com.triplec.triway.common;
 import java.util.ArrayList;
 
 public class User {
