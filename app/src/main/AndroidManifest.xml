@@ -24,9 +24,9 @@
             android:value="@string/google_maps_key" />
 
         <activity
-            android:name="com.triplec.triway.LoginPage"
+            android:name="com.triplec.triway.LoginActivity"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -34,9 +34,9 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.triplec.triway.SignUpPage"
+            android:name="com.triplec.triway.SignUpActivity"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme">
         </activity>
         <activity
             android:name="com.triplec.triway.MainActivity"
