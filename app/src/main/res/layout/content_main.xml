@@ -29,23 +29,10 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/home_search_left_margin"
         android:layout_marginTop="@dimen/home_search_top_margin"
+        android:imeOptions="actionSearch"
+        android:singleLine="true"
         app:backgroundTint="@color/lineGreen"/>
-    <!--SearchView
 
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="232dp"
-        android:layout_marginEnd="10dp"
-        android:background="@android:color/white"
-        android:iconifiedByDefault="false"
-        android:queryBackground="@android:color/white"
-        android:queryHint="Where to go"
-        android:submitBackground="@android:color/white"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" /-->
 
     <com.triplec.triway.AutoSlideViewPager
         android:id="@+id/viewPager"

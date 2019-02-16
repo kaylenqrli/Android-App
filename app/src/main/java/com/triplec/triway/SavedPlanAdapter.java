@@ -1,6 +1,8 @@
 package com.triplec.triway;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -50,14 +52,13 @@ public class SavedPlanAdapter extends BaseAdapter implements ListAdapter {
         listItemText.setText(list.get(position));
 
         //Handle buttons and add onClickListeners
-        Button deleteBtn = (Button)view.findViewById(R.id.deleteButton);
+        final Button deleteBtn = (Button)view.findViewById(R.id.deleteButton);
         Button editBtn = (Button)view.findViewById(R.id.editButton);
 
         deleteBtn.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                //do something
-                list.remove(position); //or some other task
+                list.remove(position);
                 notifyDataSetChanged();
             }
         });
@@ -73,4 +74,6 @@ public class SavedPlanAdapter extends BaseAdapter implements ListAdapter {
 
         return view;
     }
+
+
 }
