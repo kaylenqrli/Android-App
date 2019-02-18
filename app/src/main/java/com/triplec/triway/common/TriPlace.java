@@ -24,6 +24,7 @@ public class TriPlace extends AppCompatActivity {
         // Specify the fields to return (all fields are returned).
         List<Place.Field> placeFields = Arrays.asList(Place.Field.ID, Place.Field.NAME);
 
+
         FetchPlaceRequest request = FetchPlaceRequest.builder(id, placeFields).build();
 
         Places.initialize(getApplicationContext(), "AIzaSyD0M31_rt5lyug3SxPeZ3NHdJcHhWZifPs");
