@@ -16,4 +16,18 @@
     <string name="Logo">Logo</string>
 
     <string name="home_search">Where is your\nnext destination?</string>
+    <string name="travel">Travel</string>
+    <string name="plan">Plan</string>
+    <string name="efficiency">Efficiency</string>
+    <string name="signin">Sign In</string>
+    <string name="signup">Sign Up</string>
+    <string name="username">Username</string>
+    <string name="email">Email</string>
+    <string name="first_name">First Name</string>
+    <string name="last_name">Last Name</string>
+    <string name="password">Password</string>
+    <string name="confirm">Confirm Password</string>
+    <string name="sign_up_button">Start Your Journey!</string>
+    <string name="sign_up_title">...Tell us some basic information</string>
+    <string name="login">Login</string>
 </resources>
