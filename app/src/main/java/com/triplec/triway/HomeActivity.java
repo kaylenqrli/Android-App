@@ -60,6 +60,7 @@ public class HomeActivity extends AppCompatActivity
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener(){
             @Override
             public boolean onQueryTextSubmit(String query) {
+
                 System.out.println("submit: " + query); // TODO: delete after done testing
                 return true;
             }
