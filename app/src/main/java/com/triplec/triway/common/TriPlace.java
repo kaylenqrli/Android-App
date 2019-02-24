@@ -80,6 +80,7 @@ public class TriPlace extends AppCompatActivity {
                     TriPlace curr = new TriPlace(poi.getName(),latitude,longitude);
                     curr.setAddress(poi.getAddress());
                     curr.setRating(poi.poiDetailInfo.overallRating);
+
                     list.add(curr);
                 }
             }
