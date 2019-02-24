@@ -37,9 +37,10 @@
             android:value="AIzaSyD0M31_rt5lyug3SxPeZ3NHdJcHhWZifPs" />
 
         <activity
-            android:name="com.triplec.triway.LoginActivity"
+            android:name=".LoadingActivity"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme">
+            android:theme="@style/AppTheme.NoActionBar">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -47,20 +48,23 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.triplec.triway.SignUpActivity"
+            android:name=".LoginActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme">
+
         </activity>
         <activity
-            android:name="com.triplec.triway.HomeActivity"
+            android:name=".SignUpActivity"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar">
-        </activity>
+            android:theme="@style/AppTheme"></activity>
         <activity
-            android:name="com.triplec.triway.RouteActivity"
+            android:name=".HomeActivity"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar">
-        </activity>
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity
+            android:name=".RouteActivity"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
 
         <meta-data
             android:name="com.google.android.gms.version"
@@ -68,6 +72,8 @@
         <meta-data
             android:name="com.google.android.geo.AIzaSyAyesbQMyKVVbBgKVi2g6VX7mop2z96jBo"
             android:value="AIzaSyD0M31_rt5lyug3SxPeZ3NHdJcHhWZifPs" />
+
+
     </application>
 
 </manifest>
