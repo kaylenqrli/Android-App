@@ -5,9 +5,12 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.regex.Matcher;
@@ -52,6 +55,16 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login_page);
         mail = findViewById(R.id.login_email);
         password = findViewById(R.id.login_password);
+        password.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
+                if ((keyEvent != null) && (keyEvent.getKeyCode() == KeyEvent.KEYCODE_ENTER)
+                || (i == EditorInfo.IME_ACTION_DONE)){
+                    login.performClick();
+                }
+                return false;
+            }
+        });
 
         login = findViewById(R.id.loginButton);
         login.setOnClickListener( new View.OnClickListener() {
@@ -71,7 +84,6 @@ public class LoginActivity extends AppCompatActivity {
                     }
                     else{
                         signIn(email, passW);
-                        openHomeActivity();
                     }
 
                 }
@@ -134,6 +146,8 @@ public class LoginActivity extends AppCompatActivity {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithEmail:success");
                             FirebaseUser user = mAuth.getCurrentUser();
+                            openHomeActivity();
+
 
                         } else {
                             // If sign in fails, display a message to the user.

@@ -8,6 +8,7 @@ android {
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
+        multiDexEnabled true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
         // test
@@ -37,8 +38,6 @@ dependencies {
     //implementation 'com.google.android.gms:play-services:7.5.0'
     implementation 'com.google.android.libraries.places:places:1.0.0'
     implementation 'com.google.android.gms:play-services-location:15.0.1'
-
-    //test
     implementation 'com.android.support:multidex:1.0.3'
 }
 
