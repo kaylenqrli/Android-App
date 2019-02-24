@@ -34,7 +34,7 @@
         -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyD0M31_rt5lyug3SxPeZ3NHdJcHhWZifPs" />
+            android:value="@string/google_maps_key" />
 
         <activity
             android:name=".LoadingActivity"
@@ -70,13 +70,12 @@
             android:name=".RouteActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar"></activity>
-
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
-        <meta-data
-            android:name="com.google.android.geo.AIzaSyAyesbQMyKVVbBgKVi2g6VX7mop2z96jBo"
-            android:value="AIzaSyD0M31_rt5lyug3SxPeZ3NHdJcHhWZifPs" />
+        <uses-library
+            android:name="org.apache.http.legacy"
+            android:required="false" />
 
 
     </application>
