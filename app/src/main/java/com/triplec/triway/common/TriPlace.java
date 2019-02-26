@@ -1,6 +1,4 @@
 package com.triplec.triway.common;
-import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 
 import com.baidu.mapapi.search.core.PoiInfo;
 import com.baidu.mapapi.search.poi.OnGetPoiSearchResultListener;
@@ -11,32 +9,19 @@ import com.baidu.mapapi.search.poi.PoiIndoorResult;
 import com.baidu.mapapi.search.poi.PoiNearbySearchOption;
 import com.baidu.mapapi.search.poi.PoiResult;
 import com.baidu.mapapi.search.poi.PoiSearch;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.libraries.places.api.Places;
-import com.google.android.libraries.places.api.model.Place;
-import com.google.android.libraries.places.api.net.FetchPlaceRequest;
-import com.google.android.libraries.places.api.net.FetchPlaceResponse;
-import com.google.android.libraries.places.api.net.PlacesClient;
-import com.google.android.libraries.places.widget.Autocomplete;
-import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
-
-
 
 
 import java.util.*;
 import java.lang.*;
 
-public class TriPlace extends AppCompatActivity {
+public class TriPlace {
 
     private String name,address;
     private double latitude, longitude,rating,shopHour;
 
 
-    public TriPlace(String n, double lat, double longi){
+    public TriPlace(String n){
         name = n;
-        latitude = lat;
-        longitude = longi;
     }
 
     private void setAddress(String a){
@@ -77,7 +62,7 @@ public class TriPlace extends AppCompatActivity {
                     PoiInfo poi = poiResult.getAllPoi().get(i);
                     double latitude = poi.getLocation().latitude;
                     double longitude = poi.getLocation().longitude;
-                    TriPlace curr = new TriPlace(poi.getName(),latitude,longitude);
+                    TriPlace curr = new TriPlace(poi.getName());
                     curr.setAddress(poi.getAddress());
                     curr.setRating(poi.poiDetailInfo.overallRating);
 

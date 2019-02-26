@@ -168,15 +168,16 @@ public class HomeActivity extends AppCompatActivity
     }
 
     public void gotoRoute(TextView v) {
-        TriPlace newPlace = new TriPlace(v.getText().toString());
-        ArrayList<TriPlace> list = newPlace.getTopFive();
-        String displayString = "";
-        for (int i=0; i<list.size(); i++) {
-            displayString += list.get(i).getName();
-        }
-        System.out.println(displayString);
+//        TriPlace newPlace = new TriPlace(v.getText().toString());
+//        ArrayList<TriPlace> list = newPlace.getTopFive();
+//        String displayString = "";
+//        for (int i=0; i<list.size(); i++) {
+//            displayString += list.get(i).getName();
+//        }
+//        System.out.println(displayString);
         // start route activity
-        Toast.makeText(HomeActivity.this, "Searching "+v.getText().toString() + "...", Toast.LENGTH_SHORT).show();;
+        Toast.makeText(HomeActivity.this,
+                "Searching "+v.getText().toString() + "...", Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(this, RouteActivity.class);
         startActivity(intent);
     }
