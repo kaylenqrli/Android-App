@@ -6,7 +6,9 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -49,7 +51,16 @@ public class SignUpActivity extends AppCompatActivity {
         mail = findViewById(R.id.signup_email);
         password = findViewById(R.id.signup_password);
         secondPassword = findViewById(R.id.signup_reenter);
-
+        secondPassword.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
+                if ((keyEvent != null) && (keyEvent.getKeyCode() == KeyEvent.KEYCODE_ENTER)
+                        || (i == EditorInfo.IME_ACTION_DONE)){
+                    signUp.performClick();
+                }
+                return false;
+            }
+        });
         signUp = findViewById(R.id.signUpButton);
         signUp.setOnClickListener(new View.OnClickListener() {
             @Override

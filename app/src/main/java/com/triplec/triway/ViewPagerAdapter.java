@@ -1,6 +1,7 @@
 package com.triplec.triway;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
@@ -44,7 +45,9 @@ public class ViewPagerAdapter extends PagerAdapter {
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // start edit activity
+                // start route activity
+                Intent intent = new Intent(context, RouteActivity.class);
+                context.startActivity(intent);
             }
         });
 
@@ -62,5 +65,4 @@ public class ViewPagerAdapter extends PagerAdapter {
         vp.removeView(view);
 
     }
-
 }
