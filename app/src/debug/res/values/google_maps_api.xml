@@ -23,4 +23,7 @@
     <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">
         AIzaSyBpfvp0ZtJ2ZO1MqWW_-I1f00S4aNsFe5c
     </string>
+    <string name="baidu_maps_key" templateMergeStrategy="preserve" translatable="false">
+        AjsjevAUlVESFYhx3bSrdHwyRPEu2llG
+    </string>
 </resources>

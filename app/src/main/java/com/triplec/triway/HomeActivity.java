@@ -17,6 +17,14 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.SearchView;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.baidu.mapapi.SDKInitializer;
+import com.triplec.triway.common.TriPlace;
+
+import org.w3c.dom.Text;
+
+import java.util.ArrayList;
 
 public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -33,6 +41,7 @@ public class HomeActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        SDKInitializer.initialize(getApplicationContext());
         setContentView(R.layout.home_main);
 
         // set up toolbar
@@ -42,8 +51,8 @@ public class HomeActivity extends AppCompatActivity
         // set up drawer
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         toggle = new ActionBarDrawerToggle(
-                        this, drawer, toolbar, R.string.navigation_drawer_open,
-                         R.string.navigation_drawer_close);
+                this, drawer, toolbar, R.string.navigation_drawer_open,
+                R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
@@ -158,8 +167,17 @@ public class HomeActivity extends AppCompatActivity
         startActivity(intent);
     }
 
-    public void gotoRoute(View v) {
+    public void gotoRoute(TextView v) {
+//        TriPlace newPlace = new TriPlace(v.getText().toString());
+//        ArrayList<TriPlace> list = newPlace.getTopFive();
+//        String displayString = "";
+//        for (int i=0; i<list.size(); i++) {
+//            displayString += list.get(i).getName();
+//        }
+//        System.out.println(displayString);
         // start route activity
+        Toast.makeText(HomeActivity.this,
+                "Searching "+v.getText().toString() + "...", Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(this, RouteActivity.class);
         startActivity(intent);
     }

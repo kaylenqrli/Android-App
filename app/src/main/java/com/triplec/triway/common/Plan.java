@@ -6,10 +6,10 @@ import android.support.v4.app.FragmentActivity;
 public class Plan extends FragmentActivity {
     private ArrayList<TriPlace> list;
     //private TriPlace triPlace;
-    private String name;
+   // private String name;
 
-    public Plan(String p){
-        name = p;
+    public Plan(){
+        //name = p;
         list = new ArrayList<TriPlace>();
     }
 
