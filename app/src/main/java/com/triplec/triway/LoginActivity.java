@@ -49,7 +49,7 @@ public class LoginActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
 
-        setContentView(R.layout.activity_login_page);
+        setContentView(R.layout.activity_login);
         mail = findViewById(R.id.login_email);
         password = findViewById(R.id.login_password);
         password.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -57,55 +57,38 @@ public class LoginActivity extends AppCompatActivity {
             public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
                 if ((keyEvent != null) && (keyEvent.getKeyCode() == KeyEvent.KEYCODE_ENTER)
                 || (i == EditorInfo.IME_ACTION_DONE)){
-                    login.performClick();
+                    login(null);
                 }
                 return false;
             }
         });
 
-        login = findViewById(R.id.loginButton);
-        login.setOnClickListener( new View.OnClickListener() {
-            @Override
-            public void onClick (View v){
-
-                String email = mail.getText().toString();
-                String passW = password.getText().toString();
-                boolean isValidPassword = validPassword(passW);
-
-
-                Matcher matcher= Pattern.compile(validEmail).matcher(email);
-                if (matcher.matches()){
-                    if (!isValidPassword){
-                        Toast.makeText(getApplicationContext(), "Password length should at least be" +
-                                "8", Toast.LENGTH_LONG).show();
-                    }
-                    else{
-                        signIn(email, passW);
-                    }
-
-                }
-                else {
-                    Toast.makeText(getApplicationContext(),"Enter Valid Email",
-                            Toast.LENGTH_LONG).show();
-                }
-            }
-
-
-
-        });
-
-        signUp = findViewById(R.id.signUpButton);
-        signUp.setOnClickListener( new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                openSignUpPage();
-            }
-        });
-
-
     }
 
-    public void openSignUpPage(){
+    public void login(View v) {
+        String email = mail.getText().toString();
+        String passW = password.getText().toString();
+        boolean isValidPassword = validPassword(passW);
+
+
+        Matcher matcher= Pattern.compile(validEmail).matcher(email);
+        if (matcher.matches()){
+            if (!isValidPassword){
+                Toast.makeText(getApplicationContext(), "Password length should at least be" +
+                        "8", Toast.LENGTH_LONG).show();
+            }
+            else{
+                signIn(email, passW);
+            }
+
+        }
+        else {
+            Toast.makeText(getApplicationContext(),"Enter Valid Email",
+                    Toast.LENGTH_LONG).show();
+        }
+    }
+
+    public void openSignUpPage(View v){
         Intent intent = new Intent(this, SignUpActivity.class);
         startActivity(intent);
     }
@@ -113,6 +96,7 @@ public class LoginActivity extends AppCompatActivity {
     public void openHomeActivity(){
         Intent intent = new Intent(this, HomeActivity.class);
         startActivity(intent);
+        finish();
     }
 
     public boolean validPassword(String password){

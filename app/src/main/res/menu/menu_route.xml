@@ -1,0 +1,15 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.example.learnmaterial.TabsActivity">
+    <item
+        android:id="@+id/Tabs_menu_edit"
+        android:orderInCategory="100"
+        android:title="Edit"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/Tabs_menu_Save"
+        android:orderInCategory="100"
+        android:title="Save"
+        app:showAsAction="never" />
+</menu>

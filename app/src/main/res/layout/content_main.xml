@@ -17,7 +17,7 @@
         android:fontFamily="@font/karla"
         android:text="@string/home_search"
         android:textAlignment="viewStart"
-        android:textColor="@color/lightGreen"
+        android:textColor="@color/colorPrimary"
         android:textSize="@dimen/home_text_size"
         android:textStyle="bold" />
 

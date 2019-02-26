@@ -15,16 +15,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
-import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.baidu.mapapi.SDKInitializer;
-import com.triplec.triway.common.TriPlace;
-
-import org.w3c.dom.Text;
-
-import java.util.ArrayList;
 
 public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -57,7 +51,7 @@ public class HomeActivity extends AppCompatActivity
         toggle.syncState();
 
         // change toolbar icon and event
-        toolbar.setNavigationIcon(R.drawable.ic_toolbar_avatar);
+        toolbar.setNavigationIcon(R.drawable.ic_menu_white_24dp);
         toolbar.setNavigationOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
