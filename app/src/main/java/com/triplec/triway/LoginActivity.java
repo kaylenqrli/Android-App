@@ -1,6 +1,7 @@
 package com.triplec.triway;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -26,6 +27,7 @@ public class LoginActivity extends AppCompatActivity {
     private Button signUp, login;
     private EditText mail, password;
     private final int PASSWORD_LENGTH = 8;
+    SharedPreferences sp;
     private final String validEmail = "[a-zA-Z0-9\\+\\.\\_\\%\\-\\+]{1,256}" +
 
             "\\@" +
@@ -48,7 +50,10 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         mAuth = FirebaseAuth.getInstance();
-
+        sp = getSharedPreferences("login", MODE_PRIVATE);
+        if(sp.getBoolean("logged",true)){
+            openHomeActivity();
+        }
         setContentView(R.layout.activity_login);
         mail = findViewById(R.id.login_email);
         password = findViewById(R.id.login_password);
@@ -117,7 +122,6 @@ public class LoginActivity extends AppCompatActivity {
             return;
         }
 
-
         // [START sign_in_with_email]
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -127,8 +131,8 @@ public class LoginActivity extends AppCompatActivity {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithEmail:success");
                             FirebaseUser user = mAuth.getCurrentUser();
+                            sp.edit().putBoolean("logged", true).apply();
                             openHomeActivity();
-
 
                         } else {
                             // If sign in fails, display a message to the user.
