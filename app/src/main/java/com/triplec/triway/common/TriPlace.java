@@ -1,5 +1,4 @@
 package com.triplec.triway.common;
-import android.support.v7.app.AppCompatActivity;
 
 import com.baidu.mapapi.search.core.PoiInfo;
 import com.baidu.mapapi.search.poi.OnGetPoiSearchResultListener;
@@ -11,19 +10,18 @@ import com.baidu.mapapi.search.poi.PoiNearbySearchOption;
 import com.baidu.mapapi.search.poi.PoiResult;
 import com.baidu.mapapi.search.poi.PoiSearch;
 
+
 import java.util.*;
 import java.lang.*;
 
-public class TriPlace extends AppCompatActivity {
+public class TriPlace {
 
     private String name,address;
     private double latitude, longitude,rating,shopHour;
 
 
-    public TriPlace(String n, double lat, double longi){
+    public TriPlace(String n){
         name = n;
-        latitude = lat;
-        longitude = longi;
     }
 
     private void setAddress(String a){
@@ -55,7 +53,7 @@ public class TriPlace extends AppCompatActivity {
     }
 
     public ArrayList<TriPlace> getTopFive(){
-        final ArrayList<TriPlace> list = new ArrayList<TriPlace>();
+        ArrayList<TriPlace> list = new ArrayList<TriPlace>();
         PoiSearch mPoiSearch = PoiSearch.newInstance();
         OnGetPoiSearchResultListener listener = new OnGetPoiSearchResultListener() {
             @Override
@@ -64,7 +62,7 @@ public class TriPlace extends AppCompatActivity {
                     PoiInfo poi = poiResult.getAllPoi().get(i);
                     double latitude = poi.getLocation().latitude;
                     double longitude = poi.getLocation().longitude;
-                    TriPlace curr = new TriPlace(poi.getName(),latitude,longitude);
+                    TriPlace curr = new TriPlace(poi.getName());
                     curr.setAddress(poi.getAddress());
                     curr.setRating(poi.poiDetailInfo.overallRating);
 
