@@ -109,6 +109,7 @@ public class SignUpActivity extends AppCompatActivity {
     public void openLoginPage(){
         Intent intent = new Intent(this, LoginActivity.class);
         startActivity(intent);
+        finish();
     }
     public boolean validPassword(String password){
         return password.length() >= PASSWORD_LENGTH;
