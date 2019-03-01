@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -24,8 +25,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class LoginActivity extends AppCompatActivity {
-    private Button signUp, login;
-    private EditText mail, password;
+    private TextInputEditText mail, password;
     private final int PASSWORD_LENGTH = 8;
     SharedPreferences sp;
     private final String validEmail = "[a-zA-Z0-9\\+\\.\\_\\%\\-\\+]{1,256}" +
@@ -74,7 +74,6 @@ public class LoginActivity extends AppCompatActivity {
         String email = mail.getText().toString();
         String passW = password.getText().toString();
         boolean isValidPassword = validPassword(passW);
-
 
         Matcher matcher= Pattern.compile(validEmail).matcher(email);
         if (matcher.matches()){
