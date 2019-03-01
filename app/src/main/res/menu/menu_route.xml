@@ -3,17 +3,18 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.example.learnmaterial.TabsActivity">
     <item
-        android:id="@+id/Tabs_menu_save"
-        android:orderInCategory="100"
-        android:title="Save"
-        android:icon="@drawable/ic_save_white_24dp"
-        app:showAsAction="always" />
-    <item
         android:id="@+id/Tabs_menu_add"
         android:orderInCategory="100"
         android:title="Add"
         android:icon="@drawable/ic_add_white_24dp"
         app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/Tabs_menu_save"
+        android:orderInCategory="100"
+        android:title="Save"
+        android:icon="@drawable/ic_save_white_24dp"
+        app:showAsAction="always" />
+
     <item
         android:id="@+id/Tabs_menu_edit"
         android:orderInCategory="100"
