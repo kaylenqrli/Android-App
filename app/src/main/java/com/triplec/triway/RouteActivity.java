@@ -1,5 +1,6 @@
 package com.triplec.triway;
 
+import android.app.Dialog;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -11,6 +12,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 public class RouteActivity extends AppCompatActivity {
 
@@ -72,10 +74,20 @@ public class RouteActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.Tabs_menu_Save) {
-            return true;
+        switch (id) {
+            case R.id.Tabs_menu_save:
+                Toast.makeText(getApplicationContext(), "Plan saved", Toast.LENGTH_SHORT).show();
+                return true;
+            case R.id.Tabs_menu_add:
+                Toast.makeText(getApplicationContext(), "Add a new place", Toast.LENGTH_SHORT).show();
+                return true;
+            case R.id.Tabs_menu_edit:
+                Toast.makeText(getApplicationContext(), "Editing plan", Toast.LENGTH_SHORT).show();
+                return true;
+            case R.id.Tabs_menu_delete:
+                Toast.makeText(getApplicationContext(), "Plan deleted", Toast.LENGTH_SHORT).show();
+                return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 

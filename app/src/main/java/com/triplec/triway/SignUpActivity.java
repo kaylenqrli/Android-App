@@ -4,6 +4,7 @@ package com.triplec.triway;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -28,8 +29,7 @@ import java.util.regex.Pattern;
 public class SignUpActivity extends AppCompatActivity {
 
     private static final String TAG = "EmailPassword";
-    private Button signUp;
-    private TextView mail, password, secondPassword;
+    private TextInputEditText mail, password, secondPassword;
     private FirebaseAuth mAuth;
     private final int PASSWORD_LENGTH = 8;
     private final String validEmail = "[a-zA-Z0-9\\+\\.\\_\\%\\-\\+]{1,256}" +
@@ -65,11 +65,12 @@ public class SignUpActivity extends AppCompatActivity {
             public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
                 if ((keyEvent != null) && (keyEvent.getKeyCode() == KeyEvent.KEYCODE_ENTER)
                         || (i == EditorInfo.IME_ACTION_DONE)){
-                    signUp.performClick();
+                    Submit(null);
                 }
                 return false;
             }
         });
+
     }
 
     public void Submit(View v){
