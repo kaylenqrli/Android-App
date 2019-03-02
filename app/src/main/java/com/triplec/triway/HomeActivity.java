@@ -49,7 +49,7 @@ public class HomeActivity extends AppCompatActivity
         setupFirebaseListener();
 
         // set up toolbar
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar_main);
         setSupportActionBar(toolbar);
 
         // set up drawer

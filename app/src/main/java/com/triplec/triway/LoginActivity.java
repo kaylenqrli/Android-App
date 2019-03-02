@@ -70,6 +70,9 @@ public class LoginActivity extends AppCompatActivity {
                     if (matcher.matches()){
                         mail_layout.setError(null);
                     }
+//                    else {
+//                        mail_layout.setError("The Email you entered is not valid");
+//                    }
                 }
                 return false;
             }
