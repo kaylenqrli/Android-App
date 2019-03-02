@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputEditText;
+import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -26,6 +27,7 @@ import java.util.regex.Pattern;
 
 public class LoginActivity extends AppCompatActivity {
     private TextInputEditText mail, password;
+    private TextInputLayout mail_layout, password_layout;
     private final int PASSWORD_LENGTH = 8;
     SharedPreferences sp;
     private final String validEmail = "[a-zA-Z0-9\\+\\.\\_\\%\\-\\+]{1,256}" +
@@ -55,7 +57,24 @@ public class LoginActivity extends AppCompatActivity {
             openHomeActivity();
         }
         setContentView(R.layout.activity_login);
+        mail_layout = findViewById(R.id.login_email_layout);
+        password_layout = findViewById(R.id.login_password_layout);
         mail = findViewById(R.id.login_email);
+        mail.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
+                if ((keyEvent != null) && (keyEvent.getKeyCode() == KeyEvent.KEYCODE_ENTER)
+                        || (i == EditorInfo.IME_ACTION_NEXT)){
+                    String email = mail.getText().toString();
+                    Matcher matcher= Pattern.compile(validEmail).matcher(email);
+                    if (matcher.matches()){
+                        mail_layout.setError(null);
+                    }
+                }
+                return false;
+            }
+        });
+
         password = findViewById(R.id.login_password);
         password.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -77,18 +96,22 @@ public class LoginActivity extends AppCompatActivity {
 
         Matcher matcher= Pattern.compile(validEmail).matcher(email);
         if (matcher.matches()){
+            mail_layout.setError(null);
             if (!isValidPassword){
-                Toast.makeText(getApplicationContext(), "Password length should at least be" +
-                        "8", Toast.LENGTH_LONG).show();
+                //Toast.makeText(getApplicationContext(), "Password length should at least be" +
+                //        "8", Toast.LENGTH_LONG).show();
+                password_layout.setError("Password length should be at least 8");
             }
             else{
                 signIn(email, passW);
+                password_layout.setError(null);
             }
 
         }
         else {
-            Toast.makeText(getApplicationContext(),"Enter Valid Email",
-                    Toast.LENGTH_LONG).show();
+            //Toast.makeText(getApplicationContext(),"Enter Valid Email",
+            //        Toast.LENGTH_LONG).show();
+            mail_layout.setError("The Email you entered is not valid");
         }
     }
 
