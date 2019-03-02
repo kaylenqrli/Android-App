@@ -1,7 +1,9 @@
 package com.triplec.triway;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.PagerAdapter;
@@ -19,11 +21,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.baidu.mapapi.SDKInitializer;
-import com.triplec.triway.common.TriPlace;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
-import org.w3c.dom.Text;
-
-import java.util.ArrayList;
 
 public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -36,12 +36,15 @@ public class HomeActivity extends AppCompatActivity
     AutoSlideViewPager viewPager;
     PagerAdapter adapter;
     EditText search;
+    private FirebaseAuth.AuthStateListener mAuthStateListener;
+    SharedPreferences sp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         SDKInitializer.initialize(getApplicationContext());
         setContentView(R.layout.home_main);
+        setupFirebaseListener();
 
         // set up toolbar
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -56,7 +59,7 @@ public class HomeActivity extends AppCompatActivity
         toggle.syncState();
 
         // change toolbar icon and event
-        toolbar.setNavigationIcon(R.drawable.ic_toolbar_avatar);
+        toolbar.setNavigationIcon(R.drawable.ic_menu_white_24dp);
         toolbar.setNavigationOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
@@ -115,11 +118,31 @@ public class HomeActivity extends AppCompatActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        switch (id){
+            case R.id.action_settings:
+                Toast.makeText(HomeActivity.this,"setting clicked", Toast.LENGTH_SHORT).show();
+                return true;
+            case R.id.action_signout:
+                Toast.makeText(HomeActivity.this,"signout clicked", Toast.LENGTH_SHORT).show();
+                FirebaseAuth.getInstance().signOut();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
+    }
 
-        return super.onOptionsItemSelected(item);
+    @Override
+    public void onStart(){
+        super.onStart();
+        FirebaseAuth.getInstance().addAuthStateListener(mAuthStateListener);
+    }
+
+    @Override
+    public void onStop(){
+        super.onStop();
+        if(mAuthStateListener != null){
+            FirebaseAuth.getInstance().removeAuthStateListener(mAuthStateListener);
+        }
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -177,5 +200,26 @@ public class HomeActivity extends AppCompatActivity
         Intent intent = new Intent(this, RouteActivity.class);
         intent.putExtra("city", city);
         startActivity(intent);
+    }
+
+    private void setupFirebaseListener(){
+        mAuthStateListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                FirebaseUser user = firebaseAuth.getCurrentUser();
+                if( user == null ){
+                    openLoginActivity();
+                }
+            }
+        };
+    }
+
+    public void openLoginActivity(){
+        sp = getSharedPreferences("login", MODE_PRIVATE);
+        sp.edit().putBoolean("logged", false).apply();
+        Intent intent = new Intent(this, LoginActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        finish();
     }
 }

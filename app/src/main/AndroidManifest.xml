@@ -34,31 +34,37 @@
         -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyDYKAtsvLfqJnT_t1VhAjvrLMb2cddLcVQ" />
+            android:value="@string/google_maps_key" />
         <meta-data android:name="com.baidu.lbsapi.API_KEY"
-            android:value="qF6nh9eugnasroAWEuoqdLSoGaq9FDhT" />
+            android:value="@string/baidu_maps_key" />
         <activity
-            android:name=".LoadingActivity"
+            android:name=".SplashActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
-
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
             android:name=".LoginActivity"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme">
+            android:theme="@style/Theme.Triway">
 
         </activity>
         <activity
             android:name=".SignUpActivity"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme">
+            android:parentActivityName=".LoginActivity"
+            android:theme="@style/Theme.Triway">
         </activity>
-
+        <activity
+            android:name=".RouteActivity"
+            android:label="@string/app_name"
+            android:parentActivityName=".HomeActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
         <activity android:name=".SavedPlanActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
@@ -67,10 +73,7 @@
             android:name=".HomeActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar"></activity>
-        <activity
-            android:name=".RouteActivity"
-            android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />

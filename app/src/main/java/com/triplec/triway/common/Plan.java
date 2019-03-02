@@ -1,7 +1,8 @@
 package com.triplec.triway.common;
-import java.util.ArrayList;
 
 import android.support.v4.app.FragmentActivity;
+
+import java.util.ArrayList;
 
 public class Plan extends FragmentActivity {
     private ArrayList<TriPlace> list;

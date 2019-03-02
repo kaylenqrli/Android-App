@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="com.triplec.triway.MainActivity"
+    tools:context="com.triplec.triway.HomeActivity"
     tools:showIn="@layout/app_bar_main">
 
     <TextView
@@ -17,7 +17,7 @@
         android:fontFamily="@font/karla"
         android:text="@string/home_search"
         android:textAlignment="viewStart"
-        android:textColor="@color/lightGreen"
+        android:textColor="@color/colorPrimary"
         android:textSize="@dimen/home_text_size"
         android:textStyle="bold" />
 

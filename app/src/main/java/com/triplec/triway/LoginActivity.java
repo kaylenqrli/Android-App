@@ -1,8 +1,10 @@
 package com.triplec.triway;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -23,9 +25,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class LoginActivity extends AppCompatActivity {
-    private Button signUp, login;
-    private EditText mail, password;
+    private TextInputEditText mail, password;
     private final int PASSWORD_LENGTH = 8;
+    SharedPreferences sp;
     private final String validEmail = "[a-zA-Z0-9\\+\\.\\_\\%\\-\\+]{1,256}" +
 
             "\\@" +
@@ -48,8 +50,11 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         mAuth = FirebaseAuth.getInstance();
-
-        setContentView(R.layout.activity_login_page);
+        sp = getSharedPreferences("login", MODE_PRIVATE);
+        if(sp.getBoolean("logged",true)){
+            openHomeActivity();
+        }
+        setContentView(R.layout.activity_login);
         mail = findViewById(R.id.login_email);
         password = findViewById(R.id.login_password);
         password.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -57,55 +62,37 @@ public class LoginActivity extends AppCompatActivity {
             public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
                 if ((keyEvent != null) && (keyEvent.getKeyCode() == KeyEvent.KEYCODE_ENTER)
                 || (i == EditorInfo.IME_ACTION_DONE)){
-                    login.performClick();
+                    login(null);
                 }
                 return false;
             }
         });
 
-        login = findViewById(R.id.loginButton);
-        login.setOnClickListener( new View.OnClickListener() {
-            @Override
-            public void onClick (View v){
-
-                String email = mail.getText().toString();
-                String passW = password.getText().toString();
-                boolean isValidPassword = validPassword(passW);
-
-
-                Matcher matcher= Pattern.compile(validEmail).matcher(email);
-                if (matcher.matches()){
-                    if (!isValidPassword){
-                        Toast.makeText(getApplicationContext(), "Password length should at least be" +
-                                "8", Toast.LENGTH_LONG).show();
-                    }
-                    else{
-                        signIn(email, passW);
-                    }
-
-                }
-                else {
-                    Toast.makeText(getApplicationContext(),"Enter Valid Email",
-                            Toast.LENGTH_LONG).show();
-                }
-            }
-
-
-
-        });
-
-        signUp = findViewById(R.id.signUpButton);
-        signUp.setOnClickListener( new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                openSignUpPage();
-            }
-        });
-
-
     }
 
-    public void openSignUpPage(){
+    public void login(View v) {
+        String email = mail.getText().toString();
+        String passW = password.getText().toString();
+        boolean isValidPassword = validPassword(passW);
+
+        Matcher matcher= Pattern.compile(validEmail).matcher(email);
+        if (matcher.matches()){
+            if (!isValidPassword){
+                Toast.makeText(getApplicationContext(), "Password length should at least be" +
+                        "8", Toast.LENGTH_LONG).show();
+            }
+            else{
+                signIn(email, passW);
+            }
+
+        }
+        else {
+            Toast.makeText(getApplicationContext(),"Enter Valid Email",
+                    Toast.LENGTH_LONG).show();
+        }
+    }
+
+    public void openSignUpPage(View v){
         Intent intent = new Intent(this, SignUpActivity.class);
         startActivity(intent);
     }
@@ -113,6 +100,7 @@ public class LoginActivity extends AppCompatActivity {
     public void openHomeActivity(){
         Intent intent = new Intent(this, HomeActivity.class);
         startActivity(intent);
+        finish();
     }
 
     public boolean validPassword(String password){
@@ -133,7 +121,6 @@ public class LoginActivity extends AppCompatActivity {
             return;
         }
 
-
         // [START sign_in_with_email]
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -143,8 +130,8 @@ public class LoginActivity extends AppCompatActivity {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithEmail:success");
                             FirebaseUser user = mAuth.getCurrentUser();
+                            sp.edit().putBoolean("logged", true).apply();
                             openHomeActivity();
-
 
                         } else {
                             // If sign in fails, display a message to the user.

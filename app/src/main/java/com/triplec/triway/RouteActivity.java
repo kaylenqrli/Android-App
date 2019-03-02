@@ -1,12 +1,22 @@
 package com.triplec.triway;
 
 import android.content.Intent;
+import android.app.Dialog;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
+import android.app.Dialog;
+import android.os.Bundle;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -41,15 +51,26 @@ import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 
 
-public class RouteActivity extends FragmentActivity {
+public class RouteActivity extends AppCompatActivity {
 
-    private static final int LIST = 0;
-    private static final int MAP = 1;
+    /**
+     * The {@link android.support.v4.view.PagerAdapter} that will provide
+     * fragments for each of the sections. We use a
+     * {@link FragmentPagerAdapter} derivative, which will keep every
+     * loaded fragment in memory. If this becomes too memory intensive, it
+     * may be best to switch to a
+     * {@link android.support.v4.app.FragmentStatePagerAdapter}.
+     */
+    private SectionsPagerAdapter mSectionsPagerAdapter;
 
-    private AutoCompleteTextView searchAddEditText;
+    //private AutoCompleteTextView searchAddEditText;
     private ArrayAdapter<String> madapter;
 
     private boolean isSaved = false;
+    /**
+     * The {@link ViewPager} that will host the section contents.
+     */
+    private ViewPager mViewPager;
 
 
     private PlacesClient placesClient;
@@ -58,14 +79,15 @@ public class RouteActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_route);
+
         //Intent intent = getIntent();
         //String tmp = intent.getStringExtra("city");
         //if(tmp != null){
         //    city = tmp;
         //}
 
-        SwitchFragment(MAP);
-        searchAddEditText = (AutoCompleteTextView) findViewById(R.id.search_add_text);
+        /* Autocomplete */
+        /*searchAddEditText = (AutoCompleteTextView) findViewById(R.id.search_add_text);
         madapter = new ArrayAdapter<String>(RouteActivity.this,
                 android.R.layout.simple_dropdown_item_1line);
         searchAddEditText.setAdapter(madapter);
@@ -114,96 +136,89 @@ public class RouteActivity extends FragmentActivity {
 
             @Override
             public void afterTextChanged(Editable s) {}
-        });
+        });*/
 
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        ActionBar actionbar = getSupportActionBar();
+        actionbar.setHomeAsUpIndicator(R.drawable.ic_arrow_back_white_24dp);
+        actionbar.setDisplayHomeAsUpEnabled(true);
+
+        // Create the adapter that will return a fragment for each of the three
+        // primary sections of the activity.
+        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
+
+        // Set up the ViewPager with the sections adapter.
+        mViewPager = (ViewPager) findViewById(R.id.container);
+        mViewPager.setAdapter(mSectionsPagerAdapter);
+
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
+
+        mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
+        tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager));
 
     }
 
-    public void SearchAndAdd(View v) {
-        String toSearch = searchAddEditText.getText().toString();
-        if (!toSearch.equals("")) {
-            Toast.makeText(RouteActivity.this, "Searching " + toSearch, Toast.LENGTH_SHORT).show();
-        }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_route, menu);
+        return true;
     }
 
-    public void ShowList(View v) {
-        SwitchFragment(LIST);
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        switch (id) {
+            case R.id.Tabs_menu_save:
+                Toast.makeText(getApplicationContext(), "Plan saved", Toast.LENGTH_SHORT).show();
+                return true;
+            case R.id.Tabs_menu_add:
+                Toast.makeText(getApplicationContext(), "Add a new place", Toast.LENGTH_SHORT).show();
+                return true;
+            case R.id.Tabs_menu_edit:
+                Toast.makeText(getApplicationContext(), "Editing plan", Toast.LENGTH_SHORT).show();
+                return true;
+            case R.id.Tabs_menu_delete:
+                Toast.makeText(getApplicationContext(), "Plan deleted", Toast.LENGTH_SHORT).show();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
-    public void ShowMap(View  v) {
-        SwitchFragment(MAP);
-    }
+    /**
+     * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
+     * one of the sections/tabs/pages.
+     */
+    public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
-    // Pseudo Function for AddToMyList, assumes the same List.
-    public void AddToMyList(View v){
-        if (!isSaved) {
-            Toast.makeText(RouteActivity.this, "Saved to My List", Toast.LENGTH_SHORT).show();
-            ((FloatingActionButton) v).setImageResource(R.drawable.ic_star_black_24dp);
-            isSaved = true;
-        }
-        else {
-            Toast.makeText(RouteActivity.this, "Removed from My List", Toast.LENGTH_LONG).show();
-            ((FloatingActionButton) v).setImageResource(R.drawable.ic_star_border_black_24dp);
-            isSaved = false;
-        }
-    }
-
-    /* AddToMyList with save and delete List realized. UI update included.
-    public void AddToMyList(View v){
-        List curList = getCurrentList();
-        if (!isSaved(curList)) {
-            Toast.makeText(RouteActivity.this, "Saved to My List", Toast.LENGTH_LONG).show();
-            ((FloatingActionButton) v).setImageResource(R.drawable.ic_star_black_24dp);
-            saveList(curList);
-        }
-        else {
-            Toast.makeText(RouteActivity.this, "Removed from My List", Toast.LENGTH_LONG).show();
-            ((FloatingActionButton) v).setImageResource(R.drawable.ic_star_border_black_24dp);
-            deleteList(curList);
-        }
-    }*/
-
-    public void SwitchFragment(int frag) {
-        Fragment fragment = null;
-        switch (frag) {
-            case LIST:
-                fragment = new ListFragment();
-                break;
-            case MAP:
-                fragment = new MapFragment();
-                break;
-        }
-        FragmentManager manager = getSupportFragmentManager();
-        manager.beginTransaction().replace(R.id.show, fragment).commit();
-    }
-
-    /* ArrayAdapter for ListView
-    class PlaceAdapter extends ArrayAdapter<Place>{
-
-        public PlaceAdapter(@androidx.annotation.NonNull Context context, int resource, @androidx.annotation.NonNull List<Place> objects) {
-            super(context, R.layout.list_item, objects);
+        public SectionsPagerAdapter(FragmentManager fm) {
+            super(fm);
         }
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            // Get the data item for this position
-            Place place = getItem(position);
-            // Check if an existing view is being reused, otherwise inflate the view
-            if (convertView == null) {
-                convertView = LayoutInflater.from(getContext()).inflate(R.layout.list_item, parent, false);
+        public Fragment getItem(int position) {
+            // getItem is called to instantiate the fragment for the given page.
+            // Return a PlaceholderFragment (defined as a static inner class below).
+            switch (position) {
+                case 0: return new MapFragment();
+                case 1: return new ListFragment();
             }
-            // Lookup view for data population
-            ImageView photo = (ImageView) convertView.findViewById(R.id.place_photo);
-            TextView name = (TextView) convertView.findViewById(R.id.place_name);
-            TextView description = (TextView) convertView.findViewById(R.id.place_description);
-            // Populate the data into the template view using the data object
-            photo.setImageBitmap(place.getPhoto());
-            name.setText(place.getName());
-            description.setText(place.getDescription());
-            // Return the completed view to render on screen
-            return convertView;
+            return null;
+        }
+
+        @Override
+        public int getCount() {
+            // Show 3 total pages.
+            return 2;
         }
     }
-    */
-
 }
