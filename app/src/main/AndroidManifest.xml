@@ -34,7 +34,7 @@
         -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="@string/google_maps_key" />
+            android:value="AIzaSyDYKAtsvLfqJnT_t1VhAjvrLMb2cddLcVQ" />
         <meta-data android:name="com.baidu.lbsapi.API_KEY"
             android:value="qF6nh9eugnasroAWEuoqdLSoGaq9FDhT" />
         <activity

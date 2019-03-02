@@ -2,6 +2,7 @@ package com.triplec.triway;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -13,16 +14,32 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import com.baidu.mapapi.SDKInitializer;
-import com.baidu.mapapi.search.sug.OnGetSuggestionResultListener;
-import com.baidu.mapapi.search.sug.SuggestionResult;
-import com.baidu.mapapi.search.sug.SuggestionSearch;
-import com.baidu.mapapi.search.sug.SuggestionSearchOption;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.tasks.Task;
+import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.model.AutocompletePrediction;
+import com.google.android.libraries.places.api.model.AutocompleteSessionToken;
+import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.api.model.RectangularBounds;
+import com.google.android.libraries.places.api.model.TypeFilter;
+import com.google.android.libraries.places.api.net.FetchPhotoRequest;
+import com.google.android.libraries.places.api.net.FetchPhotoResponse;
+import com.google.android.libraries.places.api.net.FetchPlaceRequest;
+import com.google.android.libraries.places.api.net.FetchPlaceResponse;
+import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest;
+import com.google.android.libraries.places.api.net.FindAutocompletePredictionsResponse;
+import com.google.android.libraries.places.api.net.FindCurrentPlaceRequest;
+import com.google.android.libraries.places.api.net.FindCurrentPlaceResponse;
+import com.google.android.libraries.places.api.net.PlacesClient;
+import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
+import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
+
 
 public class RouteActivity extends FragmentActivity {
 
@@ -31,30 +48,33 @@ public class RouteActivity extends FragmentActivity {
 
     private AutoCompleteTextView searchAddEditText;
     private ArrayAdapter<String> madapter;
-    private String city = "北京";
+    //private String city = "北京";
 
     private boolean isSaved = false;
 
-    SuggestionSearch mSuggestionSearch;
+
+    private PlacesClient placesClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_route);
-        Intent intent = getIntent();
-        String tmp = intent.getStringExtra("city");
-        if(tmp != null){
-            city = tmp;
-        }
+        //Intent intent = getIntent();
+        //String tmp = intent.getStringExtra("city");
+        //if(tmp != null){
+        //    city = tmp;
+        //}
 
         SwitchFragment(MAP);
         searchAddEditText = (AutoCompleteTextView) findViewById(R.id.search_add_text);
         madapter = new ArrayAdapter<String>(RouteActivity.this,
                 android.R.layout.simple_dropdown_item_1line);
         searchAddEditText.setAdapter(madapter);
-        SDKInitializer.setHttpsEnable(true);
-        mSuggestionSearch = SuggestionSearch.newInstance();
-        mSuggestionSearch.setOnGetSuggestionResultListener(listener);
+
+        Places.initialize(getApplicationContext(), "AIzaSyDYKAtsvLfqJnT_t1VhAjvrLMb2cddLcVQ");
+        placesClient = Places.createClient(this);
+
+        AutocompleteSessionToken token = AutocompleteSessionToken.newInstance();
 
         searchAddEditText.addTextChangedListener(new TextWatcher() {
             @Override
@@ -62,41 +82,43 @@ public class RouteActivity extends FragmentActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                mSuggestionSearch.requestSuggestion((new SuggestionSearchOption())
-                        .keyword(searchAddEditText.getText().toString())
-                        .city(city));
+                // Create a RectangularBounds object.
+                RectangularBounds bounds = RectangularBounds.newInstance(
+                        new LatLng(-33.880490, 151.184363),
+                        new LatLng(-33.858754, 151.229596));
+                // Use the builder to create a FindAutocompletePredictionsRequest.
+                FindAutocompletePredictionsRequest request = FindAutocompletePredictionsRequest.builder()
+                        // Call either setLocationBias() OR setLocationRestriction().
+                        //.setLocationRestriction(bounds)
+                        .setTypeFilter(TypeFilter.ADDRESS)
+                        .setSessionToken(token)
+                        .setQuery(searchAddEditText.getText().toString())
+                        .build();
+
+                placesClient.findAutocompletePredictions(request).addOnSuccessListener((response) -> {
+                    madapter.clear();
+                    for (AutocompletePrediction prediction : response.getAutocompletePredictions()) {
+                        //Log.i("result: ", prediction.getPlaceId());
+                        madapter.add(prediction.getPrimaryText(null).toString());
+                        Log.i("result", prediction.getPrimaryText(null).toString());
+                    }
+                    madapter.notifyDataSetChanged();
+                }).addOnFailureListener((exception) -> {
+                    if (exception instanceof ApiException) {
+                        ApiException apiException = (ApiException) exception;
+                        Toast.makeText(RouteActivity.this, "Not found :(", Toast.LENGTH_SHORT).show();
+                        Log.e("not found", "Place not found: " + apiException.getMessage());
+                    }
+                });
+
             }
 
             @Override
             public void afterTextChanged(Editable s) {}
         });
 
-    }
 
-    @Override
-    protected void onDestroy(){
-        mSuggestionSearch.destroy();
-        super.onDestroy();
     }
-    OnGetSuggestionResultListener listener = new OnGetSuggestionResultListener() {
-        @Override
-        public void onGetSuggestionResult(SuggestionResult suggestionResult) {
-            //处理sug检索结果
-            if (suggestionResult == null || suggestionResult.getAllSuggestions() == null) {
-                Toast.makeText(RouteActivity.this, "Suggestions Not Found", Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-            List<SuggestionResult.SuggestionInfo> resl = suggestionResult.getAllSuggestions();
-            madapter.clear();
-            for (int i = 0; i < resl.size(); i++) {
-                madapter.add(resl.get(i).key);
-                madapter.notifyDataSetChanged();
-                Log.i("result: ", "adapter size = " + madapter.getCount() + " suggestions["  + i + "] = " + resl.get(i).key);
-            }
-            madapter.notifyDataSetChanged();
-        }
-    };
 
     public void SearchAndAdd(View v) {
         String toSearch = searchAddEditText.getText().toString();
