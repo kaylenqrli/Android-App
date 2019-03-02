@@ -48,7 +48,6 @@ public class RouteActivity extends FragmentActivity {
 
     private AutoCompleteTextView searchAddEditText;
     private ArrayAdapter<String> madapter;
-    //private String city = "北京";
 
     private boolean isSaved = false;
 
