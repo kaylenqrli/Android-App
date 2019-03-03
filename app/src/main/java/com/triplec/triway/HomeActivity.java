@@ -148,7 +148,7 @@ public class HomeActivity extends AppCompatActivity
                 Toast.makeText(HomeActivity.this,"setting clicked", Toast.LENGTH_SHORT).show();
                 return true;
             case R.id.action_signout:
-                Toast.makeText(HomeActivity.this,"signout clicked", Toast.LENGTH_SHORT).show();
+                Toast.makeText(HomeActivity.this,"Sign Out Successful", Toast.LENGTH_SHORT).show();
                 FirebaseAuth.getInstance().signOut();
                 return true;
             default:
