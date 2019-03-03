@@ -16,7 +16,7 @@ public class RoutePlanner {
 	private static int[] index;
 	
 	/* Store result */
-	private static Plan plan;
+	private static TriPlan plan;
 	private static ArrayList<TriPlace> result;
 	private static double minCost = Integer.MAX_VALUE;
 	
@@ -36,36 +36,36 @@ public class RoutePlanner {
 	 * 
 	 * @return array list of places with the order such that the route has minimum cost
 	 */
-	public static Plan planRoute() {
+	public static TriPlan planRoute() {
 		// return empty array list if input list is empty
-		if(num == 0) {
-			return new Plan();
-		}
-		
-		// initialize selected places and index array
-		mplaces = new SelectedPlace[num];
-		index = new int[num];
-		
-		// set up places with weight and index array
-		for(int i = 0; i < num; i++) {
-			index[i] = i;
-			mplaces[i] = new SelectedPlace(list.get(i), num);
-			// set weight
-			for(int j = 0; j < num; j++) {
-				mplaces[i].setNeighbor(list.get(j), j);
-			}
-		}
-		
-		// initialize the result array list
-		plan = new Plan();
-		result = new ArrayList<TriPlace>(num);
-		
-		// iterate through all permutations, get best route with minCost
-		permute(index, 0);
-		for(TriPlace p: result){
-			plan.addPlace(p);
-		}
-		
+//		if(num == 0) {
+//			return new TriPlan();
+//		}
+//
+//		// initialize selected places and index array
+//		mplaces = new SelectedPlace[num];
+//		index = new int[num];
+//
+//		// set up places with weight and index array
+//		for(int i = 0; i < num; i++) {
+//			index[i] = i;
+//			mplaces[i] = new SelectedPlace(list.get(i), num);
+//			// set weight
+//			for(int j = 0; j < num; j++) {
+//				mplaces[i].setNeighbor(list.get(j), j);
+//			}
+//		}
+//
+//		// initialize the result array list
+//		plan = new TriPlan();
+//		result = new ArrayList<TriPlace>(num);
+//
+//		// iterate through all permutations, get best route with minCost
+//		permute(index, 0);
+//		for(TriPlace p: result){
+//			plan.addPlace(p);
+//		}
+
 		return plan;
 	}
 	
