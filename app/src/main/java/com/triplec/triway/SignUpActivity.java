@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputEditText;
+import android.support.v4.view.GravityCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -24,6 +25,7 @@ import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -32,6 +34,7 @@ import java.util.regex.Pattern;
 public class SignUpActivity extends AppCompatActivity {
 
     private static final String TAG = "EmailPassword";
+    private TextInputEditText first_name, last_name;
     private Button signUp;
     private TextInputEditText mail, password, secondPassword;
     private FirebaseAuth mAuth;
@@ -53,14 +56,24 @@ public class SignUpActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
-        Toolbar toolbar = findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar_sign_up);
         setSupportActionBar(toolbar);
+
+        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
 
         ActionBar actionbar = getSupportActionBar();
         actionbar.setHomeAsUpIndicator(R.drawable.ic_arrow_back_white_24dp);
         actionbar.setDisplayHomeAsUpEnabled(true);
         signUp = findViewById(R.id.signUpButton);
         mAuth = FirebaseAuth.getInstance();
+        first_name = findViewById(R.id.first_name);
+        last_name = findViewById(R.id.last_name);
         mail = findViewById(R.id.signup_email);
         password = findViewById(R.id.signup_password);
         secondPassword = findViewById(R.id.signup_reenter);
@@ -78,7 +91,8 @@ public class SignUpActivity extends AppCompatActivity {
 
     }
 
-    public void submit(View v){
+    public void Submit(View v){
+        String name = last_name.getText().toString() + " " + first_name.getText().toString();
         String email = mail.getText().toString();
         String passW = password.getText().toString();
         String check = secondPassword.getText().toString();
@@ -95,7 +109,8 @@ public class SignUpActivity extends AppCompatActivity {
                         Toast.LENGTH_LONG).show();
             }
             else{
-                createAccount(email, passW);
+                createAccount(email, passW, name);
+                finish();
             }
 
         }
@@ -121,7 +136,7 @@ public class SignUpActivity extends AppCompatActivity {
     }
 
 
-    private void createAccount(String email, String password) {
+    private void createAccount(String email, String password, String name) {
         Log.d(TAG, "createAccount:" + email);
         if (!validateForm()) {
             return;
@@ -134,6 +149,20 @@ public class SignUpActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "createUserWithEmail:success");
+                            FirebaseUser user = mAuth.getCurrentUser();
+                            UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                                    .setDisplayName(name)
+                                    .build();
+
+                            user.updateProfile(profileUpdates)
+                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            if (task.isSuccessful()) {
+                                                Log.d(TAG, "User profile updated.");
+                                            }
+                                        }
+                                    });
                             sendEmailVerification();
 
                         } else {
@@ -158,8 +187,6 @@ public class SignUpActivity extends AppCompatActivity {
                             // If sign in fails, display a message to the user.
 
                         }
-
-
                     }
                 });
     }

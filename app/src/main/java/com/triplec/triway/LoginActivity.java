@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputEditText;
+import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -27,9 +28,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class LoginActivity extends AppCompatActivity {
+    private TextInputEditText mail, password;
+    private TextInputLayout mail_layout, password_layout;
 
-    private EditText mail, password;
-    private String email, passW;
     private CheckBox checkBox;
     private final int PASSWORD_LENGTH = 8;
     SharedPreferences autologinSp;
@@ -66,8 +67,28 @@ public class LoginActivity extends AppCompatActivity {
         if(autologinSp.getBoolean("logged",false)){
             openHomeActivity();
         }
-
+        setContentView(R.layout.activity_login);
+        mail_layout = findViewById(R.id.login_email_layout);
+        password_layout = findViewById(R.id.login_password_layout);
         mail = findViewById(R.id.login_email);
+        mail.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
+                if ((keyEvent != null) && (keyEvent.getKeyCode() == KeyEvent.KEYCODE_ENTER)
+                        || (i == EditorInfo.IME_ACTION_NEXT)){
+                    String email = mail.getText().toString();
+                    Matcher matcher= Pattern.compile(validEmail).matcher(email);
+                    if (matcher.matches()){
+                        mail_layout.setError(null);
+                    }
+//                    else {
+//                        mail_layout.setError("The Email you entered is not valid");
+//                    }
+                }
+                return false;
+            }
+        });
+
         password = findViewById(R.id.login_password);
 
         // check if user has saved their email and password before
@@ -78,10 +99,6 @@ public class LoginActivity extends AppCompatActivity {
             password.setText(rememberSp.getString("userPassword",""));
             checkBox.setChecked(true);
         }
-
-        // get the inputs in the EditTexts
-        email = mail.getText().toString();
-        passW = password.getText().toString();
 
 
         // make done the default button when user has input password
@@ -110,8 +127,8 @@ public class LoginActivity extends AppCompatActivity {
      */
     public void login(View v) {
         // check if the email & password match the valid form
-        email = mail.getText().toString();
-        passW = password.getText().toString();
+        String email = mail.getText().toString();
+        String passW = password.getText().toString();
         if (validateForm(email, passW)) {
 
             mAuth.signInWithEmailAndPassword(email, passW)

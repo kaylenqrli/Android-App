@@ -13,7 +13,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
+import android.view.ContextMenu;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -58,6 +58,8 @@ public class HomeActivity extends AppCompatActivity
     AutoSlideViewPager viewPager;
     PagerAdapter adapter;
     EditText search;
+    TextView user_name_tv, user_email_tv;
+    boolean updated = false;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
     SharedPreferences sp;
     private PlaceRequestApi placesRequestApi;
@@ -65,27 +67,38 @@ public class HomeActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.home_main);
+        setContentView(R.layout.activity_main);
         setupFirebaseListener();
 
         // set up toolbar
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar_main);
         setSupportActionBar(toolbar);
 
         // set up drawer
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open,
-                R.string.navigation_drawer_close);
+                R.string.navigation_drawer_close) {
+
+            /** Called when a drawer has settled in a completely open state. */
+            public void onDrawerStateChanged (int newState) {
+                super.onDrawerStateChanged(newState);
+                if (!updated) {
+                    UpdateUserInfo();
+                    updated = true;
+                }
+                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
+            }
+        };
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
         // change toolbar icon and event
-        toolbar.setNavigationIcon(R.drawable.ic_menu_white_24dp);
+        toolbar.setNavigationIcon(R.drawable.ic_person_white_24dp);
         toolbar.setNavigationOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                gotoSavedPlan(v);
+                drawer.openDrawer(GravityCompat.START,true);
             }
         });
 
@@ -116,6 +129,19 @@ public class HomeActivity extends AppCompatActivity
         //TODO: delete after done testing
         //removeItem(R.id.nav_plan2);
         //addItem("New plan");
+    }
+
+    private void UpdateUserInfo() {
+        // set up Name and Email
+        user_name_tv = findViewById(R.id.user_name_text);
+        user_email_tv = findViewById(R.id.user_email_text);
+        String user_email = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+        String user_name = FirebaseAuth.getInstance().getCurrentUser().getDisplayName();
+        if ((user_name == null) || (user_name.isEmpty())) {
+            user_name = user_email.substring(0,user_email.indexOf("@"));
+        }
+        user_name_tv.setText(user_name);
+        user_email_tv.setText(user_email);
     }
 
 
@@ -173,26 +199,21 @@ public class HomeActivity extends AppCompatActivity
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
+        // close drawer
+        drawer.closeDrawer(GravityCompat.START, true);
+
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        /*if (id == R.id.nav_plan1) {
-            // go to saved plan 1
-        } else if (id == R.id.nav_plan2) {
-            // go to saved plan 2
-        } else if (id == R.id.nav_plan3) {
-            // go to saved plan 3
-        } else if (id == R.id.nav_plan4) {
-            // go to saved plan 4
-        } else if (id == R.id.nav_plan5) {
-            // go to saved plan 5
-        }*/
-        // start route activity
-        Intent intent = new Intent(this, RouteActivity.class);
-        startActivity(intent);
+        switch (id) {
+            case R.id.drawer_saved_plan:
+                gotoSavedPlan(null);
+                break;
+            case R.id.drawer_sign_out:
+                FirebaseAuth.getInstance().signOut();
+                break;
+        }
 
-        // close drawer
-        drawer.closeDrawer(GravityCompat.START);
         return true;
     }
 
