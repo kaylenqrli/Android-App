@@ -47,6 +47,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+
 public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -119,7 +120,7 @@ public class HomeActivity extends AppCompatActivity
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 boolean handled = false;
                 if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                    gotoRoute(v);
+                    gotoRoute(v, search.getText().toString());
                     handled = true;
                 }
                 return handled;
@@ -232,7 +233,7 @@ public class HomeActivity extends AppCompatActivity
         startActivity(intent);
     }
 
-    public void gotoRoute(TextView v) {
+    public void gotoRoute(TextView v, String city) {
 //        TriPlace newPlace = new TriPlace(v.getText().toString());
 //        ArrayList<TriPlace> list = newPlace.getTopFive();
 //        String displayString = "";
@@ -280,6 +281,7 @@ public class HomeActivity extends AppCompatActivity
 
         });
         Intent intent = new Intent(this, RouteActivity.class);
+        intent.putExtra("city", city);
         startActivity(intent);
     }
 
