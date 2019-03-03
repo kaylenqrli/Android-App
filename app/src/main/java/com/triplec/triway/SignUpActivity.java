@@ -18,6 +18,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
@@ -91,7 +92,7 @@ public class SignUpActivity extends AppCompatActivity {
 
     }
 
-    public void Submit(View v){
+    public void submit(View v){
         String name = last_name.getText().toString() + " " + first_name.getText().toString();
         String email = mail.getText().toString();
         String passW = password.getText().toString();
@@ -110,7 +111,6 @@ public class SignUpActivity extends AppCompatActivity {
             }
             else{
                 createAccount(email, passW, name);
-                finish();
             }
 
         }
@@ -135,17 +135,17 @@ public class SignUpActivity extends AppCompatActivity {
         return password.length() >= PASSWORD_LENGTH;
     }
 
-
     private void createAccount(String email, String password, String name) {
-        Log.d(TAG, "createAccount:" + email);
-        if (!validateForm()) {
-            return;
-        }
-
+//        Log.d(TAG, "createAccount:" + email);
+//        if (!validateForm()) {
+//            return;
+//        }
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
+                        Log.d(TAG, "createUserWithEmail:success");
+
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "createUserWithEmail:success");
@@ -153,7 +153,6 @@ public class SignUpActivity extends AppCompatActivity {
                             UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
                                     .setDisplayName(name)
                                     .build();
-
                             user.updateProfile(profileUpdates)
                                     .addOnCompleteListener(new OnCompleteListener<Void>() {
                                         @Override
@@ -164,7 +163,6 @@ public class SignUpActivity extends AppCompatActivity {
                                         }
                                     });
                             sendEmailVerification();
-
                         } else {
                             try
                             {
