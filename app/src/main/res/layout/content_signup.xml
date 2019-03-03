@@ -121,7 +121,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
                     android:layout_alignParentRight="true"
-                    android:onClick="Submit"
+                    android:onClick="submit"
                     android:text="Submit" />
 
             </RelativeLayout>

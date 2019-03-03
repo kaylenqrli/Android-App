@@ -21,6 +21,9 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
+import com.google.firebase.auth.FirebaseAuthUserCollisionException;
+import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
 
@@ -31,7 +34,9 @@ import java.util.regex.Pattern;
 public class SignUpActivity extends AppCompatActivity {
 
     private static final String TAG = "EmailPassword";
-    private TextInputEditText first_name, last_name, mail, password, secondPassword;
+    private TextInputEditText first_name, last_name;
+    private Button signUp;
+    private TextInputEditText mail, password, secondPassword;
     private FirebaseAuth mAuth;
     private final int PASSWORD_LENGTH = 8;
     private final String validEmail = "[a-zA-Z0-9\\+\\.\\_\\%\\-\\+]{1,256}" +
@@ -62,6 +67,10 @@ public class SignUpActivity extends AppCompatActivity {
             }
         });
 
+        ActionBar actionbar = getSupportActionBar();
+        actionbar.setHomeAsUpIndicator(R.drawable.ic_arrow_back_white_24dp);
+        actionbar.setDisplayHomeAsUpEnabled(true);
+        signUp = findViewById(R.id.signUpButton);
         mAuth = FirebaseAuth.getInstance();
         first_name = findViewById(R.id.first_name);
         last_name = findViewById(R.id.last_name);
@@ -73,7 +82,8 @@ public class SignUpActivity extends AppCompatActivity {
             public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
                 if ((keyEvent != null) && (keyEvent.getKeyCode() == KeyEvent.KEYCODE_ENTER)
                         || (i == EditorInfo.IME_ACTION_DONE)){
-                    Submit(null);
+                    signUp.performClick();
+                    return true;
                 }
                 return false;
             }
@@ -153,12 +163,49 @@ public class SignUpActivity extends AppCompatActivity {
                                             }
                                         }
                                     });
+                            sendEmailVerification();
 
                         } else {
+                            try
+                            {
+                                throw task.getException();
+                            }
+
+                            catch (FirebaseAuthUserCollisionException existEmail)
+                            {
+                                Log.d(TAG, "onComplete: exist_email");
+                                Toast.makeText(SignUpActivity.this, "Email already used"
+                                        , Toast.LENGTH_SHORT).show();
+
+                            }
+                            catch (Exception e)
+                            {
+                                Log.d(TAG, "onComplete: " + e.getMessage());
+                                Toast.makeText(SignUpActivity.this, "Authentication" +
+                                                " failed.", Toast.LENGTH_SHORT).show();
+                            }
                             // If sign in fails, display a message to the user.
-                            Log.w(TAG, "createUserWithEmail:failure", task.getException());
-                            Toast.makeText(SignUpActivity.this, "Authentication failed.",
-                                    Toast.LENGTH_SHORT).show();
+
+                        }
+                    }
+                });
+    }
+    public void sendEmailVerification() {
+        // [START send_email_verification]
+        FirebaseUser user = mAuth.getCurrentUser();
+        user.sendEmailVerification()
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            Log.d(TAG, "Email sent.");
+                            Toast.makeText(SignUpActivity.this, "Verification" +
+                                    "Email Sent", Toast.LENGTH_LONG).show();
+                            openLoginPage();
+                        }else{
+                            Log.d(TAG,"Sent Email Failed");
+                            Toast.makeText(SignUpActivity.this, "Fail to send" +
+                                    "verification email", Toast.LENGTH_LONG).show();
                         }
                     }
                 });
@@ -188,4 +235,3 @@ public class SignUpActivity extends AppCompatActivity {
     }
 
 }
-
