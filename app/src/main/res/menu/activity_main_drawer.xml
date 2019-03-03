@@ -5,29 +5,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:showIn="navigation_view">
 
-    <group android:checkableBehavior="single">
-        <item
-            android:id="@+id/nav_plan1"
-            android:icon="@drawable/ic_menu_trip"
-            android:title="My Plan 1" />
-        <item
-            android:id="@+id/nav_plan2"
-            android:icon="@drawable/ic_menu_trip"
-            android:title="My Plan 2"/>
-        <item
-            android:id="@+id/nav_plan3"
-            android:icon="@drawable/ic_menu_trip"
-            android:title="My Plan 3" />
-        <item
-            android:id="@+id/nav_plan4"
-            android:icon="@drawable/ic_menu_trip"
-            android:title="My Plan 4" />
-        <item
-            android:id="@+id/nav_plan5"
-            android:icon="@drawable/ic_menu_trip"
-            android:title="My Plan 5" />
-
-    </group>
-
+    <item
+        android:id="@+id/drawer_saved_plan"
+        android:icon="@drawable/ic_menu_trip"
+        android:title="Saved Plans" />
+    <item
+        android:id="@+id/drawer_sign_out"
+        android:icon="@drawable/ic_exit_to_app_black_24dp"
+        android:title="Sign out" />
 
 </menu>
