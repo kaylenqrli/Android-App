@@ -49,6 +49,7 @@ import com.google.android.libraries.places.api.net.FindCurrentPlaceResponse;
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
+import com.triplec.triway.common.TriPlan;
 
 
 public class RouteActivity extends AppCompatActivity {
@@ -71,19 +72,23 @@ public class RouteActivity extends AppCompatActivity {
      * The {@link ViewPager} that will host the section contents.
      */
     private ViewPager mViewPager;
-
+    private TriPlan plan;
 
     private PlacesClient placesClient;
+
+    public TriPlan getPlan() {
+        return plan;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_route);
 
-        //Intent intent = getIntent();
-        //String tmp = intent.getStringExtra("city");
+        Intent intent = getIntent();
+        //TriPlan tmp = (TriPlan)intent.getBundleExtra("plan").get("plan");
         //if(tmp != null){
-        //    city = tmp;
+        //    plan = tmp;
         //}
 
         /* Autocomplete */
