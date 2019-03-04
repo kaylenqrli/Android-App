@@ -81,14 +81,10 @@ public class LoginActivity extends AppCompatActivity {
                     if (matcher.matches()){
                         mail_layout.setError(null);
                     }
-//                    else {
-//                        mail_layout.setError("The Email you entered is not valid");
-//                    }
                 }
                 return false;
             }
         });
-
         password = findViewById(R.id.login_password);
 
         // check if user has saved their email and password before
@@ -150,18 +146,21 @@ public class LoginActivity extends AppCompatActivity {
                                     }else{          //if checkBox not checked, clear the sharedPreference
                                         rememberSp.edit().clear().commit();
                                     }
-
+                                    mail_layout.setError(null);
+                                    password_layout.setError(null);
                                     openHomeActivity();
                                 }
                                 else{
-                                    Toast.makeText(LoginActivity.this, "Please " +
-                                            "verify your email address",Toast.LENGTH_LONG).show();
+//                                    Toast.makeText(LoginActivity.this, "Please " +
+//                                            "verify your email address",Toast.LENGTH_LONG).show();
+                                    mail_layout.setError("Please check your Email for verification");
                                 }
                             } else {
                                 // If sign in fails, display a message to the user.
                                 Log.w(TAG, "signInWithEmail:failure", task.getException());
-                                Toast.makeText(getApplicationContext(), "Email and Password doesn't match",
-                                        Toast.LENGTH_LONG).show();
+//                                Toast.makeText(getApplicationContext(), "Email and Password doesn't match",
+//                                        Toast.LENGTH_LONG).show();
+                                password_layout.setError("Incorrect password");
                             }
                         }
                     });
@@ -201,17 +200,20 @@ public class LoginActivity extends AppCompatActivity {
         Matcher matcher= Pattern.compile(validEmail).matcher(email);
         if (matcher.matches()){
             if(isValidPassword){
+                password_layout.setError(null);
                 return true;
             }
             else{
-                Toast.makeText(getApplicationContext(), "Password length should at least be" +
-                        "8", Toast.LENGTH_LONG).show();
+//                Toast.makeText(getApplicationContext(), "Password length should at least be" +
+//                        "8", Toast.LENGTH_LONG).show();
+                password_layout.setError("Password length should be at least 8");
                 return false;
             }
         }
         else{
-            Toast.makeText(getApplicationContext(),"Enter Valid Email",
-                    Toast.LENGTH_LONG).show();
+//            Toast.makeText(getApplicationContext(),"Enter Valid Email",
+//                    Toast.LENGTH_LONG).show();
+            mail_layout.setError("Not valid Email");
             return false;
         }
     }
