@@ -36,6 +36,7 @@ import java.util.List;
  */
 public class ListFragment extends Fragment {
     PlaceListAdapter adapter;
+    ListView list;
 
     public ListFragment() {
         // Required empty public constructor
@@ -88,7 +89,7 @@ public class ListFragment extends Fragment {
         }
         TriPlan plan = builder.buildPlan();
 
-        ListView list = (ListView)view.findViewById(R.id.route_list);
+        list = (ListView)view.findViewById(R.id.route_list);
         adapter = new PlaceListAdapter
                 (getActivity().getApplicationContext(), R.layout.fragment_list, plan.getPlaceList());
         list.setAdapter(adapter);
@@ -109,7 +110,7 @@ public class ListFragment extends Fragment {
 
     public void toggleColor(View view, int position) {
         SparseBooleanArray selected = adapter.getSelectedIds();
-        if(!selected.valueAt(position)){
+        if(!selected.get(position)){
             Toast.makeText(getActivity().getApplicationContext(),
                             adapter.getItem(selected.keyAt(position)).getName() + " Unselected", Toast.LENGTH_SHORT).show();
             view.setBackgroundColor(getResources().getColor(R.color.quantum_white_text));
@@ -120,6 +121,14 @@ public class ListFragment extends Fragment {
         }
     }
 
+    public void turnOffAll() {
+        for(int i = 0; i < list.getCount(); i++){
+            View v = list.getChildAt(i);
+            if(v != null){
+                v.setBackgroundColor(getResources().getColor(R.color.quantum_white_text));
+            }
+        }
+    }
 
     public class PlaceListAdapter extends ArrayAdapter<TriPlace> {
         List<TriPlace> places;
@@ -171,18 +180,15 @@ public class ListFragment extends Fragment {
         @Override
         public void remove(TriPlace p) {
             places.remove(p);
+            turnOffAll();
             notifyDataSetChanged();
         }
 
         public void selectView(int position, boolean value) {
             if (value) {
                 mSelectedItemsIds.put(position, value);
-                //Toast.makeText(getActivity().getApplicationContext(),
-                //        places.get(position).getName() + " Selected", Toast.LENGTH_SHORT).show();
             } else {
                 mSelectedItemsIds.delete(position);
-                //Toast.makeText(getActivity().getApplicationContext(),
-                //        places.get(position).getName() + " Unselected", Toast.LENGTH_SHORT).show();
             }
             notifyDataSetChanged();
         }
