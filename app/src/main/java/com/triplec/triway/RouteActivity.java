@@ -194,7 +194,7 @@ public class RouteActivity extends AppCompatActivity {
                 return true;
             case R.id.Tabs_menu_delete:
                 Toast.makeText(getApplicationContext(), "Plan deleted", Toast.LENGTH_SHORT).show();
-                return true;
+                return false;
         }
         return super.onOptionsItemSelected(item);
     }
