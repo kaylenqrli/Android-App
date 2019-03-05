@@ -18,6 +18,7 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
+import android.widget.CheckBox;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -83,11 +84,13 @@ public class ListFragment extends Fragment {
 
         //TriPlan plan = ((RouteActivity)getActivity()).getPlan();
 
+        /*----- pseudo plan for testing -----*/
         TriPlan.TriPlanBuilder builder = new TriPlan.TriPlanBuilder();
         for(int i = 0; i < 5; i++){
             builder.addPlace(new TriPlace("place " + i));
         }
         TriPlan plan = builder.buildPlan();
+        /*----- pseudo plan for testing -----*/
 
         list = (ListView)view.findViewById(R.id.route_list);
         adapter = new PlaceListAdapter
@@ -99,35 +102,10 @@ public class ListFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 // toggle selected status
                 adapter.toggleSelection(position);
-
-                // toggle background color, need to change when checkbox is added
-                toggleColor(view, position);
             }
         });
 
         return view;
-    }
-
-    public void toggleColor(View view, int position) {
-        SparseBooleanArray selected = adapter.getSelectedIds();
-        if(!selected.get(position)){
-            Toast.makeText(getActivity().getApplicationContext(),
-                            adapter.getItem(selected.keyAt(position)).getName() + " Unselected", Toast.LENGTH_SHORT).show();
-            view.setBackgroundColor(getResources().getColor(R.color.quantum_white_text));
-        } else {
-            Toast.makeText(getActivity().getApplicationContext(),
-                    adapter.getItem(position).getName() + " Selected", Toast.LENGTH_SHORT).show();
-            view.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
-        }
-    }
-
-    public void turnOffAll() {
-        for(int i = 0; i < list.getCount(); i++){
-            View v = list.getChildAt(i);
-            if(v != null){
-                v.setBackgroundColor(getResources().getColor(R.color.quantum_white_text));
-            }
-        }
     }
 
     public class PlaceListAdapter extends ArrayAdapter<TriPlace> {
@@ -146,6 +124,7 @@ public class ListFragment extends Fragment {
         }
 
         private class ViewHolder {
+            CheckBox checkBox;
             TextView name;
             TextView description;
             ImageView photo;
@@ -158,6 +137,7 @@ public class ListFragment extends Fragment {
                 holder = new ViewHolder();
                 convertView = inflater.inflate(R.layout.list_item, null);
                 // Locate the TextViews in listview_item.xml
+                holder.checkBox = (CheckBox) convertView.findViewById(R.id.place_checkbox);
                 holder.name = (TextView) convertView.findViewById(R.id.place_name);
                 holder.description = (TextView) convertView.findViewById(R.id.place_description);
                 holder.photo = (ImageView) convertView.findViewById(R.id.place_photo);
@@ -173,6 +153,8 @@ public class ListFragment extends Fragment {
             //holder.description.setText("description " + position);
             holder.photo.setImageResource(R.drawable.album_city3);
 
+            holder.checkBox.setChecked(mSelectedItemsIds.get(position));
+
             convert = convertView;
             return convertView;
         }
@@ -180,7 +162,6 @@ public class ListFragment extends Fragment {
         @Override
         public void remove(TriPlace p) {
             places.remove(p);
-            turnOffAll();
             notifyDataSetChanged();
         }
 
