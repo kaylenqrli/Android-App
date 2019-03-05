@@ -85,7 +85,7 @@ public class RouteActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_route);
 
-        Intent intent = getIntent();
+        //Intent intent = getIntent();
         //TriPlan tmp = (TriPlan)intent.getBundleExtra("plan").get("plan");
         //if(tmp != null){
         //    plan = tmp;
@@ -142,7 +142,7 @@ public class RouteActivity extends AppCompatActivity {
             @Override
             public void afterTextChanged(Editable s) {}
         });*/
-
+        /* Autocomplete */
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
