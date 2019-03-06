@@ -194,7 +194,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void openSignUpPage(View v){
-        signUpButton.setEnabled(true);
+        signUpButton.setEnabled(false);
         Log.d(TAG, "open sign up page");
         Intent intent = new Intent(this, SignUpActivity.class);
         startActivity(intent);
