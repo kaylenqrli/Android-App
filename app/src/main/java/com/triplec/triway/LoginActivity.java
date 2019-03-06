@@ -14,21 +14,20 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.CheckBox;
-import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 import com.google.firebase.auth.FirebaseUser;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class LoginActivity extends AppCompatActivity {
-    private TextInputEditText mail, password;
+    private TextInputEditText mail_et, password_et;
     private TextInputLayout mail_layout, password_layout;
 
     private CheckBox checkBox;
@@ -70,39 +69,35 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         mail_layout = findViewById(R.id.login_email_layout);
         password_layout = findViewById(R.id.login_password_layout);
-        mail = findViewById(R.id.login_email);
-        mail.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
-                if ((keyEvent != null) && (keyEvent.getKeyCode() == KeyEvent.KEYCODE_ENTER)
-                        || (i == EditorInfo.IME_ACTION_NEXT)){
-                    String email = mail.getText().toString();
-                    Matcher matcher= Pattern.compile(validEmail).matcher(email);
-                    if (matcher.matches()){
-                        mail_layout.setError(null);
-                    }
-//                    else {
-//                        mail_layout.setError("The Email you entered is not valid");
+        mail_et = findViewById(R.id.login_email);
+//        mail_et.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+//            @Override
+//            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
+//                if ((keyEvent != null) && (keyEvent.getKeyCode() == KeyEvent.KEYCODE_ENTER)
+//                        || (i == EditorInfo.IME_ACTION_NEXT)){
+//                    String email = mail_et.getText().toString();
+//                    Matcher matcher= Pattern.compile(validEmail).matcher(email);
+//                    if (matcher.matches()){
+//                        mail_layout.setError(null);
 //                    }
-                }
-                return false;
-            }
-        });
+//                }
+//                return false;
+//            }
+//        });
+        password_et = findViewById(R.id.login_password);
 
-        password = findViewById(R.id.login_password);
-
-        // check if user has saved their email and password before
+        // check if user has saved their email and password_et before
         rememberSp = getSharedPreferences("savedPref", MODE_PRIVATE);
         if(rememberSp.getBoolean("isRemember", false)){
             // read user's data from sharedPreference
-            mail.setText(rememberSp.getString("userEmail",""));
-            password.setText(rememberSp.getString("userPassword",""));
+            mail_et.setText(rememberSp.getString("userEmail",""));
+            password_et.setText(rememberSp.getString("userPassword",""));
             checkBox.setChecked(true);
         }
 
 
-        // make done the default button when user has input password
-        password.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+        // make done the default button when user has input password_et
+        password_et.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
                 if ((keyEvent != null) && (keyEvent.getKeyCode() == KeyEvent.KEYCODE_ENTER)
@@ -121,14 +116,14 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     /**
-     * Login method, first check email&password are in valid form, if yes, attempt to login.
+     * Login method, first check email&password_et are in valid form, if yes, attempt to login.
      * If fail, make a login failure toast.
      * @param v
      */
     public void login(View v) {
-        // check if the email & password match the valid form
-        String email = mail.getText().toString();
-        String passW = password.getText().toString();
+        // check if the email & password_et match the valid form
+        String email = mail_et.getText().toString();
+        String passW = password_et.getText().toString();
         if (validateForm(email, passW)) {
 
             mAuth.signInWithEmailAndPassword(email, passW)
@@ -142,7 +137,7 @@ public class LoginActivity extends AppCompatActivity {
                                     //user = mAuth.getCurrentUser();
                                     autologinSp.edit().putBoolean("logged", true).apply();
 
-                                    // remember user's email address and password if ckeckbox is checked
+                                    // remember user's email address and password_et if ckeckbox is checked
                                     if(checkBox.isChecked()){
                                         rememberSp.edit().putString("userEmail", email).apply();
                                         rememberSp.edit().putString("userPassword", passW).apply();
@@ -150,18 +145,26 @@ public class LoginActivity extends AppCompatActivity {
                                     }else{          //if checkBox not checked, clear the sharedPreference
                                         rememberSp.edit().clear().commit();
                                     }
-
+                                    clearError(mail_layout);
+                                    clearError(password_layout);
                                     openHomeActivity();
                                 }
                                 else{
-                                    Toast.makeText(LoginActivity.this, "Please " +
-                                            "verify your email address",Toast.LENGTH_LONG).show();
+//                                    Toast.makeText(LoginActivity.this, "Please " +
+//                                            "verify your email address",Toast.LENGTH_LONG).show();
+                                    displayError(mail_layout, mail_et,"Please check your Email for verification");
                                 }
                             } else {
                                 // If sign in fails, display a message to the user.
                                 Log.w(TAG, "signInWithEmail:failure", task.getException());
-                                Toast.makeText(getApplicationContext(), "Email and Password doesn't match",
-                                        Toast.LENGTH_LONG).show();
+//                                Toast.makeText(getApplicationContext(), "Email and Password doesn't match",
+//                                        Toast.LENGTH_LONG).show();
+                                if (task.getException().getClass().equals(FirebaseAuthInvalidUserException.class)) {
+                                    displayError(mail_layout, mail_et, "This Email is not registered");
+                                }
+                                else {
+                                    displayError(password_layout, password_et, "Incorrect password");
+                                }
                             }
                         }
                     });
@@ -179,7 +182,7 @@ public class LoginActivity extends AppCompatActivity {
         finish();               // terminate LoginActivity after login
     }
 
-    // check if the password length is greater than or equal than 8
+    // check if the password_et length is greater than or equal than 8
     public boolean validPassword(String password){
         return password.length() >= PASSWORD_LENGTH;
     }
@@ -192,7 +195,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     /**
-     * validateForm, check if email matches the standard format and password length is greater than 8
+     * validateForm, check if email matches the standard format and password_et length is greater than 8
      * @return
      */
     private boolean validateForm(String email, String password){
@@ -200,20 +203,34 @@ public class LoginActivity extends AppCompatActivity {
 
         Matcher matcher= Pattern.compile(validEmail).matcher(email);
         if (matcher.matches()){
+            clearError(mail_layout);
             if(isValidPassword){
+                clearError(password_layout);
                 return true;
             }
             else{
-                Toast.makeText(getApplicationContext(), "Password length should at least be" +
-                        "8", Toast.LENGTH_LONG).show();
+//                Toast.makeText(getApplicationContext(), "Password length should at least be" +
+//                        "8", Toast.LENGTH_LONG).show();
+                displayError(password_layout, password_et, "Password length should be at least 8");
                 return false;
             }
         }
         else{
-            Toast.makeText(getApplicationContext(),"Enter Valid Email",
-                    Toast.LENGTH_LONG).show();
+//            Toast.makeText(getApplicationContext(),"Enter Valid Email",
+//                    Toast.LENGTH_LONG).show();
+            displayError(mail_layout, mail_et, "Not a valid Email");
             return false;
         }
+    }
+
+    private void clearError(@NonNull TextInputLayout layout) {
+        layout.setError(null);
+    }
+
+    private void displayError(@NonNull TextInputLayout layout, @NonNull TextInputEditText editText, String error) {
+        layout.setError(error);
+        editText.setSelection(editText.getText().length());
+        editText.requestFocus();
     }
 
 
