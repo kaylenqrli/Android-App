@@ -93,6 +93,7 @@ public class SignUpActivity extends AppCompatActivity {
     }
 
     public void submit(View v){
+        signUp.setEnabled(false);
         String name = last_name.getText().toString() + " " + first_name.getText().toString();
         String email = mail.getText().toString();
         String passW = password.getText().toString();
@@ -125,8 +126,15 @@ public class SignUpActivity extends AppCompatActivity {
         super.onStart();
         FirebaseUser currentUser = mAuth.getCurrentUser();
     }
-
+    @Override
+    public void onResume(){
+        super.onResume();
+        signUp = findViewById(R.id.signUpButton);
+        signUp.setEnabled(true);
+    }
     public void openLoginPage(){
+        signUp.setEnabled(false);
+        Log.d(TAG, "open Login Page");
         Intent intent = new Intent(this, LoginActivity.class);
         startActivity(intent);
         finish();
@@ -164,6 +172,7 @@ public class SignUpActivity extends AppCompatActivity {
                                     });
                             sendEmailVerification();
                         } else {
+                            signUp.setEnabled(true);
                             try
                             {
                                 throw task.getException();

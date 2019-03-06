@@ -13,6 +13,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -30,7 +31,8 @@ import java.util.regex.Pattern;
 public class LoginActivity extends AppCompatActivity {
     private TextInputEditText mail, password;
     private TextInputLayout mail_layout, password_layout;
-
+    private Button loginInButton;
+    private Button signUpButton;
     private CheckBox checkBox;
     private final int PASSWORD_LENGTH = 8;
     SharedPreferences autologinSp;
@@ -57,17 +59,18 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
+        loginInButton = findViewById(R.id.loginButton);
+        signUpButton = findViewById(R.id.signupButton);
         mAuth = FirebaseAuth.getInstance();
         user = mAuth.getCurrentUser();
         // check if the user logged before, auto-login if true
         checkBox = findViewById(R.id.ch_rememberme);
         autologinSp = getSharedPreferences("login", MODE_PRIVATE);
-
         if(autologinSp.getBoolean("logged",false)){
             openHomeActivity();
         }
-        setContentView(R.layout.activity_login);
+
+        //setContentView(R.layout.activity_login);
         mail_layout = findViewById(R.id.login_email_layout);
         password_layout = findViewById(R.id.login_password_layout);
         mail = findViewById(R.id.login_email);
@@ -93,10 +96,10 @@ public class LoginActivity extends AppCompatActivity {
 
         // check if user has saved their email and password before
         rememberSp = getSharedPreferences("savedPref", MODE_PRIVATE);
-        if(rememberSp.getBoolean("isRemember", false)){
+        if(rememberSp.getBoolean("isRemembered", false)){
             // read user's data from sharedPreference
+            Log.d(TAG, "saved before, should auto set email");
             mail.setText(rememberSp.getString("userEmail",""));
-            password.setText(rememberSp.getString("userPassword",""));
             checkBox.setChecked(true);
         }
 
@@ -120,6 +123,21 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public void onStart(){
+        super.onStart();
+        // Check if user is signed in (non-null) and update UI accordingly.
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        loginInButton = findViewById(R.id.loginButton);
+        signUpButton = findViewById(R.id.signupButton);
+        loginInButton.setEnabled(true);
+        signUpButton.setEnabled(true);
+    }
     /**
      * Login method, first check email&password are in valid form, if yes, attempt to login.
      * If fail, make a login failure toast.
@@ -127,6 +145,7 @@ public class LoginActivity extends AppCompatActivity {
      */
     public void login(View v) {
         // check if the email & password match the valid form
+        loginInButton.setEnabled(false);
         String email = mail.getText().toString();
         String passW = password.getText().toString();
         if (validateForm(email, passW)) {
@@ -145,30 +164,38 @@ public class LoginActivity extends AppCompatActivity {
                                     // remember user's email address and password if ckeckbox is checked
                                     if(checkBox.isChecked()){
                                         rememberSp.edit().putString("userEmail", email).apply();
-                                        rememberSp.edit().putString("userPassword", passW).apply();
-                                        rememberSp.edit().putBoolean("isRemember", true).apply();
+                                        rememberSp.edit().putBoolean("isRemembered", true).apply();
+                                        Log.d(TAG, "user email saved");
                                     }else{          //if checkBox not checked, clear the sharedPreference
                                         rememberSp.edit().clear().commit();
                                     }
-
                                     openHomeActivity();
                                 }
                                 else{
                                     Toast.makeText(LoginActivity.this, "Please " +
                                             "verify your email address",Toast.LENGTH_LONG).show();
+                                    loginInButton.setEnabled(true);
+                                    Log.d(TAG, "no verification");
                                 }
                             } else {
                                 // If sign in fails, display a message to the user.
                                 Log.w(TAG, "signInWithEmail:failure", task.getException());
                                 Toast.makeText(getApplicationContext(), "Email and Password doesn't match",
                                         Toast.LENGTH_LONG).show();
+                                loginInButton.setEnabled(true);
+                                Log.d(TAG, "open home activity failed");
                             }
                         }
                     });
+        }else{
+            loginInButton.setEnabled(true);
+            Log.d(TAG, "invalid email or password");
         }
     }
 
     public void openSignUpPage(View v){
+        signUpButton.setEnabled(true);
+        Log.d(TAG, "open sign up page");
         Intent intent = new Intent(this, SignUpActivity.class);
         startActivity(intent);
     }
@@ -184,12 +211,7 @@ public class LoginActivity extends AppCompatActivity {
         return password.length() >= PASSWORD_LENGTH;
     }
 
-    @Override
-    public void onStart(){
-        super.onStart();
-        // Check if user is signed in (non-null) and update UI accordingly.
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-    }
+
 
     /**
      * validateForm, check if email matches the standard format and password length is greater than 8
