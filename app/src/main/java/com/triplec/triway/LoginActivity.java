@@ -142,8 +142,8 @@ public class LoginActivity extends AppCompatActivity {
     public void login(View v) {
         // check if the email & password match the valid form
         loginInButton.setEnabled(false);
-        String email = mail.getText().toString();
-        String passW = password.getText().toString();
+        String email = mail_et.getText().toString();
+        String passW = password_et.getText().toString();
         if (validateForm(email, passW)) {
 
             mAuth.signInWithEmailAndPassword(email, passW)
