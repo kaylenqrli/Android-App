@@ -2,6 +2,7 @@ package com.triplec.triway;
 
 import android.content.Context;
 import android.content.Intent;
+import android.support.design.button.MaterialButton;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -46,12 +47,12 @@ public class SavedPlanAdapter extends BaseAdapter implements ListAdapter {
         }
 
         //Handle TextView and display string from your list
-        TextView listItemText = (TextView)view.findViewById(R.id.label);
+        TextView listItemText = (TextView)view.findViewById(R.id.card_title);
         listItemText.setText(list.get(position));
 
         //Handle buttons and add onClickListeners
-        final Button deleteBtn = (Button)view.findViewById(R.id.deleteButton);
-        Button editBtn = (Button)view.findViewById(R.id.editButton);
+        MaterialButton deleteBtn = view.findViewById(R.id.card_delete);
+        MaterialButton editBtn = view.findViewById(R.id.card_edit);
 
         deleteBtn.setOnClickListener(new View.OnClickListener(){
             @Override
