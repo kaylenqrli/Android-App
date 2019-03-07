@@ -24,11 +24,6 @@ android {
         sourceCompatibility 1.8
         targetCompatibility 1.8
     }
-    sourceSets {
-        main {
-            jniLibs.srcDir 'libs'
-        }
-    }
 
 }
 ext {

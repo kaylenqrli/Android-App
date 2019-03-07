@@ -20,7 +20,7 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="3"/>
+                android:layout_weight="1"/>
 
             <TextView
                 android:layout_width="match_parent"
@@ -86,18 +86,17 @@
 
             </android.support.design.widget.TextInputLayout>
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"/>
-
             <CheckBox
                 android:id="@+id/ch_rememberme"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="130dp"
-                android:layout_marginRight="10dp"
+                android:layout_marginTop="8dp"
                 android:text="Remember me" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"/>
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -113,6 +112,7 @@
                     android:text="Sign in" />
 
                 <android.support.design.button.MaterialButton
+                    android:id="@+id/signupButton"
                     style="@style/Widget.MaterialComponents.Button.TextButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

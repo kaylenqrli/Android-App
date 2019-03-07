@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputEditText;
+import android.support.design.widget.TextInputLayout;
 import android.support.v4.view.GravityCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -38,6 +39,7 @@ public class SignUpActivity extends AppCompatActivity {
     private TextInputEditText first_name, last_name;
     private Button signUp;
     private TextInputEditText mail, password, secondPassword;
+    private TextInputLayout mail_layout, password_layout, secondPassword_layout;
     private FirebaseAuth mAuth;
     private final int PASSWORD_LENGTH = 8;
     private final String validEmail = "[a-zA-Z0-9\\+\\.\\_\\%\\-\\+]{1,256}" +
@@ -83,16 +85,20 @@ public class SignUpActivity extends AppCompatActivity {
             public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
                 if ((keyEvent != null) && (keyEvent.getKeyCode() == KeyEvent.KEYCODE_ENTER)
                         || (i == EditorInfo.IME_ACTION_DONE)){
-                    signUp.performClick();
+                    submit(null);
                     return true;
                 }
                 return false;
             }
         });
+        mail_layout = findViewById(R.id.signup_email_layout);
+        password_layout = findViewById(R.id.signup_password_layout);
+        secondPassword_layout = findViewById(R.id.signup_reenter_layout);
 
     }
 
     public void submit(View v){
+        signUp.setEnabled(false);
         String name = last_name.getText().toString() + " " + first_name.getText().toString();
         String email = mail.getText().toString();
         String passW = password.getText().toString();
@@ -101,22 +107,29 @@ public class SignUpActivity extends AppCompatActivity {
 
         Matcher matcher= Pattern.compile(validEmail).matcher(email);
         if (matcher.matches()){
+            clearError(mail_layout);
             if (!isValidPassword){
-                Toast.makeText(getApplicationContext(), "Password length should be " +
-                        "longer than 8", Toast.LENGTH_LONG).show();
+//                Toast.makeText(getApplicationContext(), "Password length should be " +
+//                        "longer than 8", Toast.LENGTH_LONG).show();
+                displayError(password_layout, password, "Password length should be at least 8");
             }
-            else if(!passW.equals(check)){
-                Toast.makeText(getApplicationContext(), "Password doesn't match" ,
-                        Toast.LENGTH_LONG).show();
+            else {
+                clearError(password_layout);
+                if(!passW.equals(check)){
+//                Toast.makeText(getApplicationContext(), "Password doesn't match" ,
+//                        Toast.LENGTH_LONG).show();
+                    displayError(secondPassword_layout, secondPassword, "The two passwords don't match");
+                }
+                else{
+                    clearError(secondPassword_layout);
+                    createAccount(email, passW, name);
+                }
             }
-            else{
-                createAccount(email, passW, name);
-            }
-
         }
         else {
-            Toast.makeText(getApplicationContext(),"Enter Valid Email",
-                    Toast.LENGTH_LONG).show();
+//            Toast.makeText(getApplicationContext(),"Enter Valid Email",
+//                    Toast.LENGTH_LONG).show();
+            displayError(mail_layout, mail, "Not a valid Email");
         }
     }
 
@@ -125,8 +138,15 @@ public class SignUpActivity extends AppCompatActivity {
         super.onStart();
         FirebaseUser currentUser = mAuth.getCurrentUser();
     }
-
+    @Override
+    public void onResume(){
+        super.onResume();
+        signUp = findViewById(R.id.signUpButton);
+        signUp.setEnabled(true);
+    }
     public void openLoginPage(){
+        signUp.setEnabled(false);
+        Log.d(TAG, "open Login Page");
         Intent intent = new Intent(this, LoginActivity.class);
         startActivity(intent);
         finish();
@@ -164,6 +184,7 @@ public class SignUpActivity extends AppCompatActivity {
                                     });
                             sendEmailVerification();
                         } else {
+                            signUp.setEnabled(true);
                             try
                             {
                                 throw task.getException();
@@ -172,8 +193,9 @@ public class SignUpActivity extends AppCompatActivity {
                             catch (FirebaseAuthUserCollisionException existEmail)
                             {
                                 Log.d(TAG, "onComplete: exist_email");
-                                Toast.makeText(SignUpActivity.this, "Email already used"
-                                        , Toast.LENGTH_SHORT).show();
+//                                Toast.makeText(SignUpActivity.this, "Email already used"
+//                                        , Toast.LENGTH_SHORT).show();
+                                displayError(mail_layout, mail, "This Email is already in use");
 
                             }
                             catch (Exception e)
@@ -230,6 +252,16 @@ public class SignUpActivity extends AppCompatActivity {
         else{
             return false;
         }
+    }
+
+    private void clearError(@NonNull TextInputLayout layout) {
+        layout.setError(null);
+    }
+
+    private void displayError(@NonNull TextInputLayout layout, @NonNull TextInputEditText editText, String error) {
+        layout.setError(error);
+        editText.setSelection(editText.getText().length());
+        editText.requestFocus();
     }
 
 }

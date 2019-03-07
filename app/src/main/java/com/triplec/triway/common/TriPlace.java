@@ -7,7 +7,7 @@ import com.google.gson.annotations.SerializedName;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-public class TriPlace {
+public class TriPlace implements Serializable {
 
 //    private double rating;
     @SerializedName("place")
@@ -62,7 +62,9 @@ public class TriPlace {
     public String getStreet(){
         return this.mPlaceDetail.mTriAddress.street;
     }
-
+    public String getDescription() {
+      return "test description for " + this.getName();
+    }
     public double getLatitude(){
         return this.mPlaceDetail.mTriPoint.coordinates.indexOf(1);
     }
@@ -74,10 +76,7 @@ public class TriPlace {
     public String getName(){
         return name;
     }
-
-
-
-    //    private void setRating(double r){
+//    private void setRating(double r){
 //        rating = r;
 //    }
 //

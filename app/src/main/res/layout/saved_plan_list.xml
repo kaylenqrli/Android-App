@@ -1,34 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<android.support.design.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="50dp"
-    android:layout_marginTop="20dp"
-    android:orientation="horizontal">
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:cardCornerRadius="4dp">
 
-    <TextView xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/label"
-        android:layout_width="wrap_content"
+    <RelativeLayout
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="10dip"
-        android:textSize="16sp"
-        android:textStyle="bold" >
-    </TextView>
+        android:layout_marginBottom="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="16dp"
+        android:orientation="vertical">
 
-    <Button
-        android:id="@+id/editButton"
-        android:layout_width="wrap_content"
-        android:layout_height="40dp"
-        android:layout_marginLeft="100dp"
-        android:background="@color/colorPrimary"
-        android:text="Edit"/>
+        <TextView
+            android:id="@+id/card_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Title"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="@color/quantum_black_100"
+            />
 
-    <Button
-        android:id="@+id/deleteButton"
-        android:layout_width="wrap_content"
-        android:layout_height="40dp"
-        android:background="@color/colorPrimary"
-        android:layout_marginLeft="20dp"
-        android:text="Delete"/>
+        <TextView
+            android:id="@+id/card_description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/card_title"
+            android:text="Description"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:textColor="@color/quantum_black_100"
+            />
 
-</LinearLayout>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/card_description">
+
+            <android.support.design.button.MaterialButton
+                android:id="@+id/card_edit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toLeftOf="@id/card_delete"
+                android:layout_marginRight="12dp"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:text="Edit"/>
+
+            <android.support.design.button.MaterialButton
+                android:id="@+id/card_delete"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:text="Delete"/>
+
+        </RelativeLayout>
+
+
+    </RelativeLayout>
+
+
+</android.support.design.card.MaterialCardView>

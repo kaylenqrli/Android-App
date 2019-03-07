@@ -2,24 +2,17 @@ package com.triplec.triway;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.view.ContextMenu;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -29,15 +22,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.baidu.mapapi.model.inner.GeoPoint;
-import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.tasks.Task;
-import com.google.android.libraries.places.api.model.Place;
-import com.google.android.libraries.places.api.model.PlaceLikelihood;
-import com.google.android.libraries.places.api.net.FetchPlaceRequest;
-import com.google.android.libraries.places.api.net.FindCurrentPlaceRequest;
-import com.google.android.libraries.places.api.net.FindCurrentPlaceResponse;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.triplec.triway.common.RoutePlanner;
@@ -48,9 +33,7 @@ import com.triplec.triway.retrofit.RetrofitClient;
 import com.triplec.triway.retrofit.response.PlaceResponse;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -97,7 +80,7 @@ public class HomeActivity extends AppCompatActivity
             public void onDrawerStateChanged (int newState) {
                 super.onDrawerStateChanged(newState);
                 if (!updated) {
-                    UpdateUserInfo();
+                    updateUserInfo();
                     updated = true;
                 }
                 invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
@@ -139,12 +122,9 @@ public class HomeActivity extends AppCompatActivity
             }
         });
         placesRequestApi = RetrofitClient.getInstance().create(PlaceRequestApi.class);
-        //TODO: delete after done testing
-        //removeItem(R.id.nav_plan2);
-        //addItem("New plan");
     }
 
-    private void UpdateUserInfo() {
+    private void updateUserInfo() {
         // set up Name and Email
         user_name_tv = findViewById(R.id.user_name_text);
         user_email_tv = findViewById(R.id.user_email_text);
@@ -156,7 +136,6 @@ public class HomeActivity extends AppCompatActivity
         user_name_tv.setText(user_name);
         user_email_tv.setText(user_email);
     }
-
 
     @Override
     public void onBackPressed() {
