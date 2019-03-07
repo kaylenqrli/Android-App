@@ -30,4 +30,7 @@
     <string name="sign_up_button">Start Your Journey!</string>
     <string name="sign_up_title">...Tell us some basic information</string>
     <string name="login">Login</string>
+    <string name="signup_title">Sign up</string>
+    <string name="signup_tellus">...Tell us some basic information</string>
+    <string name="sign_out">Sign out</string>
 </resources>
