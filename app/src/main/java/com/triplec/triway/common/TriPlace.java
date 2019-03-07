@@ -57,7 +57,8 @@ public class TriPlace implements Serializable {
         return this.mPlaceDetail.mTriAddress.countryCode;
     }
     public String getStreet(){
-        return this.mPlaceDetail.mTriAddress.street;
+        return "test description for " + this.getName();
+        //return this.mPlaceDetail.mTriAddress.street;
     }
 
     public double getLatitude(){

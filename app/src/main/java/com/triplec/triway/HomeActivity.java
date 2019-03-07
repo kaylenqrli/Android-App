@@ -127,9 +127,6 @@ public class HomeActivity extends AppCompatActivity
             }
         });
         placesRequestApi = RetrofitClient.getInstance().create(PlaceRequestApi.class);
-        //TODO: delete after done testing
-        //removeItem(R.id.nav_plan2);
-        //addItem("New plan");
     }
 
     private void UpdateUserInfo() {

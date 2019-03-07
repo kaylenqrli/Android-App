@@ -60,6 +60,7 @@ import com.google.android.libraries.places.api.net.FindCurrentPlaceResponse;
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
+import com.triplec.triway.common.TriPlan;
 
 
 public class RouteActivity extends AppCompatActivity {
@@ -82,9 +83,14 @@ public class RouteActivity extends AppCompatActivity {
      * The {@link ViewPager} that will host the section contents.
      */
     private ViewPager mViewPager;
+    private TriPlan plan;
     private ActionBar actionbar;
 
     private PlacesClient placesClient;
+
+    public TriPlan getPlan() {
+        return plan;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,9 +98,9 @@ public class RouteActivity extends AppCompatActivity {
         setContentView(R.layout.activity_route);
 
         //Intent intent = getIntent();
-        //String tmp = intent.getStringExtra("city");
+        //TriPlan tmp = (TriPlan)intent.getBundleExtra("plan").get("plan");
         //if(tmp != null){
-        //    city = tmp;
+        //    plan = tmp;
         //}
 
         /* Autocomplete */
@@ -148,6 +154,7 @@ public class RouteActivity extends AppCompatActivity {
             @Override
             public void afterTextChanged(Editable s) {}
         });*/
+        /* Autocomplete */
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -222,7 +229,7 @@ public class RouteActivity extends AppCompatActivity {
             case R.id.Tabs_menu_delete:
                 Toast.makeText(getApplicationContext(), "Plan deleted", Toast.LENGTH_SHORT).show();
                 actionbar.setTitle("Try your way");
-                return true;
+                return false;
         }
         return super.onOptionsItemSelected(item);
     }
