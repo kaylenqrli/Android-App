@@ -1,6 +1,7 @@
 package com.triplec.triway.common;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Take an array list of places and give a route with minimum cost
@@ -8,32 +9,32 @@ import java.util.ArrayList;
  */
 public class RoutePlanner {
 	/* input list of places */
-	private static ArrayList<TriPlace> list;
+	private static List<TriPlace> list;
 	private static int num;
-	
+
 	/* Store places and relative weight */
 	private static SelectedPlace[] mplaces;
 	private static int[] index;
-	
+
 	/* Store result */
 	private static TriPlan plan;
 	private static ArrayList<TriPlace> result;
 	private static double minCost = Integer.MAX_VALUE;
-	
+
 	/**
 	 * Set list and get number of places
-	 * 
+	 *
 	 * @param alist The given list of selected places
 	 */
-	public static void setRoutePlanner(ArrayList<TriPlace> alist) {
+	public static void setRoutePlanner(List<TriPlace> alist) {
 		list = alist;
 		num = list.size();
 	}
-	
+
 	/**
 	 * Get the route with minimum cost (shortest distance for now)
 	 * Must call setRoutePlanner() with a nonempty array list before calling this function
-	 * 
+	 *
 	 * @return array list of places with the order such that the route has minimum cost
 	 */
 	public static TriPlan planRoute() {
@@ -68,10 +69,10 @@ public class RoutePlanner {
 
 		return plan;
 	}
-	
+
 	/**
 	 * Iterate through all permutations, update route and minCost
-	 * 
+	 *
 	 * @param index		Array of index of neighbors
 	 * @param start		The start index to permute
 	 */
@@ -80,7 +81,7 @@ public class RoutePlanner {
 		if (start == num - 1){
             // check the cost of current route
 			double currCost = getRouteCost(index);
-			
+
 			// update minCost and route
 			if(currCost < minCost) {
 				minCost = currCost;
@@ -90,19 +91,19 @@ public class RoutePlanner {
 				}
 			}
         }
-        
+
 		// recursion
         for(int i = start; i < num; i++){
             swap(index, i, start);
             permute(index, start + 1);
             swap(index, start, i);
         }
-        
+
     }
-	
+
 	/**
 	 * Swap start and end index
-	 * 
+	 *
 	 * @param index		Array of index of neighbors
 	 * @param start		Start index to swap
 	 * @param end		End index to swap
@@ -112,21 +113,21 @@ public class RoutePlanner {
 		index[start] = index[end];
 		index[end] = tmp;
 	}
-	
+
 	/**
 	 * Get cost of current route
-	 * 
+	 *
 	 * @param index		Array of index of neighbors
 	 * @return			Cost of current route
 	 */
 	private static double getRouteCost(int[] index) {
 		double cost = 0;
-		
+
 		// add weights
 		for(int i = 0; i < num - 1; i++) {
 			cost += mplaces[index[i]].getWeight(index[i + 1]);
 		}
-		
+
 		return cost;
 	}
 }

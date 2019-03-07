@@ -62,6 +62,8 @@ import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 import com.triplec.triway.common.TriPlan;
 
+import java.util.ArrayList;
+
 
 public class RouteActivity extends AppCompatActivity {
 
@@ -275,8 +277,17 @@ public class RouteActivity extends AppCompatActivity {
         public Fragment getItem(int position) {
             // getItem is called to instantiate the fragment for the given page.
             // Return a PlaceholderFragment (defined as a static inner class below).
+            Intent intent = getIntent();
+            ArrayList<String> strl = intent.getStringArrayListExtra("strlist");
+            //Bundle bundle = intent.getBundleExtra("strlist");
+            Bundle bundle = new Bundle();
+            bundle.putStringArrayList("strlist", strl);
             switch (position) {
-                case 0: return new MapFragment();
+
+                case 0:
+                    MapFragment mp = new MapFragment();
+                    mp.setArguments(bundle);
+                    return mp;
                 case 1: return new ListFragment();
             }
             return null;

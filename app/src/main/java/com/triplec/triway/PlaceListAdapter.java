@@ -56,7 +56,7 @@ public class PlaceListAdapter extends ArrayAdapter<TriPlace> {
         }
         // Capture position and set to the TextViews
         holder.name.setText(places.get(position).getName());
-        holder.description.setText(places.get(position).getStreet());
+        holder.description.setText(places.get(position).getDescription());
         // Drawable dr = places.getPhoto(position);
         // Adjust image size
         Drawable dr = mContext.getResources().getDrawable(R.drawable.album_city3);

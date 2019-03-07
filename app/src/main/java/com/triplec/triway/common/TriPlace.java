@@ -1,5 +1,8 @@
 package com.triplec.triway.common;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.SerializedName;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -57,10 +60,11 @@ public class TriPlace implements Serializable {
         return this.mPlaceDetail.mTriAddress.countryCode;
     }
     public String getStreet(){
-        return "test description for " + this.getName();
-        //return this.mPlaceDetail.mTriAddress.street;
+        return this.mPlaceDetail.mTriAddress.street;
     }
-
+    public String getDescription() {
+      return "test description for " + this.getName();
+    }
     public double getLatitude(){
         return this.mPlaceDetail.mTriPoint.coordinates.indexOf(1);
     }
