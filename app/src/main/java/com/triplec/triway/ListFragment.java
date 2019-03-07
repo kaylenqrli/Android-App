@@ -94,7 +94,6 @@ public class ListFragment extends Fragment {
         adapter = new PlaceListAdapter
                 (getActivity().getApplicationContext(), R.layout.fragment_list, plan.getPlaceList());
         list.setAdapter(adapter);
-        list.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
