@@ -177,7 +177,16 @@ public class RouteActivity extends AppCompatActivity {
 
         mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager));
+        Bundle bundle = getIntent().getExtras();
+        if (bundle != null) {
+            Bundle innerBundle = bundle.getBundle("BUNDLE");
+            if (innerBundle != null) {
+                ArrayList<String> RouteList = innerBundle.getStringArrayList("strll");
 
+            }
+        }
+        else {
+        }
     }
 
 

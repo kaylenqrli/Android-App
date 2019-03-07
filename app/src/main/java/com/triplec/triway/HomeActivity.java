@@ -267,7 +267,7 @@ public class HomeActivity extends AppCompatActivity
         // this sets the category to tourist attractions
         paramMap.put("category", "sic:799972");
 
-        Callback<PlaceResponse> callback = new Callback<PlaceResponse>() {
+        placesRequestApi.getPlaces(paramMap).enqueue(new Callback<PlaceResponse>() {
             @Override
             public void onResponse(Call<PlaceResponse> call, Response<PlaceResponse> response) {
                 if (!response.isSuccessful()) {
@@ -296,11 +296,10 @@ public class HomeActivity extends AppCompatActivity
                     String s = curr.getLatitude() + " " + curr.getLongitude();
                     strll.add(s);
                 }
-                MapFragment mapf = new MapFragment();
                 Intent intent = new Intent(HomeActivity.this, RouteActivity.class);
-//                Bundle bundle = new Bundle();
-//                bundle.putStringArrayList("strll", strll);
-                intent.putStringArrayListExtra("strlist",strll);
+                Bundle bundle = new Bundle();
+                bundle.putStringArrayList("strll", strll);
+                intent.putExtra("BUNDLE", bundle);
                 startActivity(intent);
             }
 
@@ -310,8 +309,7 @@ public class HomeActivity extends AppCompatActivity
                 Toast.makeText(HomeActivity.this, "Failed !" + t.getMessage(), Toast.LENGTH_LONG).show();
 
             }
-        };
-        placesRequestApi.getPlaces(paramMap).enqueue(callback);
+        });
         Intent intent = new Intent(this, RouteActivity.class);
         intent.putExtra("city", city);
         startActivity(intent);
