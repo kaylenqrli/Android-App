@@ -36,6 +36,7 @@
                 android:layout_weight="1"/>
 
             <android.support.design.widget.TextInputLayout
+                android:id="@+id/first_name_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="First Name">
@@ -50,6 +51,7 @@
             </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
+                android:id="@+id/last_name_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Last Name">
@@ -64,6 +66,7 @@
             </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
+                android:id="@+id/signup_email_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Email">
@@ -78,6 +81,7 @@
             </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
+                android:id="@+id/signup_password_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Password">
@@ -92,6 +96,7 @@
             </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
+                android:id="@+id/signup_reenter_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Confirm Password">

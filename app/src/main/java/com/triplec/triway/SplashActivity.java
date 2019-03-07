@@ -9,7 +9,7 @@ import java.util.TimerTask;
 
 public class SplashActivity extends AppCompatActivity {
 
-    public static final int SPLASH_TIME_OUT = 1000; // TODO: change back to 3000
+    public static final int SPLASH_TIME_OUT = 2000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
