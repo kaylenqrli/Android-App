@@ -228,22 +228,17 @@ public class HomeActivity extends AppCompatActivity
         Geocoder coder = new Geocoder(this);
         List<Address> address;
         LatLng p1 = null;
-
         try {
             // May throw an IOException
             address = coder.getFromLocationName(place, 5);
             if (address == null) {
                 return null;
             }
-
             Address location = address.get(0);
             p1 = new LatLng(location.getLatitude(), location.getLongitude() );
-
         } catch (IOException ex) {
-
             ex.printStackTrace();
         }
-
         return p1;
     }
 
@@ -259,7 +254,7 @@ public class HomeActivity extends AppCompatActivity
         double lng = latLng.longitude;
 
         // longt, lat
-        paramMap.put("location", lng + ", " +lat);
+        paramMap.put("location", lng + "," +lat);
         //paramMap.put("q", "san diego");
         paramMap.put("sort", "distance");
         paramMap.put("feedback", "false");
