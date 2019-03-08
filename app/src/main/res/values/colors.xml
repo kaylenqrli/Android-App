@@ -7,5 +7,6 @@
     <color name="lineGreen">#3A3B1C</color>
     <color name="logo">#243A4E</color>
     <color name="copyright">#939596</color>
+    <color name="road">#00AAFD</color>
     <color name="error">#FF0000</color>
 </resources>
