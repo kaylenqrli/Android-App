@@ -1,52 +1,50 @@
-package com.triplec.triway;
+package com.triplec.triway.route;
 
 
-import android.content.ClipData;
-import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.text.Html;
 import android.util.SparseBooleanArray;
-import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.BaseAdapter;
-import android.widget.CheckBox;
-import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
+import com.triplec.triway.PlaceListAdapter;
+import com.triplec.triway.R;
 import com.triplec.triway.common.TriPlace;
 import com.triplec.triway.common.TriPlan;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.triplec.triway.mvp.MvpFragment;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class ListFragment extends Fragment {
+public class ListFragment extends MvpFragment<RouteContract.Presenter> implements RouteContract.View{
     PlaceListAdapter adapter;
     ListView list;
 
-    public ListFragment() {
-        // Required empty public constructor
+    public static ListFragment newInstance() {
+
+        Bundle args = new Bundle();
+
+        ListFragment fragment = new ListFragment();
+        fragment.setArguments(args);
+        return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+    }
+
+    @Override
+    public RouteContract.Presenter getPresenter() {
+        return new RoutePresenter();
     }
 
     @Override
@@ -82,15 +80,22 @@ public class ListFragment extends Fragment {
         //TriPlan plan = ((RouteActivity)getActivity()).getPlan();
 
         /*----- pseudo plan for testing -----*/
-        TriPlan.TriPlanBuilder builder = new TriPlan.TriPlanBuilder();
-        for(int i = 0; i < 5; i++){
-            builder.addPlace(new TriPlace("place " + i));
-        }
-        TriPlan plan = builder.buildPlan();
+
         /*----- pseudo plan for testing -----*/
 
         // set up list with adapter
         list = (ListView)view.findViewById(R.id.route_list);
+
+
+        return view;
+    }
+
+    @Override
+    public void showRoutes(TriPlan placePlan) {
+        //TODO
+        TriPlan.TriPlanBuilder builder = new TriPlan.TriPlanBuilder();
+        builder.addPlaceList(placePlan.getPlaceList());
+        TriPlan plan = builder.buildPlan();
         adapter = new PlaceListAdapter
                 (getActivity().getApplicationContext(), R.layout.fragment_list, plan.getPlaceList());
         list.setAdapter(adapter);
@@ -101,7 +106,20 @@ public class ListFragment extends Fragment {
                 adapter.toggleSelection(position);
             }
         });
+    }
 
-        return view;
+    @Override
+    public void onError() {
+
+    }
+
+    @Override
+    public void onSavedSuccess() {
+        Toast.makeText(getContext(), "Plan has been successfully saved", Toast.LENGTH_SHORT);
+    }
+
+    @Override
+    public String getMainPlace() {
+        return getArguments().getString("place");
     }
 }
