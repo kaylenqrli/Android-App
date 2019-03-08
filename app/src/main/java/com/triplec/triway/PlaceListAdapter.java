@@ -44,7 +44,7 @@ public class PlaceListAdapter extends ArrayAdapter<TriPlace> {
         final ViewHolder holder;
         if (convertView == null) {
             holder = new ViewHolder();
-            convertView = inflater.inflate(R.layout.list_item, null);
+            convertView = inflater.inflate(R.layout.route_list_item, null);
             // Locate the TextViews in listview_item.xml
             holder.checkBox = (CheckBox) convertView.findViewById(R.id.place_checkbox);
             holder.name = (TextView) convertView.findViewById(R.id.place_name);
@@ -59,10 +59,11 @@ public class PlaceListAdapter extends ArrayAdapter<TriPlace> {
         holder.description.setText(places.get(position).getDescription());
         // Drawable dr = places.getPhoto(position);
         // Adjust image size
-        Drawable dr = mContext.getResources().getDrawable(R.drawable.album_city3);
-        Bitmap bitmap = ((BitmapDrawable) dr).getBitmap();
-        Drawable d = new BitmapDrawable(mContext.getResources(), Bitmap.createScaledBitmap(bitmap, 100, 100, true));
-        holder.photo.setImageDrawable(d);
+//        Drawable dr = mContext.getResources().getDrawable(R.drawable.album_city3);
+//        Bitmap bitmap = ((BitmapDrawable) dr).getBitmap();
+//        Drawable d = new BitmapDrawable(mContext.getResources(), Bitmap.createScaledBitmap(bitmap, 100, 100, true));
+//        holder.photo.setImageDrawable(d);
+        holder.photo.setImageResource(R.drawable.album_city3);
 
         holder.checkBox.setChecked(mSelectedItemsIds.get(position));
         holder.checkBox.jumpDrawablesToCurrentState();

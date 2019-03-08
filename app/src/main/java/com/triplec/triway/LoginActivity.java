@@ -57,6 +57,10 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Intent intent = getIntent();
+        if (intent.getBooleanExtra("Splash", false)) {
+            overridePendingTransition(R.transition.fade_in,R.transition.fade_out);
+        }
         setContentView(R.layout.activity_login);
         loginInButton = findViewById(R.id.loginButton);
         signUpButton = findViewById(R.id.signupButton);
@@ -69,7 +73,6 @@ public class LoginActivity extends AppCompatActivity {
             openHomeActivity();
         }
 
-        //setContentView(R.layout.activity_login);
         mail_layout = findViewById(R.id.login_email_layout);
         password_layout = findViewById(R.id.login_password_layout);
         mail_et = findViewById(R.id.login_email);

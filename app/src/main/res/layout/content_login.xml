@@ -14,7 +14,7 @@
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="5"
+            android:layout_weight="8"
             android:orientation="vertical">
 
             <View
@@ -28,7 +28,7 @@
                 android:text="Travel"
                 android:textColor="@color/colorPrimary"
                 android:fontFamily="Karla"
-                android:textSize="37dp"
+                android:textSize="37sp"
                 />
 
             <TextView
@@ -37,7 +37,7 @@
                 android:text="Plan"
                 android:textColor="@color/colorAccent"
                 android:fontFamily="Karla"
-                android:textSize="37dp"
+                android:textSize="37sp"
                 />
 
             <TextView
@@ -46,7 +46,7 @@
                 android:text="Efficiency"
                 android:textColor="@color/colorPrimaryDark"
                 android:fontFamily="Karla"
-                android:textSize="37dp"
+                android:textSize="37sp"
                 />
 
             <View
@@ -129,7 +129,45 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="2"/>
+                android:layout_weight="0.5"/>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <ImageButton
+                    android:id="@+id/login_facebook"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/auth_service_facebook"
+                    android:background="@null"
+                    android:layout_alignParentLeft="true"/>
+
+                <ImageButton
+                    android:id="@+id/login_google"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/auth_service_google"
+                    android:background="@null"
+                    android:layout_centerHorizontal="true"/>
+
+                <ImageButton
+                    android:id="@+id/login_twitter"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/auth_service_twitter"
+                    android:background="@null"
+                    android:layout_alignParentRight="true"/>
+
+            </RelativeLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"/>
 
         </LinearLayout>
 
