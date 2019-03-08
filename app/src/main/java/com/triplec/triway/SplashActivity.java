@@ -30,6 +30,7 @@ public class SplashActivity extends AppCompatActivity {
             public void run() {
                 Intent intent = new Intent(SplashActivity.this, LoginActivity.class);
                 startActivity(intent);
+                overridePendingTransition(R.transition.fade_in,R.transition.fade_out);
                 finish();
             }
         }, SPLASH_TIME_OUT);
