@@ -1,16 +1,10 @@
 package com.triplec.triway;
 
-import android.app.Activity;
 import android.app.SearchManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.app.Dialog;
-import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
-import android.app.Dialog;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.TextInputEditText;
@@ -18,49 +12,25 @@ import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
-import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 
-import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.common.api.Status;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.tasks.Task;
-import com.google.android.libraries.places.api.Places;
-import com.google.android.libraries.places.api.model.AutocompletePrediction;
-import com.google.android.libraries.places.api.model.AutocompleteSessionToken;
-import com.google.android.libraries.places.api.model.Place;
-import com.google.android.libraries.places.api.model.RectangularBounds;
-import com.google.android.libraries.places.api.model.TypeFilter;
-import com.google.android.libraries.places.api.net.FetchPhotoRequest;
-import com.google.android.libraries.places.api.net.FetchPhotoResponse;
-import com.google.android.libraries.places.api.net.FetchPlaceRequest;
-import com.google.android.libraries.places.api.net.FetchPlaceResponse;
-import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest;
-import com.google.android.libraries.places.api.net.FindAutocompletePredictionsResponse;
-import com.google.android.libraries.places.api.net.FindCurrentPlaceRequest;
-import com.google.android.libraries.places.api.net.FindCurrentPlaceResponse;
 import com.google.android.libraries.places.api.net.PlacesClient;
-import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
-import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 import com.triplec.triway.common.TriPlan;
+import com.triplec.triway.route.ListFragment;
+import com.triplec.triway.route.MapFragment;
 
 import java.util.ArrayList;
 
@@ -99,63 +69,6 @@ public class RouteActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_route);
 
-        //Intent intent = getIntent();
-        //TriPlan tmp = (TriPlan)intent.getBundleExtra("plan").get("plan");
-        //if(tmp != null){
-        //    plan = tmp;
-        //}
-
-        /* Autocomplete */
-        /*searchAddEditText = (AutoCompleteTextView) findViewById(R.id.search_add_text);
-        madapter = new ArrayAdapter<String>(RouteActivity.this,
-                android.R.layout.simple_dropdown_item_1line);
-        searchAddEditText.setAdapter(madapter);
-
-        Places.initialize(getApplicationContext(), "AIzaSyDYKAtsvLfqJnT_t1VhAjvrLMb2cddLcVQ");
-        placesClient = Places.createClient(this);
-
-        AutocompleteSessionToken token = AutocompleteSessionToken.newInstance();
-
-        searchAddEditText.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                // Create a RectangularBounds object.
-                RectangularBounds bounds = RectangularBounds.newInstance(
-                        new LatLng(-33.880490, 151.184363),
-                        new LatLng(-33.858754, 151.229596));
-                // Use the builder to create a FindAutocompletePredictionsRequest.
-                FindAutocompletePredictionsRequest request = FindAutocompletePredictionsRequest.builder()
-                        // Call either setLocationBias() OR setLocationRestriction().
-                        //.setLocationRestriction(bounds)
-                        .setTypeFilter(TypeFilter.ADDRESS)
-                        .setSessionToken(token)
-                        .setQuery(searchAddEditText.getText().toString())
-                        .build();
-
-                placesClient.findAutocompletePredictions(request).addOnSuccessListener((response) -> {
-                    madapter.clear();
-                    for (AutocompletePrediction prediction : response.getAutocompletePredictions()) {
-                        //Log.i("result: ", prediction.getPlaceId());
-                        madapter.add(prediction.getPrimaryText(null).toString());
-                        Log.i("result", prediction.getPrimaryText(null).toString());
-                    }
-                    madapter.notifyDataSetChanged();
-                }).addOnFailureListener((exception) -> {
-                    if (exception instanceof ApiException) {
-                        ApiException apiException = (ApiException) exception;
-                        Toast.makeText(RouteActivity.this, "Not found :(", Toast.LENGTH_SHORT).show();
-                        Log.e("not found", "Place not found: " + apiException.getMessage());
-                    }
-                });
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {}
-        });*/
         /* Autocomplete */
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -177,16 +90,6 @@ public class RouteActivity extends AppCompatActivity {
 
         mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager));
-        Bundle bundle = getIntent().getExtras();
-        if (bundle != null) {
-            Bundle innerBundle = bundle.getBundle("BUNDLE");
-            if (innerBundle != null) {
-                ArrayList<String> RouteList = innerBundle.getStringArrayList("strll");
-
-            }
-        }
-        else {
-        }
     }
 
 
@@ -286,18 +189,17 @@ public class RouteActivity extends AppCompatActivity {
         public Fragment getItem(int position) {
             // getItem is called to instantiate the fragment for the given page.
             // Return a PlaceholderFragment (defined as a static inner class below).
-            Intent intent = getIntent();
-            ArrayList<String> strl = intent.getStringArrayListExtra("strlist");
             //Bundle bundle = intent.getBundleExtra("strlist");
-            Bundle bundle = new Bundle();
-            bundle.putStringArrayList("strlist", strl);
+            Bundle bundle = getIntent().getExtras();
             switch (position) {
-
                 case 0:
-                    MapFragment mp = new MapFragment();
-                    mp.setArguments(bundle);
-                    return mp;
-                case 1: return new ListFragment();
+                    MapFragment mf = new MapFragment().newInstance();
+                    mf.setArguments(bundle);
+                    return mf;
+                case 1:
+                    ListFragment lf = new ListFragment().newInstance();
+                    lf.setArguments(bundle);
+                    return lf;
             }
             return null;
         }

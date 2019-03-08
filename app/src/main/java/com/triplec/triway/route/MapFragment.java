@@ -1,28 +1,25 @@
-package com.triplec.triway;
+package com.triplec.triway.route;
 
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.util.Log;
-import android.location.Location;
 import android.os.AsyncTask;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.maps.CameraUpdate;
+
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.triplec.triway.R;
 import com.triplec.triway.common.DataParser;
 import com.triplec.triway.common.TriPlace;
+import com.triplec.triway.common.TriPlan;
+import com.triplec.triway.mvp.MvpFragment;
 
 import org.json.JSONObject;
 import java.io.BufferedReader;
@@ -38,16 +35,21 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class MapFragment extends Fragment {
+public class MapFragment extends MvpFragment<RouteContract.Presenter> implements RouteContract.View {
 
     MapView mMapView;
     private GoogleMap mMap;
     List<LatLng> MarkerPoints;
 
-    public MapFragment() {
-        // Required empty public constructor
-    }
 
+    public static MapFragment newInstance() {
+
+        Bundle args = new Bundle();
+
+        MapFragment fragment = new MapFragment();
+        fragment.setArguments(args);
+        return fragment;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -55,51 +57,18 @@ public class MapFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_map, container, false);
         // parsing plan(list)
 
-
         mMapView = (MapView) view.findViewById(R.id.mapView);
         mMapView.onCreate(savedInstanceState);
         mMapView.onResume(); // needed to get the map to display immediately
-
-        // testing data
-        MarkerPoints = new ArrayList<LatLng>();
-        MarkerPoints.add(new LatLng(32.8801,-117.2304 )); // ucsd
-        MarkerPoints.add(new LatLng(33.195869, -117.379486)); //oceanside
-
-//        Bundle bundle = getArguments();
-//        ArrayList<String> list = bundle.getStringArrayList("strll");
-//        for(int i=0; i<list.size(); i++) {
-//            String[] ll = list.get(i).split(" ");
-//            double lat = Double.valueOf(ll[0]);
-//            double lng = Double.valueOf(ll[1]);
-//            MarkerPoints.add(new LatLng(lat, lng));
-//        }
-
-
-
         mMapView.getMapAsync(new OnMapReadyCallback() {
             @Override
             public void onMapReady(GoogleMap googleMap) {
                 //initialize
                 mMap = googleMap;
-
-                // pin all the places to the map
-                for(int i=0; i< MarkerPoints.size(); i++){
-                    MarkerOptions options = new MarkerOptions();
-                    options.position(MarkerPoints.get(i));
-                    mMap.addMarker(options);
-                }
-
-                for(int i=0; i< MarkerPoints.size()-1; i++){
-                    LatLng from = MarkerPoints.get(i);
-                    LatLng to = MarkerPoints.get(i+1);
-                    String url = getUrl(from,to);
-                    FetchUrl fetch = new FetchUrl();
-                    fetch.execute(url);
-                }
-                mMap.moveCamera(CameraUpdateFactory.newLatLng(MarkerPoints.get(0)));
-                mMap.animateCamera(CameraUpdateFactory.zoomTo(10));
+                mMap.getUiSettings().setZoomControlsEnabled(true);
             }
         });
+
         return view;
 
     }
@@ -120,7 +89,8 @@ public class MapFragment extends Fragment {
         // Output format
         String output = "json";
         // Building the url to the web service
-        String url = "https://maps.googleapis.com/maps/api/directions/" + output + "?" + parameters + "&key=" + "AIzaSyCmALKlEfyw3eOrW1jPnf6_xrrS7setOFU";
+        String url = "https://maps.googleapis.com/maps/api/directions/" + output + "?"
+                                + parameters + "&key=" + "AIzaSyCmALKlEfyw3eOrW1jPnf6_xrrS7setOFU";
         return url;
     }
 
@@ -155,6 +125,63 @@ public class MapFragment extends Fragment {
             urlConnection.disconnect();
         }
         return data;
+    }
+
+    @Override
+    public RouteContract.Presenter getPresenter() {
+        return new RoutePresenter();
+    }
+
+    @Override
+    public void showRoutes(TriPlan placePlan) {
+        // testing data
+        MarkerPoints = new ArrayList<LatLng>();
+        List<TriPlace> resultPlaces = placePlan.getPlaceList();
+        for (int i=0; i<resultPlaces.size(); i++) {
+            MarkerPoints.add(new LatLng(resultPlaces.get(i).getLatitude(),
+                                                    resultPlaces.get(i).getLongitude()));
+        }
+
+//        Bundle bundle = getArguments();
+//        ArrayList<String> list = bundle.getStringArrayList("strll");
+//        for(int i=0; i<list.size(); i++) {
+//            String[] ll = list.get(i).split(" ");
+//            double lat = Double.valueOf(ll[0]);
+//            double lng = Double.valueOf(ll[1]);
+//            MarkerPoints.add(new LatLng(lat, lng));
+//        }
+
+        // pin all the places to the map
+        for(int i=0; i< MarkerPoints.size(); i++){
+            MarkerOptions options = new MarkerOptions();
+            options.position(MarkerPoints.get(i));
+            mMap.addMarker(options);
+        }
+
+        for(int i=0; i< MarkerPoints.size()-1; i++){
+            LatLng from = MarkerPoints.get(i);
+            LatLng to = MarkerPoints.get(i+1);
+            String url = getUrl(from,to);
+            FetchUrl fetch = new FetchUrl();
+            fetch.execute(url);
+        }
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(MarkerPoints.get(0)));
+        mMap.animateCamera(CameraUpdateFactory.zoomTo(10));
+    }
+
+    @Override
+    public void onError() {
+
+    }
+
+    @Override
+    public void onSavedSuccess() {
+
+    }
+
+    @Override
+    public String getMainPlace() {
+        return getArguments().getString("place");
     }
 
     // Fetches data from url passed
