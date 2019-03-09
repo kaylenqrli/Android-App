@@ -67,7 +67,7 @@ public class HomeActivity extends AppCompatActivity
     EditText search;
     TextView user_name_tv, user_email_tv;
     boolean updated = false;
-    boolean isclicked = false;
+    private static boolean isclicked = false;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
     SharedPreferences sp;
     GoogleSignInClient mGoogleSignInClient;
@@ -288,5 +288,17 @@ public class HomeActivity extends AppCompatActivity
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
         finish();
+    }
+
+    public static boolean getIsClicked(){
+        return isclicked;
+    }
+
+    public static void setisClickedTrue(){
+        isclicked = true;
+    }
+
+    public static void setIsclickedFalse(){
+        isclicked = false;
     }
 }

@@ -9,6 +9,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import java.util.Timer;
+
 
 public class ViewPagerAdapter extends PagerAdapter {
 
@@ -47,6 +49,12 @@ public class ViewPagerAdapter extends PagerAdapter {
             @Override
             public void onClick(View v) {
                 // start route activity
+                if( HomeActivity.getIsClicked() ){
+                    return;
+                }
+                else{
+                    HomeActivity.setisClickedTrue();
+                }
                 Intent intent = new Intent(context, RouteActivity.class);
                 String city = cities[position];
                 intent.putExtra("place", city);
