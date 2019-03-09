@@ -15,26 +15,65 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GoogleAuthProvider;
 
+/*
+import com.facebook.AccessToken;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.login.LoginManager;
+import com.facebook.login.LoginResult;
+import com.facebook.login.widget.LoginButton;
+
+import com.twitter.sdk.android.core.Callback;
+import com.twitter.sdk.android.core.Result;
+import com.twitter.sdk.android.core.Twitter;
+import com.twitter.sdk.android.core.TwitterAuthConfig;
+import com.twitter.sdk.android.core.TwitterConfig;
+import com.twitter.sdk.android.core.TwitterCore;
+import com.twitter.sdk.android.core.TwitterException;
+import com.twitter.sdk.android.core.TwitterSession;
+import com.twitter.sdk.android.core.identity.TwitterLoginButton;
+*/
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends AppCompatActivity implements SessionTimeoutListener{
+    private static final int RC_SIGN_IN = 9001;
     private TextInputEditText mail_et, password_et;
     private TextInputLayout mail_layout, password_layout;
     private Button loginInButton;
     private Button signUpButton;
+    private ImageButton GoogleSigninButton;
+  //  private ImageButton FacebookSigninButton;
+    private ImageButton TwitterSigninButton;
     private CheckBox checkBox;
     private final int PASSWORD_LENGTH = 8;
-    SharedPreferences autologinSp;
+    private boolean loginClicked;
+    private Timer timer;
+    private SessionTimeoutListener timeoutListener;
+   // private CallbackManager mCallbackManager;   // facebook
+    GoogleSignInClient mGoogleSignInClient;
+    SharedPreferences sp;
     SharedPreferences rememberSp;
     private final String validEmail = "[a-zA-Z0-9\\+\\.\\_\\%\\-\\+]{1,256}" +
 
@@ -62,17 +101,42 @@ public class LoginActivity extends AppCompatActivity {
             overridePendingTransition(R.transition.fade_in,R.transition.fade_out);
         }
         setContentView(R.layout.activity_login);
+
         loginInButton = findViewById(R.id.loginButton);
         signUpButton = findViewById(R.id.signupButton);
         mAuth = FirebaseAuth.getInstance();
         user = mAuth.getCurrentUser();
         // check if the user logged before, auto-login if true
         checkBox = findViewById(R.id.ch_rememberme);
-        autologinSp = getSharedPreferences("login", MODE_PRIVATE);
-        if(autologinSp.getBoolean("logged",false)){
+        sp = getSharedPreferences("login", MODE_PRIVATE);
+        loginClicked = false;
+        if(sp.getBoolean("isTimeout", false)){
+            Log.d(TAG, "timeout");
+            Toast.makeText(this,"Login session timeout!", Toast.LENGTH_LONG).show();
+            sp.edit().putBoolean("isTimeout", false).apply();
+        }
+        if(sp.getBoolean("logged",false)){
             openHomeActivity();
         }
+        // Google third party Login
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build();
+        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+        GoogleSigninButton = findViewById(R.id.login_google);
+        GoogleSigninButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                googleSignIn();
+            }
+        });
 
+        // Facebook third party login
+        // initializeFacebook();
+
+        // Twitter third party login
+        // initializeTwitter();
         mail_layout = findViewById(R.id.login_email_layout);
         password_layout = findViewById(R.id.login_password_layout);
         mail_et = findViewById(R.id.login_email);
@@ -134,8 +198,10 @@ public class LoginActivity extends AppCompatActivity {
         super.onResume();
         loginInButton = findViewById(R.id.loginButton);
         signUpButton = findViewById(R.id.signupButton);
+        // reset all the login & signup flag, allow user to login & sign up again
         loginInButton.setEnabled(true);
         signUpButton.setEnabled(true);
+        loginClicked = false;
     }
     /**
      * Login method, first check email&password_et are in valid form, if yes, attempt to login.
@@ -143,22 +209,33 @@ public class LoginActivity extends AppCompatActivity {
      * @param v
      */
     public void login(View v) {
-        // check if the email & password match the valid form
+        // lock the method to avoid login twice at the same time
+        if( loginClicked ){
+            return;
+        }
+        else{
+            loginClicked = true;
+        }
         loginInButton.setEnabled(false);
         String email = mail_et.getText().toString();
         String passW = password_et.getText().toString();
+        // check if email & password in valid form
         if (validateForm(email, passW)) {
-
+            // start the timer and listener to check is the session has timeout
+            registerSessionListner(this);
+            startLoginSession();
             mAuth.signInWithEmailAndPassword(email, passW)
                     .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if (task.isSuccessful()) {
+                                // cancel the timer since login successful
+                                timer.cancel();
                                 if(mAuth.getCurrentUser().isEmailVerified()) {
                                     // Sign in success, update UI with the signed-in user's information
                                     Log.d(TAG, "signInWithEmail:success");
                                     //user = mAuth.getCurrentUser();
-                                    autologinSp.edit().putBoolean("logged", true).apply();
+                                    sp.edit().putBoolean("logged", true).apply();
 
                                     // remember user's email address and password_et if ckeckbox is checked
                                     if(checkBox.isChecked()){
@@ -173,8 +250,11 @@ public class LoginActivity extends AppCompatActivity {
                                     openHomeActivity();
                                 }
                                 else{
-                                  loginInButton.setEnabled(true);
-                                  Log.d(TAG, "no verification");
+                                    // cancel the timer and reset the login flag since failed, allow user to login again
+                                    timer.cancel();
+                                    loginInButton.setEnabled(true);
+                                    loginClicked = false;
+                                    Log.d(TAG, "no verification");
 
 //                                    Toast.makeText(LoginActivity.this, "Please " +
 //                                            "verify your email address",Toast.LENGTH_LONG).show();
@@ -191,18 +271,23 @@ public class LoginActivity extends AppCompatActivity {
                                 else {
                                     displayError(password_layout, password_et, "Incorrect password");
                                 }
+                                // reset the login button and the flag since failed, allow user to login again
+                                loginClicked = false;
                                 loginInButton.setEnabled(true);
                                 Log.d(TAG, "open home activity failed");
                             }
                         }
                     });
         }else{
+            // reset the login button and the flag since failed, allow user to login again
+            loginClicked = false;
             loginInButton.setEnabled(true);
             Log.d(TAG, "invalid email or password");
         }
     }
 
     public void openSignUpPage(View v){
+        // lock the signUpButoon when openSignUpPage is called
         signUpButton.setEnabled(false);
         Log.d(TAG, "open sign up page");
         Intent intent = new Intent(this, SignUpActivity.class);
@@ -261,5 +346,252 @@ public class LoginActivity extends AppCompatActivity {
         editText.requestFocus();
     }
 
+    /**
+     * After timer is done, finish the current LoginActivity and start a new one
+     */
+    @Override
+    public void onSessionTimeout(){
+        Log.d(TAG, "login session timeout");
+        startActivity(new Intent(this, LoginActivity.class));
+        sp.edit().putBoolean("isTimeout", true).apply();
+        //Toast.makeText(getApplicationContext(),"Login session timeout!", Toast.LENGTH_LONG).show();
+        finish();
+    }
 
+    /**
+     * After Clicked login Button, timer begins. After 10s, make the login session timeout
+     */
+    public void startLoginSession(){
+        timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                timeoutListener.onSessionTimeout();
+            }
+        }, 10000);
+    }
+
+    // create a sessionTimeOut Listner
+    public void registerSessionListner(SessionTimeoutListener listener){
+        this.timeoutListener = listener;
+    }
+
+    /**
+     * Google Third Party Login Method
+     */
+    private void googleSignIn() {
+        // if clicked one, lock the method to avoid open homeActivity twice
+        if( loginClicked ){
+            return;
+        }
+        else{
+            loginClicked = true;
+        }
+        Intent signInIntent = mGoogleSignInClient.getSignInIntent();
+        startActivityForResult(signInIntent, RC_SIGN_IN);
+    }
+
+    /**
+     * Handle three third party login based on different requestCode,
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
+        if (requestCode == RC_SIGN_IN) {
+            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
+            try {
+                // Google Sign In was successful, authenticate with Firebase
+                GoogleSignInAccount account = task.getResult(ApiException.class);
+                firebaseAuthWithGoogle(account);
+            } catch (ApiException e) {
+                loginClicked = false;
+                // Google Sign In failed, update UI appropriately
+                Log.w(TAG, "Google sign in failed", e);
+            }
+        }/*
+        else if(requestCode == TwitterAuthConfig.DEFAULT_AUTH_REQUEST_CODE){
+            //  twitter related handling
+            TwitterSigninButton.onActivityResult(requestCode, resultCode, data);
+        }else{
+            // facebook related handling
+            mCallbackManager.onActivityResult(requestCode, resultCode, data);
+        }*/
+    }
+
+    /**
+     * Connect Google Account to firebase
+     * @param acct user's google account
+     */
+    private void firebaseAuthWithGoogle(GoogleSignInAccount acct){
+        AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
+        // create a timer and a listener, after 10s, login session timeout if activity no response
+        registerSessionListner(this);
+        startLoginSession();
+        mAuth.signInWithCredential(credential)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            timer.cancel();
+                            // Sign in success, update UI with the signed-in user's information
+                            Log.d(TAG, "signInWithCredential:success");
+                            FirebaseUser user = mAuth.getCurrentUser();
+                            sp.edit().putBoolean("logged", true).apply();
+                            openHomeActivity();
+                        } else {
+                            timer.cancel();
+                            // If sign in fails, display a message to the user
+                            loginClicked = false;
+                            Log.w(TAG, "signInWithCredential:failure", task.getException());
+                            Toast.makeText(getApplicationContext(), "Login in Failed",
+                                    Toast.LENGTH_LONG).show();
+                        }
+
+                    }
+                });
+    }
+/*
+    private void initializeFacebook(){
+        mCallbackManager = CallbackManager.Factory.create();
+        FacebookSigninButton = findViewById(R.id.login_facebook);
+        FacebookSigninButton.setReadPermissions("email", "public_profile");
+        FacebookSigninButton.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
+            @Override
+            public void onSuccess(LoginResult loginResult) {
+                Log.d(TAG, "facebook:onSuccess:" + loginResult);
+                handleFacebookAccessToken(loginResult.getAccessToken());
+            }
+
+            @Override
+            public void onCancel() {
+                Log.d(TAG, "facebook:onCancel");
+                loginClicked = false;
+                // [END_EXCLUDE]
+            }
+
+            @Override
+            public void onError(FacebookException error) {
+                loginClicked = false;
+                Log.d(TAG, "facebook:onError", error);
+
+            }
+        });
+        // [END initialize_fblogin]
+    }
+
+    private void handleFacebookAccessToken(AccessToken token) {
+        Log.d(TAG, "handleFacebookAccessToken:" + token);
+        if( loginClicked ){
+            return;
+        }
+        else{
+            loginClicked = true;
+        }
+        AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
+        registerSessionListner(this);
+        startLoginSession();
+        mAuth.signInWithCredential(credential)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            timer.cancel();
+                            // Sign in success, update UI with the signed-in user's information
+                            Log.d(TAG, "signInWithCredential:success");
+                            sp.edit().putBoolean("logged", true).apply();
+                            FirebaseUser user = mAuth.getCurrentUser();
+                            openHomeActivity();
+                        } else {
+                            timer.cancel();
+                            loginClicked = false;
+                            // If sign in fails, display a message to the user.
+                            Log.w(TAG, "signInWithCredential:failure", task.getException());
+                            Toast.makeText(FacebookLoginActivity.this, "Authentication failed.",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+
+                    }
+                });
+    }
+*/
+/*
+    private void initializeTwitter(){
+        TwitterAuthConfig authConfig =  new TwitterAuthConfig(
+                getString(R.string.twitter_consumer_key),
+                getString(R.string.twitter_consumer_secret));
+
+        TwitterConfig twitterConfig = new TwitterConfig.Builder(this)
+                .twitterAuthConfig(authConfig)
+                .build();
+
+        Twitter.initialize(twitterConfig);
+        TwitterSigninButton= findViewById(R.id.buttonTwitterLogin);
+        TwitterSigninButton.setCallback(new Callback<TwitterSession>() {
+            @Override
+            public void success(Result<TwitterSession> result) {
+                Log.d(TAG, "twitterLogin:success" + result);
+                handleTwitterSession(result.data);
+            }
+
+            @Override
+            public void failure(TwitterException exception) {
+                Log.w(TAG, "twitterLogin:failure", exception);
+                loginClicked = false;
+            }
+        });
+    }
+
+    // [START auth_with_twitter]
+    private void handleTwitterSession(TwitterSession session) {
+        if( loginClicked ){
+            return;
+        }
+        else{
+            loginClicked = true;
+        }
+        Log.d(TAG, "handleTwitterSession:" + session);
+        // [START_EXCLUDE silent]
+        showProgressDialog();
+        // [END_EXCLUDE]
+
+        AuthCredential credential = TwitterAuthProvider.getCredential(
+                session.getAuthToken().token,
+                session.getAuthToken().secret);
+
+        registerSessionListner(this);
+        startLoginSession();
+        mAuth.signInWithCredential(credential)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            timer.cancel();
+                            // Sign in success, update UI with the signed-in user's information
+                            Log.d(TAG, "signInWithCredential:success");
+                            FirebaseUser user = mAuth.getCurrentUser();
+                            sp.edit().putBoolean("logged", true).apply();
+                            openHomeActivity();
+
+                        } else {
+                            timer.cancel();
+                            loginClicked = false;
+                            // If sign in fails, display a message to the user.
+                            Log.w(TAG, "signInWithCredential:failure", task.getException());
+                            Toast.makeText(getApplicationContext(), "Authentication failed.",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+
+                        // [START_EXCLUDE]
+                        hideProgressDialog();
+                        // [END_EXCLUDE]
+                    }
+                });
+    }
+    // [END auth_with_twitter]
+    */
 }

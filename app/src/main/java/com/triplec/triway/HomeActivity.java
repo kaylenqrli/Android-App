@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.location.Address;
 import android.location.Geocoder;
+import android.nfc.Tag;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -13,6 +14,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -22,6 +24,15 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.SignInButton;
+import com.google.android.gms.common.api.Api;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -58,12 +69,19 @@ public class HomeActivity extends AppCompatActivity
     boolean updated = false;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
     SharedPreferences sp;
+    GoogleSignInClient mGoogleSignInClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setupFirebaseListener();
+
+        // used to logout user's google account if the user uses google acount to login
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestEmail()
+                .build();
+        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
 
         // set up toolbar
         toolbar = (Toolbar) findViewById(R.id.toolbar_main);
@@ -166,6 +184,8 @@ public class HomeActivity extends AppCompatActivity
             case R.id.action_signout:
                 Toast.makeText(HomeActivity.this,"Sign Out Successful", Toast.LENGTH_SHORT).show();
                 FirebaseAuth.getInstance().signOut();
+                // logout user's google account if user uses google account to login
+                mGoogleSignInClient.signOut();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -201,6 +221,8 @@ public class HomeActivity extends AppCompatActivity
                 break;
             case R.id.drawer_sign_out:
                 FirebaseAuth.getInstance().signOut();
+                // logout user's google account if user uses google account to login
+                mGoogleSignInClient.signOut();
                 break;
         }
 
