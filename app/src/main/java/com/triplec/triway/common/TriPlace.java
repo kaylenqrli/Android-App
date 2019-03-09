@@ -14,6 +14,8 @@ import com.google.android.libraries.places.api.net.FetchPhotoRequest;
 import com.google.android.libraries.places.api.net.FetchPlaceRequest;
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.gson.annotations.SerializedName;
+import com.triplec.triway.PlaceListAdapter;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -22,7 +24,6 @@ import java.util.List;
 public class TriPlace implements Serializable {
 
 //    private double rating;
-
 
     @SerializedName("name")
     private String name;
@@ -104,7 +105,7 @@ public class TriPlace implements Serializable {
         placeId = id;
     }
 
-    private void fetchPhoto(Context context) {
+    private void fetchPhoto(Context context, PlaceListAdapter adapter) {
         Places.initialize(context, "AIzaSyDYKAtsvLfqJnT_t1VhAjvrLMb2cddLcVQ");
         PlacesClient placesClient = Places.createClient(context);
 
@@ -126,7 +127,7 @@ public class TriPlace implements Serializable {
                 Bitmap bitmap = fetchPhotoResponse.getBitmap();
                 setPhoto(bitmap);
                 photoSetup = true;
-                Log.e("=====", "fetchPhoto() ");
+                adapter.notifyDataSetChanged();
             }).addOnFailureListener((exception) -> {
                 if (exception instanceof ApiException) {
                     ApiException apiException = (ApiException) exception;
@@ -142,9 +143,9 @@ public class TriPlace implements Serializable {
         photo = bitmap;
     }
 
-    public Bitmap getPhoto(Context context){
+    public Bitmap getPhoto(Context context, PlaceListAdapter adapter){
         if(!photoSetup) {
-            fetchPhoto(context);
+            fetchPhoto(context, adapter);
         }
         Log.e("=====", "getPhoto() ");
         return photo;

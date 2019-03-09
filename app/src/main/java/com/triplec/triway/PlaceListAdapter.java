@@ -2,8 +2,6 @@ package com.triplec.triway;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -69,7 +67,7 @@ public class PlaceListAdapter extends ArrayAdapter<TriPlace> {
         holder.description.setText(places.get(position).getDescription());
         // set photo
         places.get(position).setId(placeIds[position]);
-        Bitmap bitmap = places.get(position).getPhoto(mContext);
+        Bitmap bitmap = places.get(position).getPhoto(mContext, this);
         holder.photo.setImageBitmap(bitmap);
         notifyDataSetChanged();
 
