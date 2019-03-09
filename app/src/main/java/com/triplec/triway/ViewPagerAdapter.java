@@ -49,7 +49,7 @@ public class ViewPagerAdapter extends PagerAdapter {
                 // start route activity
                 Intent intent = new Intent(context, RouteActivity.class);
                 String city = cities[position];
-                intent.putExtra("city", city);
+                intent.putExtra("place", city);
                 context.startActivity(intent);
             }
         });

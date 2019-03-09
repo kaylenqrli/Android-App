@@ -6,35 +6,38 @@ import android.os.Parcelable;
 import com.google.gson.annotations.SerializedName;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 
 public class TriPlace implements Serializable {
 
 //    private double rating;
-    @SerializedName("place")
-    private PlaceDetails mPlaceDetail;
+
 
     @SerializedName("name")
     private String name;
-    public static class PlaceDetails {
+
+    @SerializedName("place")
+    private PlaceDetails mPlaceDetail;
+    private static class PlaceDetails {
         @SerializedName("geometry")
         private TriPoint mTriPoint;
+        private static class TriPoint {
+            @SerializedName("coordinates")
+            private List<Double> coordinates;
+        }
         @SerializedName("properties")
         private TriAddress mTriAddress;
-        public static class TriPoint {
-            @SerializedName("coordinates")
-            public ArrayList<String> coordinates;
-        }
-        public static class TriAddress {
+        private static class TriAddress {
             @SerializedName("city")
-            public String city;
+            private String city;
             @SerializedName("stateCode")
-            public String stateCode;
+            private String stateCode;
             @SerializedName("postalCode")
-            public String postalCode;
+            private String postalCode;
             @SerializedName("countryCode")
-            public String countryCode;
+            private String countryCode;
             @SerializedName("street")
-            public String street;
+            private String street;
         }
     }
     public String address;
@@ -46,7 +49,6 @@ public class TriPlace implements Serializable {
 //    private void setAddress(String a){
 //        address = a;
 //    }
-
     public String getCity(){
         return this.mPlaceDetail.mTriAddress.city;
     }
@@ -66,11 +68,11 @@ public class TriPlace implements Serializable {
       return "test description for " + this.getName();
     }
     public double getLatitude(){
-        return this.mPlaceDetail.mTriPoint.coordinates.indexOf(1);
+        return this.mPlaceDetail.mTriPoint.coordinates.get(1);
     }
 
     public double getLongitude(){
-        return this.mPlaceDetail.mTriPoint.coordinates.indexOf(0);
+        return this.mPlaceDetail.mTriPoint.coordinates.get(0);
     }
 
     public String getName(){
