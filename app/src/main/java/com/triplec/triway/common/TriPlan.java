@@ -20,36 +20,6 @@ public class TriPlan {
     }
     private List<TriPlace> getTopFive(List<TriPlace> allPlaces){
         List<TriPlace> list = allPlaces;
-//        PoiSearch mPoiSearch = PoiSearch.newInstance();
-//        OnGetPoiSearchResultListener listener = new OnGetPoiSearchResultListener() {
-//            @Override
-//            public void onGetPoiResult(PoiResult poiResult) {
-//                for(int i=0; i<5; i++) {
-//                    PoiInfo poi = poiResult.getAllPoi().get(i);
-//                    double latitude = poi.getLocation().latitude;
-//                    double longitude = poi.getLocation().longitude;
-//                    TriPlace curr = new TriPlace(poi.getName());
-//                    curr.setAddress(poi.getAddress());
-//                    curr.setRating(poi.poiDetailInfo.overallRating);
-//
-//                    list.add(curr);
-//                }
-//            }
-//            @Override
-//            public void onGetPoiDetailResult(PoiDetailSearchResult poiDetailSearchResult) {
-//
-//            }
-//            @Override
-//            public void onGetPoiIndoorResult(PoiIndoorResult poiIndoorResult) {
-//
-//            }
-//            //废弃
-//            @Override
-//            public void onGetPoiDetailResult(PoiDetailResult poiDetailResult) {
-//
-//            }
-//        };
-
         return list.subList(0,5);
     }
 

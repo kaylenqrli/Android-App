@@ -36,7 +36,7 @@ public class RouteModel implements RouteContract.Model {
     }
 //    private LatLng getFromName(String place){
 //
-//        Geocoder coder = new Geocoder(this);
+//        Geocoder coder = new Geocoder(RoutePresenter.view);
 //        List<Address> address;
 //        LatLng p1 = null;
 //        try {
