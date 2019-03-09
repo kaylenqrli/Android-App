@@ -2,6 +2,7 @@ package com.triplec.triway.route;
 
 import android.content.Context;
 
+import com.triplec.triway.common.TriPlace;
 import com.triplec.triway.common.TriPlan;
 
 class RoutePresenter implements RouteContract.Presenter {
@@ -21,22 +22,37 @@ class RoutePresenter implements RouteContract.Presenter {
     }
 
     @Override
-    public void savePlans(TriPlan placePlan) {
-
+    public String savePlans(String planName) {
+        return this.model.savePlans(planName);
     }
 
     @Override
-    public void onError() {
+    public void onError(String message) {
         if (this.view != null) {
-            view.onError();
+            view.onError(message);
         }
     }
 
     @Override
-    public void onSavedSuccess() {
+    public void onSavedSuccess(String planName) {
         if (view != null) {
-            view.onSavedSuccess();
+            view.onSavedSuccess(planName);
         }
+    }
+
+    @Override
+    public boolean addPlace(TriPlace newPlace) {
+        return this.model.addPlace(newPlace);
+    }
+
+    @Override
+    public void setPlanId(String id) {
+        this.model.setPlanId(id);
+    }
+
+    @Override
+    public Context getContext() {
+        return this.view.getContext();
     }
 
     @Override
@@ -52,7 +68,15 @@ class RoutePresenter implements RouteContract.Presenter {
     @Override
     public void onViewAttached(RouteContract.View view) {
         this.view = view;
-        this.model.fetchData(this.view.getMainPlace());
+        this.model.setGeocoder(view.getContext());
+        if (this.view.getMainPlace() == null || this.view.getMainPlace().length() == 0) {
+            TriPlan.TriPlanBuilder mBuilder= new TriPlan.TriPlanBuilder();
+            // TODO this.view.getPassedPlan() -> Plan
+            this.view.showRoutes(mBuilder.buildPlan());
+        }
+        else {
+            this.model.fetchData(this.view.getMainPlace());
+        }
     }
 
     @Override

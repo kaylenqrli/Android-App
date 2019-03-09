@@ -23,12 +23,14 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
 
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.triplec.triway.common.TriPlan;
+import com.triplec.triway.mvp.MvpFragment;
 import com.triplec.triway.route.ListFragment;
 import com.triplec.triway.route.MapFragment;
 
@@ -55,14 +57,7 @@ public class RouteActivity extends AppCompatActivity {
      * The {@link ViewPager} that will host the section contents.
      */
     private ViewPager mViewPager;
-    private TriPlan plan;
     private ActionBar actionbar;
-
-    private PlacesClient placesClient;
-
-    public TriPlan getPlan() {
-        return plan;
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -149,6 +144,8 @@ public class RouteActivity extends AppCompatActivity {
     }
 
     private void getDialog() {
+//        MapFragment test = (MapFragment) this.getSupportFragmentManager().findFragmentById(R.id.test_fragment);
+
         LayoutInflater linf = LayoutInflater.from(this);
         final View inflator = linf.inflate(R.layout.route_change_name_dialog, null);
         AlertDialog.Builder alert = new AlertDialog.Builder(this);
@@ -163,8 +160,23 @@ public class RouteActivity extends AppCompatActivity {
             {
                 String plan_name=plan_rename.getText().toString();
                 //do operations using s1 and s2 here...
-                Toast.makeText(getApplicationContext(), "Plan saved as " + plan_name, Toast.LENGTH_SHORT).show();
-                actionbar.setTitle(plan_name);
+                MapFragment mf = (MapFragment)findFragmentByPosition(0);
+                ListFragment lf = (ListFragment)findFragmentByPosition(1);
+                if (getViewPager().getCurrentItem() == 0) {
+                    String planId = mf.savePlans(plan_name);
+                    if (planId.length() !=0 ) {
+                        lf.setTriPlanId(planId);
+                        actionbar.setTitle(plan_name);
+                    }
+
+                }
+                else {
+                    String planId = lf.savePlans(plan_name);
+                    if (planId.length() !=0 ) {
+                        mf.setTriPlanId(planId);
+                        actionbar.setTitle(plan_name);
+                    }
+                }
             }
         });
         alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -174,14 +186,28 @@ public class RouteActivity extends AppCompatActivity {
         });
         alert.show();
     }
+    private Fragment findFragmentByPosition(int position) {
+        FragmentPagerAdapter fragmentPagerAdapter = getFragmentPagerAdapter();
+        return getSupportFragmentManager().findFragmentByTag(
+                "android:switcher:" + getViewPager().getId() + ":"
+                        + fragmentPagerAdapter.getItemId(position));
+    }
+
+    private ViewPager getViewPager() {
+        return mViewPager;
+    }
+
+    private FragmentPagerAdapter getFragmentPagerAdapter() {
+        return mSectionsPagerAdapter;
+    }
 
     /**
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
      * one of the sections/tabs/pages.
      */
-    public class SectionsPagerAdapter extends FragmentPagerAdapter {
+    private class SectionsPagerAdapter extends FragmentPagerAdapter {
 
-        public SectionsPagerAdapter(FragmentManager fm) {
+        private SectionsPagerAdapter(FragmentManager fm) {
             super(fm);
         }
 

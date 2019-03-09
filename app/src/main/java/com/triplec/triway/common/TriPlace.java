@@ -15,7 +15,7 @@ public class TriPlace implements Serializable {
 
     @SerializedName("name")
     private String name;
-    private String ID;
+
     @SerializedName("place")
     private PlaceDetails mPlaceDetail;
     private static class PlaceDetails {
@@ -70,13 +70,16 @@ public class TriPlace implements Serializable {
     public double getLatitude(){
         return this.mPlaceDetail.mTriPoint.coordinates.get(1);
     }
+
     public double getLongitude(){
         return this.mPlaceDetail.mTriPoint.coordinates.get(0);
     }
-    public void setID(String id) {ID = id;}
-    public String getID(){return ID;}
+
     public String getName(){
         return name;
+    }
+    public void setName(String name){
+        this.name = name;
     }
 //    private void setRating(double r){
 //        rating = r;

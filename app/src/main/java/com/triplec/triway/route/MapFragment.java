@@ -1,12 +1,14 @@
 package com.triplec.triway.route;
 
+import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.util.Log;
-import android.os.AsyncTask;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -22,6 +24,7 @@ import com.triplec.triway.common.TriPlan;
 import com.triplec.triway.mvp.MvpFragment;
 
 import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -37,11 +40,9 @@ import java.util.List;
  */
 public class MapFragment extends MvpFragment<RouteContract.Presenter> implements RouteContract.View {
 
-    MapView mMapView;
+    private MapView mMapView;
     private GoogleMap mMap;
-    List<LatLng> MarkerPoints;
-    ArrayList<String> IDs = new ArrayList<String>();
-
+    private List<LatLng> MarkerPoints;
 
     public static MapFragment newInstance() {
 
@@ -74,47 +75,7 @@ public class MapFragment extends MvpFragment<RouteContract.Presenter> implements
 
     }
 
-    @Override
-    public void showRoutes(TriPlan placePlan) {
-        // testing data
-        MarkerPoints = new ArrayList<LatLng>();
-        List<TriPlace> resultPlaces = placePlan.getPlaceList();
-        for (int i=0; i<resultPlaces.size(); i++) {
-            MarkerPoints.add(new LatLng(resultPlaces.get(i).getLatitude(),
-                    resultPlaces.get(i).getLongitude()));
-        }
-
-//        Bundle bundle = getArguments();
-//        ArrayList<String> list = bundle.getStringArrayList("strll");
-//        for(int i=0; i<list.size(); i++) {
-//            String[] ll = list.get(i).split(" ");
-//            double lat = Double.valueOf(ll[0]);
-//            double lng = Double.valueOf(ll[1]);
-//            MarkerPoints.add(new LatLng(lat, lng));
-//        }
-
-        // pin all the places to the map
-        for(int i=0; i< MarkerPoints.size(); i++){
-            MarkerOptions options = new MarkerOptions();
-            options.position(MarkerPoints.get(i));
-            mMap.addMarker(options);
-        }
-
-        for(int i=0; i< placePlan.getPlaceList().size()-1; i++){
-            LatLng from = MarkerPoints.get(i);
-            LatLng to = MarkerPoints.get(i+1);
-            String url = getUrl(from,to);
-            FetchUrl fetch = new FetchUrl();
-            fetch.execute(url);
-
-            placePlan.getPlaceList().get(i).setID(IDs.get(0));
-            placePlan.getPlaceList().get(i+1).setID(IDs.get(1));
-        }
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(MarkerPoints.get(0)));
-        mMap.animateCamera(CameraUpdateFactory.zoomTo(10));
-    }
-
-
+    /* following helper methods from: https://github.com/hiteshbpatel/Android_Blog_Projects*/
     // generate url base on two locations
     private String getUrl(LatLng origin, LatLng dest) {
         // Origin of route
@@ -173,21 +134,88 @@ public class MapFragment extends MvpFragment<RouteContract.Presenter> implements
         return new RoutePresenter();
     }
 
-
-
     @Override
-    public void onError() {
+    public void showRoutes(TriPlan placePlan) {
+        // testing data
+        MarkerPoints = new ArrayList<LatLng>();
+        List<TriPlace> resultPlaces = placePlan.getPlaceList();
+        for (int i=0; i<resultPlaces.size(); i++) {
+            MarkerPoints.add(new LatLng(resultPlaces.get(i).getLatitude(),
+                                                    resultPlaces.get(i).getLongitude()));
+        }
 
+//        Bundle bundle = getArguments();
+//        ArrayList<String> list = bundle.getStringArrayList("strll");
+//        for(int i=0; i<list.size(); i++) {
+//            String[] ll = list.get(i).split(" ");
+//            double lat = Double.valueOf(ll[0]);
+//            double lng = Double.valueOf(ll[1]);
+//            MarkerPoints.add(new LatLng(lat, lng));
+//        }
+
+        // pin all the places to the map
+        for(int i=0; i< MarkerPoints.size(); i++){
+            MarkerOptions options = new MarkerOptions();
+            options.position(MarkerPoints.get(i));
+            mMap.addMarker(options);
+        }
+
+        for(int i=0; i< MarkerPoints.size()-1; i++){
+            LatLng from = MarkerPoints.get(i);
+            LatLng to = MarkerPoints.get(i+1);
+            String url = getUrl(from,to);
+            FetchUrl fetch = new FetchUrl();
+            fetch.execute(url);
+        }
+        if (MarkerPoints.size() > 0) {
+            mMap.moveCamera(CameraUpdateFactory.newLatLng(MarkerPoints.get(0)));
+            mMap.animateCamera(CameraUpdateFactory.zoomTo(10));
+        }
     }
 
     @Override
-    public void onSavedSuccess() {
+    public void onError(String message) {
+        Toast.makeText(getActivity(), "Failed to save plan. "
+                                    + message, Toast.LENGTH_SHORT).show();
+    }
 
+    @Override
+    public void onSavedSuccess(String planName) {
+        Toast.makeText(getActivity(), "Plan saved as "
+                                    + planName, Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public String getMainPlace() {
-        return getArguments().getString("place");
+        if (getArguments() != null)
+            return getArguments().getString("place");
+        else
+            return "";
+    }
+    public void setTriPlanId(String id) {
+        presenter.setPlanId(id);
+    }
+    @Override
+    public String savePlans(String plan_name) {
+        return this.presenter.savePlans(plan_name);
+    }
+
+    @Override
+    public boolean addPlace(TriPlace newPlace) {
+        return this.presenter.addPlace(newPlace);
+    }
+
+    @Override
+    public ArrayList<String> getPassedPlan() {
+        if (getArguments() != null)
+            return getArguments().getStringArrayList("plan");
+        else
+            return null;
+    }
+
+    @Override
+    public Context getContext() {
+        return this.getActivity();
     }
 
     // Fetches data from url passed
@@ -236,15 +264,12 @@ public class MapFragment extends MvpFragment<RouteContract.Presenter> implements
 
                 // Starts parsing data
                 routes = parser.parse(jObject);
-                IDs = parser.getIDs();
-
                 Log.d("ParserTask","Executing routes");
                 Log.d("ParserTask",routes.toString());
             } catch (Exception e) {
                 Log.d("ParserTask",e.toString());
                 e.printStackTrace();
             }
-
             return routes;
         }
 
