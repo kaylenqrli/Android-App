@@ -1,5 +1,7 @@
 package com.triplec.triway.route;
 
+import android.content.Context;
+
 import com.triplec.triway.common.TriPlace;
 import com.triplec.triway.common.TriPlan;
 
@@ -49,6 +51,11 @@ class RoutePresenter implements RouteContract.Presenter {
     }
 
     @Override
+    public Context getContext() {
+        return this.view.getContext();
+    }
+
+    @Override
     public void onCreate() {
 
     }
@@ -61,6 +68,7 @@ class RoutePresenter implements RouteContract.Presenter {
     @Override
     public void onViewAttached(RouteContract.View view) {
         this.view = view;
+        this.model.setGeocoder(view.getContext());
         if (this.view.getMainPlace() == null || this.view.getMainPlace().length() == 0) {
             TriPlan.TriPlanBuilder mBuilder= new TriPlan.TriPlanBuilder();
             // TODO this.view.getPassedPlan() -> Plan

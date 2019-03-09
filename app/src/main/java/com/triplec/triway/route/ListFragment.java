@@ -1,6 +1,7 @@
 package com.triplec.triway.route;
 
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.SparseBooleanArray;
@@ -145,6 +146,11 @@ public class ListFragment extends MvpFragment<RouteContract.Presenter> implement
             return getArguments().getStringArrayList("plan");
         else
             return null;
+    }
+
+    @Override
+    public Context getContext() {
+        return this.getActivity();
     }
 
     public void setTriPlanId(String id) {

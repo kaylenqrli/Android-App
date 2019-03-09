@@ -1,5 +1,7 @@
 package com.triplec.triway.route;
 
+import android.content.Context;
+
 import com.triplec.triway.common.TriPlace;
 import com.triplec.triway.common.TriPlan;
 import com.triplec.triway.mvp.MvpContract;
@@ -20,6 +22,8 @@ public interface RouteContract {
         boolean addPlace(TriPlace newPlace);
 
         ArrayList<String> getPassedPlan();
+
+        Context getContext();
     }
 
     interface Presenter extends MvpContract.Presenter<View, Model> {
@@ -30,6 +34,8 @@ public interface RouteContract {
         void onSavedSuccess(String planName);
         boolean addPlace(TriPlace newPlace);
         void setPlanId(String id);
+
+        Context getContext();
     }
 
     interface Model extends MvpContract.Model<Presenter> {

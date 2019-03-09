@@ -1,12 +1,13 @@
 package com.triplec.triway.route;
 
+import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.util.Log;
-import android.os.AsyncTask;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -23,6 +24,7 @@ import com.triplec.triway.common.TriPlan;
 import com.triplec.triway.mvp.MvpFragment;
 
 import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -165,8 +167,10 @@ public class MapFragment extends MvpFragment<RouteContract.Presenter> implements
             FetchUrl fetch = new FetchUrl();
             fetch.execute(url);
         }
-//        mMap.moveCamera(CameraUpdateFactory.newLatLng(MarkerPoints.get(0)));
-//        mMap.animateCamera(CameraUpdateFactory.zoomTo(10));
+        if (MarkerPoints.size() > 0) {
+            mMap.moveCamera(CameraUpdateFactory.newLatLng(MarkerPoints.get(0)));
+            mMap.animateCamera(CameraUpdateFactory.zoomTo(10));
+        }
     }
 
     @Override
@@ -207,6 +211,11 @@ public class MapFragment extends MvpFragment<RouteContract.Presenter> implements
             return getArguments().getStringArrayList("plan");
         else
             return null;
+    }
+
+    @Override
+    public Context getContext() {
+        return this.getActivity();
     }
 
     // Fetches data from url passed
