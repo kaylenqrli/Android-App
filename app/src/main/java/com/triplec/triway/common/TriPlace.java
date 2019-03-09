@@ -28,7 +28,7 @@ public class TriPlace implements Serializable {
     private String name;
     private String placeId;
     private Bitmap photo;
-    private boolean photosetup = false;
+    private boolean photoSetup = false;
 
     @SerializedName("place")
     private PlaceDetails mPlaceDetail;
@@ -125,7 +125,7 @@ public class TriPlace implements Serializable {
             placesClient.fetchPhoto(photoRequest).addOnSuccessListener((fetchPhotoResponse) -> {
                 Bitmap bitmap = fetchPhotoResponse.getBitmap();
                 setPhoto(bitmap);
-                photosetup = true;
+                photoSetup = true;
             }).addOnFailureListener((exception) -> {
                 if (exception instanceof ApiException) {
                     ApiException apiException = (ApiException) exception;
@@ -142,7 +142,7 @@ public class TriPlace implements Serializable {
     }
 
     public Bitmap getPhoto(Context context){
-        if(!photosetup) {
+        if(!photoSetup) {
             fetchPhoto(context);
         }
         return photo;
