@@ -64,13 +64,14 @@ public class PlaceListAdapter extends ArrayAdapter<TriPlace> {
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
-        // Capture position and set to the TextViews
+        // set name and description
         holder.name.setText(places.get(position).getName());
         holder.description.setText(places.get(position).getDescription());
+        // set photo
         places.get(position).setId(placeIds[position]);
         Bitmap bitmap = places.get(position).getPhoto(mContext);
-        Drawable d = new BitmapDrawable(mContext.getResources(), bitmap);
-        holder.photo.setImageDrawable(d);
+        holder.photo.setImageBitmap(bitmap);
+        notifyDataSetChanged();
 
         holder.checkBox.setChecked(mSelectedItemsIds.get(position));
         holder.checkBox.jumpDrawablesToCurrentState();

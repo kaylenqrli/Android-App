@@ -126,6 +126,7 @@ public class TriPlace implements Serializable {
                 Bitmap bitmap = fetchPhotoResponse.getBitmap();
                 setPhoto(bitmap);
                 photoSetup = true;
+                Log.e("=====", "fetchPhoto() ");
             }).addOnFailureListener((exception) -> {
                 if (exception instanceof ApiException) {
                     ApiException apiException = (ApiException) exception;
@@ -145,6 +146,7 @@ public class TriPlace implements Serializable {
         if(!photoSetup) {
             fetchPhoto(context);
         }
+        Log.e("=====", "getPhoto() ");
         return photo;
     }
 }
