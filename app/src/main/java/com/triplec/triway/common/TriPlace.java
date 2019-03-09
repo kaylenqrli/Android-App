@@ -1,11 +1,22 @@
 package com.triplec.triway.common;
 
+import android.content.Context;
+import android.graphics.Bitmap;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
+import com.google.android.gms.common.api.ApiException;
+import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.model.PhotoMetadata;
+import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.api.net.FetchPhotoRequest;
+import com.google.android.libraries.places.api.net.FetchPlaceRequest;
+import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.gson.annotations.SerializedName;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class TriPlace implements Serializable {
@@ -15,6 +26,9 @@ public class TriPlace implements Serializable {
 
     @SerializedName("name")
     private String name;
+    private String placeId;
+    private Bitmap photo;
+    private boolean photosetup = false;
 
     @SerializedName("place")
     private PlaceDetails mPlaceDetail;
@@ -86,4 +100,51 @@ public class TriPlace implements Serializable {
 //        return rating;
 //    }
 
+    public void setId(String id){
+        placeId = id;
+    }
+
+    private void fetchPhoto(Context context) {
+        Places.initialize(context, "AIzaSyDYKAtsvLfqJnT_t1VhAjvrLMb2cddLcVQ");
+        PlacesClient placesClient = Places.createClient(context);
+
+        List<Place.Field> fields = Arrays.asList(Place.Field.PHOTO_METADATAS);
+        FetchPlaceRequest placeRequest = FetchPlaceRequest.builder(placeId, fields).build();
+
+        placesClient.fetchPlace(placeRequest).addOnSuccessListener((response) -> {
+            Place place = response.getPlace();
+
+            // Get the photo metadata.
+            PhotoMetadata photoMetadata = place.getPhotoMetadatas().get(0);
+
+            // Get the attribution text.
+            String attributions = photoMetadata.getAttributions();
+
+            // Create a FetchPhotoRequest.
+            FetchPhotoRequest photoRequest = FetchPhotoRequest.builder(photoMetadata).build();
+            placesClient.fetchPhoto(photoRequest).addOnSuccessListener((fetchPhotoResponse) -> {
+                Bitmap bitmap = fetchPhotoResponse.getBitmap();
+                setPhoto(bitmap);
+                photosetup = true;
+            }).addOnFailureListener((exception) -> {
+                if (exception instanceof ApiException) {
+                    ApiException apiException = (ApiException) exception;
+                    int statusCode = apiException.getStatusCode();
+                    // Handle error with given status code.
+                    Log.e("Photo Setup Failed", "Place not found: " + exception.getMessage());
+                }
+            });
+        });
+    }
+
+    public void setPhoto(Bitmap bitmap){
+        photo = bitmap;
+    }
+
+    public Bitmap getPhoto(Context context){
+        if(!photosetup) {
+            fetchPhoto(context);
+        }
+        return photo;
+    }
 }

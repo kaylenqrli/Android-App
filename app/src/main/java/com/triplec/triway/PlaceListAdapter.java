@@ -24,6 +24,16 @@ public class PlaceListAdapter extends ArrayAdapter<TriPlace> {
     private SparseBooleanArray mSelectedItemsIds;
     View convert;
 
+    /*----- Place Id for getPhoto() -----*/
+    private final String[] placeIds = {
+            "ChIJyYB_SZVU2YARR-I1Jjf08F0",  // San Diego Zoo
+            "ChIJA8tw-pZU2YARxPYVsDwL8-0",  // Balboa Park
+            "ChIJ7-bxRDmr3oARawtVV_lGLtw",  // Airport
+            "ChIJ54O2gpEG3IAR0YlUGyNK1GQ",  // Black's Beach
+            "ChIJT69MQcQG3IARpz6Rifyqtu8"   // UCSD
+    };
+    /*----- Place Id for getPhoto() -----*/
+
     public PlaceListAdapter (Context context, int resourceId, List<TriPlace> places) {
         super(context, resourceId, places);
         this.mContext = context;
@@ -57,13 +67,10 @@ public class PlaceListAdapter extends ArrayAdapter<TriPlace> {
         // Capture position and set to the TextViews
         holder.name.setText(places.get(position).getName());
         holder.description.setText(places.get(position).getDescription());
-        // Drawable dr = places.getPhoto(position);
-        // Adjust image size
-//        Drawable dr = mContext.getResources().getDrawable(R.drawable.album_city3);
-//        Bitmap bitmap = ((BitmapDrawable) dr).getBitmap();
-//        Drawable d = new BitmapDrawable(mContext.getResources(), Bitmap.createScaledBitmap(bitmap, 100, 100, true));
-//        holder.photo.setImageDrawable(d);
-        holder.photo.setImageResource(R.drawable.album_city3);
+        places.get(position).setId(placeIds[position]);
+        Bitmap bitmap = places.get(position).getPhoto(mContext);
+        Drawable d = new BitmapDrawable(mContext.getResources(), bitmap);
+        holder.photo.setImageDrawable(d);
 
         holder.checkBox.setChecked(mSelectedItemsIds.get(position));
         holder.checkBox.jumpDrawablesToCurrentState();
