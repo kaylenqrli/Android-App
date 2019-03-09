@@ -67,6 +67,7 @@ public class HomeActivity extends AppCompatActivity
     EditText search;
     TextView user_name_tv, user_email_tv;
     boolean updated = false;
+    boolean isclicked = false;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
     SharedPreferences sp;
     GoogleSignInClient mGoogleSignInClient;
@@ -196,6 +197,7 @@ public class HomeActivity extends AppCompatActivity
     public void onStart(){
         super.onStart();
         FirebaseAuth.getInstance().addAuthStateListener(mAuthStateListener);
+        isclicked = false;
     }
 
     @Override
@@ -204,6 +206,12 @@ public class HomeActivity extends AppCompatActivity
         if(mAuthStateListener != null){
             FirebaseAuth.getInstance().removeAuthStateListener(mAuthStateListener);
         }
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        isclicked = false;
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -245,6 +253,12 @@ public class HomeActivity extends AppCompatActivity
     }
 
     public void gotoRoute(String place) {
+        if( isclicked ){
+            return;
+        }
+        else{
+            isclicked = true;
+        }
         Toast.makeText(HomeActivity.this,
                 "Searching "+ place + "...", Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(HomeActivity.this, RouteActivity.class);
@@ -252,6 +266,9 @@ public class HomeActivity extends AppCompatActivity
         startActivity(intent);
     }
 
+    /**
+     * check if the auth state has changed, if auth logged out, go back to login activity
+     */
     private void setupFirebaseListener(){
         mAuthStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
