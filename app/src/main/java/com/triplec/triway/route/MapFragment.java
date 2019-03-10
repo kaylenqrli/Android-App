@@ -1,13 +1,21 @@
 package com.triplec.triway.route;
 
+import android.content.res.Resources;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
-import android.util.Log;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.PagerSnapHelper;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SnapHelper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.util.Log;
+import android.os.AsyncTask;
+import android.widget.AdapterView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -15,8 +23,11 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.triplec.triway.MapListAdapter;
+import com.triplec.triway.PlaceListAdapter;
 import com.triplec.triway.R;
 import com.triplec.triway.common.DataParser;
 import com.triplec.triway.common.TriPlace;
@@ -35,6 +46,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
+
 /**
  * A simple {@link Fragment} subclass.
  */
@@ -42,6 +55,12 @@ public class MapFragment extends MvpFragment<RouteContract.Presenter> implements
 
     private MapView mMapView;
     private GoogleMap mMap;
+    List<LatLng> markerPoints;
+    Marker markers[] = new Marker[5];
+    MapListAdapter mapListAdapter;
+    RecyclerView.LayoutManager layoutManager;
+    RecyclerView recyclerView;
+
 
     public static MapFragment newInstance() {
 
@@ -69,6 +88,27 @@ public class MapFragment extends MvpFragment<RouteContract.Presenter> implements
                 mMap.getUiSettings().setZoomControlsEnabled(true);
             }
         });
+
+        recyclerView = view.findViewById(R.id.map_recycler);
+        mapListAdapter = new MapListAdapter(null);
+        recyclerView.setAdapter(mapListAdapter);
+        layoutManager = new LinearLayoutManager(getActivity());
+        ((LinearLayoutManager) layoutManager).setOrientation(LinearLayoutManager.HORIZONTAL);
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                if (newState == SCROLL_STATE_IDLE) {
+                    // TODO: This is the item that is focused, update marker
+                    int itemSelected = ((LinearLayoutManager) layoutManager).findFirstVisibleItemPosition();
+                    mMap.moveCamera(CameraUpdateFactory.newLatLng(markerPoints.get(itemSelected)));
+//                    Toast.makeText(getContext(), "Item " + itemSelected + " is selected", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+        SnapHelper snapHelper = new PagerSnapHelper();
+        snapHelper.attachToRecyclerView(recyclerView);
 
         return view;
 
@@ -136,7 +176,7 @@ public class MapFragment extends MvpFragment<RouteContract.Presenter> implements
     @Override
     public void showRoutes(TriPlan placePlan) {
         // testing data
-        List<LatLng> markerPoints= new ArrayList<LatLng>();
+        markerPoints= new ArrayList<LatLng>();
         List<TriPlace> resultPlaces = placePlan.getPlaceList();
         if (resultPlaces == null)
             return;
@@ -154,29 +194,66 @@ public class MapFragment extends MvpFragment<RouteContract.Presenter> implements
 //            MarkerPoints.add(new LatLng(lat, lng));
 //        }
 
-
         mMapView.getMapAsync(new OnMapReadyCallback() {
             @Override
             public void onMapReady(GoogleMap googleMap) {
-                for(int i=0; i< markerPoints.size()-1; i++){
-                    LatLng from = markerPoints.get(i);
-                    LatLng to = markerPoints.get(i+1);
-                    String url = getUrl(from,to);
-                    FetchUrl fetch = new FetchUrl();
-                    fetch.execute(url);
-                }
-                // pin all the places to the map
-                for(int i=0; i< markerPoints.size(); i++){
-                    MarkerOptions options = new MarkerOptions();
-                    options.position(markerPoints.get(i));
-                    mMap.addMarker(options);
-                }
-                if (markerPoints.size() > 0) {
-                    mMap.moveCamera(CameraUpdateFactory.newLatLng(markerPoints.get(0)));
-                    mMap.animateCamera(CameraUpdateFactory.zoomTo(10));
-                }
+              // pin all the places to the map
+              for(int i=0; i< markerPoints.size(); i++){
+                  MarkerOptions options = new MarkerOptions();
+                  options.position(markerPoints.get(i));
+                  Marker marker = mMap.addMarker(options);
+                  marker.setTag(i);
+                  markers[i] = marker;
+              }
+
+              mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+                  @Override
+                  public void onMapClick(LatLng latLng) {
+                      recyclerView.setVisibility(recyclerView.INVISIBLE);
+                      mMap.setPadding(0,0,0,0);
+                  }
+              });
+
+              mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+                  @Override
+                  public boolean onMarkerClick(Marker marker) {
+                      int markerPosition = 0;
+                      try {
+                          markerPosition = (Integer) marker.getTag();
+                      } catch (NullPointerException e) {
+                          Toast.makeText(getContext(), "Marker has no Tag", Toast.LENGTH_SHORT).show();
+                      }
+      //                Toast.makeText(getContext(), "Marker " + markerPosition + " is selected", Toast.LENGTH_SHORT).show();
+                      recyclerView.setVisibility(recyclerView.VISIBLE);
+                      mMap.setPadding(0,0,0,(int) (200 * Resources.getSystem().getDisplayMetrics().density));
+                      recyclerView.scrollToPosition(markerPosition);
+                      return false;
+                  }
+              });
+
+              for(int i=0; i< markerPoints.size()-1; i++){
+                  LatLng from = markerPoints.get(i);
+                  LatLng to = markerPoints.get(i+1);
+                  String url = getUrl(from,to);
+                  FetchUrl fetch = new FetchUrl();
+                  fetch.execute(url);
+              }
+              mMap.moveCamera(CameraUpdateFactory.newLatLng(markerPoints.get(0)));
+              mMap.animateCamera(CameraUpdateFactory.zoomTo(10));
+
+              TriPlan.TriPlanBuilder builder = new TriPlan.TriPlanBuilder();
+              builder.addPlaceList(placePlan.getPlaceList());
+              TriPlan plan = builder.buildPlan();
+              mapListAdapter = new MapListAdapter(plan.getPlaceList());
+              recyclerView.setAdapter(mapListAdapter);
+
+              if (markerPoints.size() > 0) {
+                  mMap.moveCamera(CameraUpdateFactory.newLatLng(markerPoints.get(0)));
+                  mMap.animateCamera(CameraUpdateFactory.zoomTo(10));
+              }
             }
         });
+
     }
     @Override
     public void onError(String message) {
