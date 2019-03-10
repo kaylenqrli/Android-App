@@ -38,11 +38,10 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class MapFragment extends MvpFragment<RouteContract.Presenter> implements RouteContract.View {
+public class MapFragment extends MvpFragment<RouteContract.Presenter> implements RouteContract.View,OnMapReadyCallback {
 
     private MapView mMapView;
     private GoogleMap mMap;
-    private List<LatLng> MarkerPoints;
 
     public static MapFragment newInstance() {
 
@@ -137,13 +136,15 @@ public class MapFragment extends MvpFragment<RouteContract.Presenter> implements
     @Override
     public void showRoutes(TriPlan placePlan) {
         // testing data
-        MarkerPoints = new ArrayList<LatLng>();
+        List<LatLng> markerPoints= new ArrayList<LatLng>();
         List<TriPlace> resultPlaces = placePlan.getPlaceList();
+        if (resultPlaces == null)
+            return;
         for (int i=0; i<resultPlaces.size(); i++) {
-            MarkerPoints.add(new LatLng(resultPlaces.get(i).getLatitude(),
+            Log.d("Get: ", String.valueOf(resultPlaces.get(i).getLatitude()) + "  " + String.valueOf(resultPlaces.get(i).getLongitude()));
+            markerPoints.add(new LatLng(resultPlaces.get(i).getLatitude(),
                                                     resultPlaces.get(i).getLongitude()));
         }
-
 //        Bundle bundle = getArguments();
 //        ArrayList<String> list = bundle.getStringArrayList("strll");
 //        for(int i=0; i<list.size(); i++) {
@@ -153,26 +154,30 @@ public class MapFragment extends MvpFragment<RouteContract.Presenter> implements
 //            MarkerPoints.add(new LatLng(lat, lng));
 //        }
 
-        // pin all the places to the map
-        for(int i=0; i< MarkerPoints.size(); i++){
-            MarkerOptions options = new MarkerOptions();
-            options.position(MarkerPoints.get(i));
-            mMap.addMarker(options);
-        }
 
-        for(int i=0; i< MarkerPoints.size()-1; i++){
-            LatLng from = MarkerPoints.get(i);
-            LatLng to = MarkerPoints.get(i+1);
-            String url = getUrl(from,to);
-            FetchUrl fetch = new FetchUrl();
-            fetch.execute(url);
-        }
-        if (MarkerPoints.size() > 0) {
-            mMap.moveCamera(CameraUpdateFactory.newLatLng(MarkerPoints.get(0)));
-            mMap.animateCamera(CameraUpdateFactory.zoomTo(10));
-        }
+        mMapView.getMapAsync(new OnMapReadyCallback() {
+            @Override
+            public void onMapReady(GoogleMap googleMap) {
+                for(int i=0; i< markerPoints.size()-1; i++){
+                    LatLng from = markerPoints.get(i);
+                    LatLng to = markerPoints.get(i+1);
+                    String url = getUrl(from,to);
+                    FetchUrl fetch = new FetchUrl();
+                    fetch.execute(url);
+                }
+                // pin all the places to the map
+                for(int i=0; i< markerPoints.size(); i++){
+                    MarkerOptions options = new MarkerOptions();
+                    options.position(markerPoints.get(i));
+                    mMap.addMarker(options);
+                }
+                if (markerPoints.size() > 0) {
+                    mMap.moveCamera(CameraUpdateFactory.newLatLng(markerPoints.get(0)));
+                    mMap.animateCamera(CameraUpdateFactory.zoomTo(10));
+                }
+            }
+        });
     }
-
     @Override
     public void onError(String message) {
         Toast.makeText(getActivity(), "Failed to save plan. "
@@ -206,9 +211,11 @@ public class MapFragment extends MvpFragment<RouteContract.Presenter> implements
     }
 
     @Override
-    public ArrayList<String> getPassedPlan() {
+    public TriPlan getPassedPlan() {
+        TriPlan mPlan = (TriPlan)getArguments().getSerializable("plan");
+        Log.d("received: ", mPlan.getName());
         if (getArguments() != null)
-            return getArguments().getStringArrayList("plan");
+            return (TriPlan) getArguments().getSerializable("plan");
         else
             return null;
     }
@@ -216,6 +223,11 @@ public class MapFragment extends MvpFragment<RouteContract.Presenter> implements
     @Override
     public Context getContext() {
         return this.getActivity();
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+
     }
 
     // Fetches data from url passed

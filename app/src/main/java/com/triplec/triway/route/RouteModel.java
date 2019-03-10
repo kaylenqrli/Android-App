@@ -28,7 +28,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class RouteModel implements RouteContract.Model {
+            public class RouteModel implements RouteContract.Model {
     private RouteContract.Presenter presenter;
     private PlaceRequestApi placesRequestApi;
     private DatabaseReference mDatabase;
@@ -120,6 +120,7 @@ public class RouteModel implements RouteContract.Model {
     public String savePlans(String planName) {
         String userId = user.getUid();
         String key = mTriPlan.getId();
+        System.out.println(key);
         // This plan has not been saved before
         if (key.length() == 0) {
             key = mDatabase.child("users").child(userId).child("plans").push().getKey();
@@ -169,6 +170,11 @@ public class RouteModel implements RouteContract.Model {
     public boolean addPlace(TriPlace newPlace) {
         // TODO add place to current plan
         return true;
+    }
+
+    @Override
+    public void upDatePlan(TriPlan newPlan) {
+        this.mTriPlan = newPlan;
     }
 
     @Override

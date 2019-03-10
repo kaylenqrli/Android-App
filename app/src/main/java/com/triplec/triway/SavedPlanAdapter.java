@@ -2,6 +2,7 @@ package com.triplec.triway;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.design.button.MaterialButton;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,13 +11,15 @@ import android.widget.BaseAdapter;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 
+import com.triplec.triway.common.TriPlan;
+
 import java.util.ArrayList;
 
 public class SavedPlanAdapter extends BaseAdapter implements ListAdapter {
-    private ArrayList<String> list = new ArrayList<String>();
+    private ArrayList<TriPlan> list = new ArrayList<TriPlan>();
     private Context context;
 
-    public SavedPlanAdapter(ArrayList<String> list, Context context) {
+    public SavedPlanAdapter(ArrayList<TriPlan> list, Context context) {
         this.list = list;
         this.context = context;
     }
@@ -47,7 +50,7 @@ public class SavedPlanAdapter extends BaseAdapter implements ListAdapter {
 
         //Handle TextView and display string from your list
         TextView listItemText = (TextView)view.findViewById(R.id.card_title);
-        listItemText.setText(list.get(position));
+        listItemText.setText(list.get(position).getName());
 
         //Handle buttons and add onClickListeners
         MaterialButton deleteBtn = view.findViewById(R.id.card_delete);
@@ -64,7 +67,10 @@ public class SavedPlanAdapter extends BaseAdapter implements ListAdapter {
             @Override
             public void onClick(View v) {
                 // start route activity
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("plan", list.get(position) );
                 Intent intent = new Intent(context, RouteActivity.class);
+                intent.putExtras(bundle);
                 context.startActivity(intent);
                 notifyDataSetChanged();
             }
