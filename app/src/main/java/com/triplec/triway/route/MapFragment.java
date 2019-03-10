@@ -37,12 +37,12 @@ import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class MapFragment extends MvpFragment<RouteContract.Presenter> implements RouteContract.View,OnMapReadyCallback {
+public class MapFragment extends MvpFragment<RouteContract.Presenter> implements RouteContract.View {
 
     private MapView mMapView;
     private GoogleMap mMap;
     List<LatLng> markerPoints;
-    Marker markers[] = new Marker[5];
+    Marker markers[];
     MapListAdapter mapListAdapter;
     RecyclerView.LayoutManager layoutManager;
     RecyclerView recyclerView;
@@ -94,7 +94,7 @@ public class MapFragment extends MvpFragment<RouteContract.Presenter> implements
         });
         SnapHelper snapHelper = new PagerSnapHelper();
         snapHelper.attachToRecyclerView(recyclerView);
-
+        markers = new Marker[5];
         return view;
     }
 
@@ -219,23 +219,8 @@ public class MapFragment extends MvpFragment<RouteContract.Presenter> implements
         return this.getActivity();
     }
 
-
     @Override
     public void addPolyline(PolylineOptions lineOptions) {
         mMap.addPolyline(lineOptions);
     }
-
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
-
-    }
-
-
-
-
-
-
-
-
-
 }
