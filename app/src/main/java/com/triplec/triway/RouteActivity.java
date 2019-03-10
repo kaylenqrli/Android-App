@@ -101,7 +101,7 @@ public class RouteActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.menu_route, menu);
 
         // Associate searchable configuration with the SearchView
-        SearchManager searchManager =
+        /*SearchManager searchManager =
                 (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         SearchView searchView =
                 (SearchView) menu.findItem(R.id.Tabs_menu_add).getActionView();
@@ -119,7 +119,7 @@ public class RouteActivity extends AppCompatActivity {
             public boolean onQueryTextChange(String s) {
                 return false;
             }
-        });
+        });*/
 
         return true;
     }

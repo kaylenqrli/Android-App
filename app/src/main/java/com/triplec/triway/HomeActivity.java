@@ -307,7 +307,6 @@ public class HomeActivity extends AppCompatActivity
 
     public void gotoSavedPlan(View v){
         Intent intent = new Intent(this, SavedPlanActivity.class);
-        intent.putExtra("name", "item 3");
         startActivity(intent);
     }
 

@@ -67,8 +67,8 @@ public class PlaceListAdapter extends ArrayAdapter<TriPlace> {
         holder.description.setText(places.get(position).getDescription());
         // set photo
         places.get(position).setId(placeIds[position]);
-        Bitmap bitmap = places.get(position).getPhoto(mContext, this);
-        holder.photo.setImageBitmap(bitmap);
+        //Bitmap bitmap = places.get(position).getPhoto(mContext, this);
+        //holder.photo.setImageBitmap(bitmap);
         notifyDataSetChanged();
 
         holder.checkBox.setChecked(mSelectedItemsIds.get(position));
