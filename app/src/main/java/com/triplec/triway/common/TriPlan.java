@@ -9,16 +9,20 @@ import java.util.List;
 public class TriPlan {
     private List<TriPlace> list;
     //private TriPlace triPlace;
-   // private String name;
+    private String name;
+    private String planId;
 
     private TriPlan(TriPlanBuilder builder){
         //name = p;
+        planId = "";
         list = getTopFive(builder.list);
     }
     public List<TriPlace> getPlaceList() {
         return this.list;
     }
     private List<TriPlace> getTopFive(List<TriPlace> allPlaces){
+        if (allPlaces.size() < 5)
+            return allPlaces;
         List<TriPlace> list = allPlaces;
 //        PoiSearch mPoiSearch = PoiSearch.newInstance();
 //        OnGetPoiSearchResultListener listener = new OnGetPoiSearchResultListener() {
@@ -51,6 +55,23 @@ public class TriPlan {
 //        };
 
         return list.subList(0,5);
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String plan_name) {
+        if (plan_name.length() == 0)
+            return;
+        name = plan_name;
+        return;
+    }
+    public void setId(String id) {
+        planId = id;
+    }
+    public String getId() {
+        return planId;
     }
 
     public static class TriPlanBuilder {

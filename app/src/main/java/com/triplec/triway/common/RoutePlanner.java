@@ -1,7 +1,5 @@
 package com.triplec.triway.common;
 
-import com.triplec.triway.common.TriPlan;
-import com.triplec.triway.common.TriPlace;
 import java.util.List;
 
 
@@ -14,7 +12,6 @@ import java.util.List;
 public class RoutePlanner {
 	/* input list of places */
 	private static List<TriPlace> list;
-	private static int num;
 /* Store places and relative weight */
 	private static SelectedPlace[] mplaces;
 	private static int[] index;
@@ -30,7 +27,6 @@ public class RoutePlanner {
 	 */
 	public static void setRoutePlanner(List<TriPlace> alist) {
 		list = alist;
-		num = list.size();
 	}
 
 
@@ -42,6 +38,7 @@ public class RoutePlanner {
 	 */
 	public static TriPlan planRoute() {
 		// return empty array list if input list is empty
+		int num = list.size();
 		if(num == 0) {
 			TriPlan.TriPlanBuilder myBuilder = new TriPlan.TriPlanBuilder();
 			return myBuilder.buildPlan();
@@ -78,6 +75,7 @@ public class RoutePlanner {
 	 * @param start		The start index to permute
 	 */
 	private static void permute(int[] index, int start){
+		int num = list.size();
 		// base case
 		if (start == num - 1){
 			// check the cost of current route
@@ -120,6 +118,7 @@ public class RoutePlanner {
 	 * @return			Cost of current route
 	 */
 	private static double getRouteCost(int[] index) {
+		int num = list.size();
 		double cost = 0;
 		// add weights
 		for(int i = 0; i < num - 1; i++) {

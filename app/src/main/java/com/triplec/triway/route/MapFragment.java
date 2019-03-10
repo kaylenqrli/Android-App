@@ -1,12 +1,14 @@
 package com.triplec.triway.route;
 
+import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.util.Log;
-import android.os.AsyncTask;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -22,6 +24,7 @@ import com.triplec.triway.common.TriPlan;
 import com.triplec.triway.mvp.MvpFragment;
 
 import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -37,10 +40,9 @@ import java.util.List;
  */
 public class MapFragment extends MvpFragment<RouteContract.Presenter> implements RouteContract.View {
 
-    MapView mMapView;
+    private MapView mMapView;
     private GoogleMap mMap;
-    List<LatLng> MarkerPoints;
-
+    private List<LatLng> MarkerPoints;
 
     public static MapFragment newInstance() {
 
@@ -165,23 +167,55 @@ public class MapFragment extends MvpFragment<RouteContract.Presenter> implements
             FetchUrl fetch = new FetchUrl();
             fetch.execute(url);
         }
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(MarkerPoints.get(0)));
-        mMap.animateCamera(CameraUpdateFactory.zoomTo(10));
+        if (MarkerPoints.size() > 0) {
+            mMap.moveCamera(CameraUpdateFactory.newLatLng(MarkerPoints.get(0)));
+            mMap.animateCamera(CameraUpdateFactory.zoomTo(10));
+        }
     }
 
     @Override
-    public void onError() {
-
+    public void onError(String message) {
+        Toast.makeText(getActivity(), "Failed to save plan. "
+                                    + message, Toast.LENGTH_SHORT).show();
     }
 
     @Override
-    public void onSavedSuccess() {
-
+    public void onSavedSuccess(String planName) {
+        Toast.makeText(getActivity(), "Plan saved as "
+                                    + planName, Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public String getMainPlace() {
-        return getArguments().getString("place");
+        if (getArguments() != null)
+            return getArguments().getString("place");
+        else
+            return "";
+    }
+    public void setTriPlanId(String id) {
+        presenter.setPlanId(id);
+    }
+    @Override
+    public String savePlans(String plan_name) {
+        return this.presenter.savePlans(plan_name);
+    }
+
+    @Override
+    public boolean addPlace(TriPlace newPlace) {
+        return this.presenter.addPlace(newPlace);
+    }
+
+    @Override
+    public ArrayList<String> getPassedPlan() {
+        if (getArguments() != null)
+            return getArguments().getStringArrayList("plan");
+        else
+            return null;
+    }
+
+    @Override
+    public Context getContext() {
+        return this.getActivity();
     }
 
     // Fetches data from url passed
