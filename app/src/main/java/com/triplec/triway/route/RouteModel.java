@@ -117,6 +117,11 @@ public class RouteModel implements RouteContract.Model {
     }
 
     @Override
+    public void setPlaceId(int i, String id) {
+        mTriPlan.getPlaceList().get(i).setID(id);
+    }
+
+    @Override
     public String savePlans(String planName) {
         String userId = user.getUid();
         String key = mTriPlan.getId();

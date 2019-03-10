@@ -34,6 +34,7 @@ public interface RouteContract {
         void onSavedSuccess(String planName);
         boolean addPlace(TriPlace newPlace);
         void setPlanId(String id);
+        void setPlaceId(int i, String id);
 
         Context getContext();
     }
@@ -45,5 +46,6 @@ public interface RouteContract {
         String savePlans(String planName);
         void setPlanId(String id);
         boolean addPlace(TriPlace newPlace);
+        void setPlaceId(int i, String id);
     }
 }
