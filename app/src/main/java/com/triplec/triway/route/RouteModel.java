@@ -49,7 +49,7 @@ class RouteModel implements RouteContract.Model {
     private FirebaseAuth mAuth;
     private FirebaseUser user;
     private Geocoder coder;
-    private int i;
+    private int index = 0;
     RouteModel() {
         placesRequestApi = RetrofitClient.getInstance().create(PlaceRequestApi.class);
         mDatabase = FirebaseDatabase.getInstance().getReference();
@@ -170,6 +170,11 @@ class RouteModel implements RouteContract.Model {
     }
 
     @Override
+    public void setPlaceId(int i, String id) {
+        mTriPlan.getPlaceList().get(i).setId(id);
+    }
+
+    @Override
     public void setPlanId(String id) {
         mTriPlan.setId(id);
     }
@@ -276,6 +281,12 @@ class RouteModel implements RouteContract.Model {
 
                 // Starts parsing data
                 routes = parser.parse(jObject);
+
+                ArrayList<String> currid = parser.getIDs();
+                setPlaceId(index,currid.get(0));
+                setPlaceId(index+1,currid.get(1));
+                index++;
+
                 Log.d("ParserTask","Executing routes");
                 Log.d("ParserTask",routes.toString());
             } catch (Exception e) {
