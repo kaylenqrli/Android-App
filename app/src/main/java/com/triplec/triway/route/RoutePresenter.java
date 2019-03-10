@@ -45,11 +45,6 @@ class RoutePresenter implements RouteContract.Presenter {
     }
 
     @Override
-    public void setPlaceId(int i, String id) {
-        this.model.setPlaceId(i,id);
-    }
-
-    @Override
     public boolean addPlace(TriPlace newPlace) {
         return this.model.addPlace(newPlace);
     }

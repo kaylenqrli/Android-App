@@ -1,34 +1,30 @@
 package com.triplec.triway.common;
 
 import com.google.android.gms.maps.model.LatLng;
-import com.google.gson.JsonObject;
 
 import org.json.JSONArray;
+
 import org.json.JSONException;
+
 import org.json.JSONObject;
+
 import java.util.ArrayList;
+
 import java.util.HashMap;
+
 import java.util.List;
 
 
 
 public class DataParser {
 
-    private ArrayList<String> IDs = new ArrayList<String>();
     /** Receives a JSONObject and returns a list of lists containing latitude and longitude */
     public List<List<HashMap<String,String>>> parse(JSONObject jObject){
         List<List<HashMap<String, String>>> routes = new ArrayList<>() ;
         JSONArray jRoutes;
         JSONArray jLegs;
         JSONArray jSteps;
-        JSONArray Jgeocoders;
         try {
-            Jgeocoders = jObject.getJSONArray("geocoded_waypoints");
-            for(int i=0; i<Jgeocoders.length();i++){
-                JSONObject object = Jgeocoders.getJSONObject(i);
-                String id = object.getString("place_id");
-                IDs.add(id);
-            }
             jRoutes = jObject.getJSONArray("routes");
             /** Traversing all routes */
             for(int i=0;i<jRoutes.length();i++){
@@ -59,10 +55,6 @@ public class DataParser {
         }catch (Exception e){
         }
         return routes;
-    }
-
-    public ArrayList<String> getIDs(){
-        return IDs;
     }
 
     /**
