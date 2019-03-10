@@ -25,6 +25,7 @@ import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
+import com.triplec.triway.common.TriPlan;
 import com.triplec.triway.route.ListFragment;
 import com.triplec.triway.route.MapFragment;
 
@@ -82,6 +83,10 @@ public class RouteActivity extends AppCompatActivity {
 
         mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager));
+        Bundle bundle = getIntent().getExtras();
+        TriPlan mPlan = (TriPlan)bundle.getSerializable("plan");
+        if (mPlan != null)
+            actionbar.setTitle(mPlan.getName());
     }
 
 
@@ -150,7 +155,10 @@ public class RouteActivity extends AppCompatActivity {
         alert.setView(inflator);
         final TextInputEditText plan_rename = inflator.findViewById(R.id.plan_rename_text);
         final TextInputLayout plan_rename_layout = inflator.findViewById(R.id.plan_rename_layout);
-        plan_rename.setText("My Plan");
+        if (actionbar.getTitle().equals("Try your way"))
+            plan_rename.setText("My Plan");
+        else
+            plan_rename.setText(actionbar.getTitle());
         plan_rename.requestFocusFromTouch();
         plan_rename.setSelection(0, plan_rename.getText().length());
         alert.setPositiveButton("Save", new DialogInterface.OnClickListener() {
