@@ -70,9 +70,8 @@ class RoutePresenter implements RouteContract.Presenter {
         this.view = view;
         this.model.setGeocoder(view.getContext());
         if (this.view.getMainPlace() == null || this.view.getMainPlace().length() == 0) {
-            TriPlan.TriPlanBuilder mBuilder= new TriPlan.TriPlanBuilder();
-            // TODO this.view.getPassedPlan() -> Plan
-            this.view.showRoutes(mBuilder.buildPlan());
+            this.model.upDatePlan(view.getPassedPlan());
+            this.view.showRoutes(view.getPassedPlan());
         }
         else {
             this.model.fetchData(this.view.getMainPlace());

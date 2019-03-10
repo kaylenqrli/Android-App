@@ -1,7 +1,10 @@
 package com.triplec.triway;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.button.MaterialButton;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,13 +13,19 @@ import android.widget.BaseAdapter;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.FirebaseDatabase;
+import com.triplec.triway.common.TriPlan;
+
 import java.util.ArrayList;
 
 public class SavedPlanAdapter extends BaseAdapter implements ListAdapter {
-    private ArrayList<String> list = new ArrayList<String>();
+    private ArrayList<TriPlan> list = new ArrayList<TriPlan>();
     private Context context;
 
-    public SavedPlanAdapter(ArrayList<String> list, Context context) {
+    public SavedPlanAdapter(ArrayList<TriPlan> list, Context context) {
         this.list = list;
         this.context = context;
     }
@@ -47,7 +56,7 @@ public class SavedPlanAdapter extends BaseAdapter implements ListAdapter {
 
         //Handle TextView and display string from your list
         TextView listItemText = (TextView)view.findViewById(R.id.card_title);
-        listItemText.setText(list.get(position));
+        listItemText.setText(list.get(position).getName());
 
         //Handle buttons and add onClickListeners
         MaterialButton deleteBtn = view.findViewById(R.id.card_delete);
@@ -56,17 +65,36 @@ public class SavedPlanAdapter extends BaseAdapter implements ListAdapter {
         deleteBtn.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                list.remove(position);
-                notifyDataSetChanged();
+                String key = list.get(position).getId();
+                FirebaseDatabase.getInstance().getReference().child("users")
+                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                        .child("plans").child(key).removeValue()
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                // Write was successful!
+                                list.remove(position);
+                                notifyDataSetChanged();
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                // Write failed
+                            }
+                        });
+
             }
         });
         editBtn.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
                 // start route activity
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("plan", list.get(position) );
                 Intent intent = new Intent(context, RouteActivity.class);
+                intent.putExtras(bundle);
                 context.startActivity(intent);
-                notifyDataSetChanged();
+                ((Activity)context).finish();
             }
         });
 
