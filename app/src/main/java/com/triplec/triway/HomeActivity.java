@@ -141,7 +141,7 @@ public class HomeActivity extends AppCompatActivity
         viewPager.setAutoPlay(true);
 
         // set up searchView
-        Places.initialize(getApplicationContext(), "AIzaSyDYKAtsvLfqJnT_t1VhAjvrLMb2cddLcVQ");
+        Places.initialize(getApplicationContext(), getResources().getString(R.string.google_maps_key));
         placesClient = Places.createClient(this);
         AutocompleteSessionToken token = AutocompleteSessionToken.newInstance();
 

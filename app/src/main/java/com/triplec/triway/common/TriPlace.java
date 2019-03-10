@@ -15,6 +15,7 @@ import com.google.android.libraries.places.api.net.FetchPlaceRequest;
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.gson.annotations.SerializedName;
 import com.triplec.triway.PlaceListAdapter;
+import com.triplec.triway.R;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -109,7 +110,7 @@ public class TriPlace implements Serializable {
     }
 
     private void fetchPhoto(Context context, PlaceListAdapter adapter) {
-        Places.initialize(context, "AIzaSyDYKAtsvLfqJnT_t1VhAjvrLMb2cddLcVQ");
+        Places.initialize(context,  context.getResources().getString(R.string.google_maps_key));
         PlacesClient placesClient = Places.createClient(context);
 
         List<Place.Field> fields = Arrays.asList(Place.Field.PHOTO_METADATAS);
