@@ -1,9 +1,7 @@
 package com.triplec.triway;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.ListView;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -12,14 +10,15 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.triplec.triway.common.TriPlace;
+import com.triplec.triway.common.TriPlan;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class SavedPlanActivity extends Activity {
-    ArrayList<String> listItems;
+    ArrayList<TriPlan> listItems;
     ListView listView;
     SavedPlanAdapter adapter;
     private FirebaseAuth mAuth;
@@ -29,7 +28,7 @@ public class SavedPlanActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_saved_plan);
 
-        listItems = new ArrayList<String>();
+        listItems = new ArrayList<TriPlan>();
         adapter = new SavedPlanAdapter(listItems, this);
 
         listView = (ListView) findViewById(R.id.listView);
@@ -49,9 +48,22 @@ public class SavedPlanActivity extends Activity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot snapm: dataSnapshot.getChildren()) {
-                    String namePlan = snapm.child("name").getValue(String.class);
-                    Log.d("plan name: ", namePlan);
-                    listItems.add(namePlan);
+                    TriPlan mPlan = snapm.getValue(TriPlan.class);
+                    List<TriPlace> newList = new ArrayList<TriPlace>();
+                    for ( DataSnapshot snapPlace : snapm.child("places").getChildren() ) {
+                        TriPlace mPlace = snapm.getValue(TriPlace.class);
+                        mPlace.setLongitude(snapPlace.child("longitude").getValue(Double.class));
+                        mPlace.setLatitude(snapPlace.child("latitude").getValue(Double.class));
+                        mPlace.setCity(snapPlace.child("city").getValue(String.class));
+                        mPlace.setName(snapPlace.child("name").getValue(String.class));
+                        mPlace.setPostalCode(snapPlace.child("postalCode").getValue(String.class));
+                        mPlace.setStateCode(snapPlace.child("stateCode").getValue(String.class));
+                        mPlace.setStreet(snapPlace.child("street").getValue(String.class));
+                        newList.add(mPlace);
+                    }
+                    mPlan.setList(newList);
+                    mPlan.setId(snapm.getKey());
+                    listItems.add(mPlan);
                 }
                 adapter.notifyDataSetChanged();
             }
@@ -63,8 +75,8 @@ public class SavedPlanActivity extends Activity {
 
     }
 
-    private void addItem(String name) {
-        listItems.add(name);
-        adapter.notifyDataSetChanged();
-    }
+//    private void addItem(String name) {
+//        listItems.add(name);
+//        adapter.notifyDataSetChanged();
+//    }
 }

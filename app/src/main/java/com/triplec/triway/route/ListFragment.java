@@ -21,8 +21,6 @@ import com.triplec.triway.common.TriPlace;
 import com.triplec.triway.common.TriPlan;
 import com.triplec.triway.mvp.MvpFragment;
 
-import java.util.ArrayList;
-
 /**
  * A simple {@link Fragment} subclass.
  */
@@ -141,9 +139,9 @@ public class ListFragment extends MvpFragment<RouteContract.Presenter> implement
     }
 
     @Override
-    public ArrayList<String> getPassedPlan() {
+    public TriPlan getPassedPlan() {
         if (getArguments() != null)
-            return getArguments().getStringArrayList("plan");
+            return (TriPlan) getArguments().getSerializable("plan");
         else
             return null;
     }
