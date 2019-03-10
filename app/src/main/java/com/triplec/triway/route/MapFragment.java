@@ -112,7 +112,7 @@ public class MapFragment extends MvpFragment<RouteContract.Presenter> implements
             return;
         for (int i=0; i<resultPlaces.size(); i++) {
             markerPoints.add(new LatLng(resultPlaces.get(i).getLatitude(),
-                                                    resultPlaces.get(i).getLongitude()));
+                                resultPlaces.get(i).getLongitude()));
         }
 
         mMapView.getMapAsync(new OnMapReadyCallback() {

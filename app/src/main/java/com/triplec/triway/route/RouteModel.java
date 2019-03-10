@@ -49,6 +49,7 @@ class RouteModel implements RouteContract.Model {
     private FirebaseAuth mAuth;
     private FirebaseUser user;
     private Geocoder coder;
+    private int i;
     RouteModel() {
         placesRequestApi = RetrofitClient.getInstance().create(PlaceRequestApi.class);
         mDatabase = FirebaseDatabase.getInstance().getReference();
