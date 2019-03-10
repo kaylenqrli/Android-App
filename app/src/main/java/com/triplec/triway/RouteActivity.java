@@ -23,6 +23,8 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
@@ -157,6 +159,7 @@ public class RouteActivity extends AppCompatActivity {
         final TextInputEditText plan_rename = inflator.findViewById(R.id.plan_rename_text);
         final TextInputLayout plan_rename_layout = inflator.findViewById(R.id.plan_rename_layout);
         plan_rename.setText("My Plan");
+        plan_rename.requestFocusFromTouch();
         plan_rename.setSelection(0, plan_rename.getText().length());
         alert.setPositiveButton("Save", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton)
@@ -172,7 +175,9 @@ public class RouteActivity extends AppCompatActivity {
                 dialog.cancel();
             }
         });
-        alert.show();
+        AlertDialog alertDialog = alert.create();
+        alertDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+        alertDialog.show();
     }
 
     /**
