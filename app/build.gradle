@@ -30,6 +30,7 @@ ext {
     googleVersion = '26.1.0'
     retrofitVersion = '2.5.0'
     rxjavaVersion = '2.0.1'
+    okhttpVersion = '3.13.1'
 }
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
@@ -41,6 +42,7 @@ dependencies {
     implementation 'com.google.android.gms:play-services-maps:16.0.0'
     implementation 'com.google.firebase:firebase-core:16.0.4'
     implementation 'com.google.firebase:firebase-auth:16.0.4'
+    implementation 'com.google.firebase:firebase-database:16.0.6'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
     implementation 'com.google.android.gms:play-services-maps:16.0.0'
@@ -53,7 +55,7 @@ dependencies {
     implementation "com.squareup.retrofit2:retrofit:${retrofitVersion}"
     implementation "com.squareup.retrofit2:converter-gson:${retrofitVersion}"
     implementation "com.squareup.retrofit2:adapter-rxjava2:${retrofitVersion}"
-    implementation 'com.squareup.okhttp3:okhttp:3.13.1'
+    implementation "com.squareup.okhttp3:okhttp:${okhttpVersion}"
 }
 
 apply plugin: 'com.google.gms.google-services'

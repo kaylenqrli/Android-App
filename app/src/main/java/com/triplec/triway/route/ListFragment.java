@@ -1,6 +1,7 @@
 package com.triplec.triway.route;
 
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.SparseBooleanArray;
@@ -19,6 +20,8 @@ import com.triplec.triway.R;
 import com.triplec.triway.common.TriPlace;
 import com.triplec.triway.common.TriPlan;
 import com.triplec.triway.mvp.MvpFragment;
+
+import java.util.ArrayList;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -109,17 +112,48 @@ public class ListFragment extends MvpFragment<RouteContract.Presenter> implement
     }
 
     @Override
-    public void onError() {
-
+    public void onError(String message) {
+        Toast.makeText(getActivity(), "Failed to save plan. "
+                + message, Toast.LENGTH_SHORT).show();
     }
 
     @Override
-    public void onSavedSuccess() {
-        Toast.makeText(getContext(), "Plan has been successfully saved", Toast.LENGTH_SHORT);
+    public void onSavedSuccess(String planName) {
+        Toast.makeText(getActivity(), "Plan saved as " + planName, Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public String getMainPlace() {
-        return getArguments().getString("place");
+        if (getArguments() != null)
+            return getArguments().getString("place");
+        else
+            return "";
+    }
+
+    @Override
+    public String savePlans(String plan_name) {
+        return this.presenter.savePlans(plan_name);
+    }
+
+    @Override
+    public boolean addPlace(TriPlace newPlace) {
+        return this.presenter.addPlace(newPlace);
+    }
+
+    @Override
+    public ArrayList<String> getPassedPlan() {
+        if (getArguments() != null)
+            return getArguments().getStringArrayList("plan");
+        else
+            return null;
+    }
+
+    @Override
+    public Context getContext() {
+        return this.getActivity();
+    }
+
+    public void setTriPlanId(String id) {
+        presenter.setPlanId(id);
     }
 }
