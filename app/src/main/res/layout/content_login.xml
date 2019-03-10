@@ -148,10 +148,11 @@
                     android:id="@+id/login_google"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
-                    android:scaleType="fitXY"
-                    android:src="@drawable/auth_service_google"
+                    android:layout_centerHorizontal="true"
                     android:background="@null"
-                    android:layout_centerHorizontal="true"/>
+                    android:onClick="googleSignIn"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/auth_service_google" />
 
                 <ImageButton
                     android:id="@+id/login_twitter"

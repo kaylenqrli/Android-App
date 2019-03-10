@@ -28,6 +28,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.SignInButton;
+import com.google.android.gms.common.api.Api;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.AutocompletePrediction;
@@ -69,8 +78,10 @@ public class HomeActivity extends AppCompatActivity
     AutoCompleteTextView search;
     TextView user_name_tv, user_email_tv;
     boolean updated = false;
+    private static boolean isclicked = false;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
     SharedPreferences sp;
+    GoogleSignInClient mGoogleSignInClient;
 
     private PlacesClient placesClient;
     private ArrayAdapter<String> madapter;
@@ -80,6 +91,12 @@ public class HomeActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setupFirebaseListener();
+
+        // used to logout user's google account if the user uses google acount to login
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestEmail()
+                .build();
+        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
 
         // set up toolbar
         toolbar = (Toolbar) findViewById(R.id.toolbar_main);
@@ -227,6 +244,8 @@ public class HomeActivity extends AppCompatActivity
             case R.id.action_signout:
                 Toast.makeText(HomeActivity.this,"Sign Out Successful", Toast.LENGTH_SHORT).show();
                 FirebaseAuth.getInstance().signOut();
+                // logout user's google account if user uses google account to login
+                mGoogleSignInClient.signOut();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -237,6 +256,7 @@ public class HomeActivity extends AppCompatActivity
     public void onStart(){
         super.onStart();
         FirebaseAuth.getInstance().addAuthStateListener(mAuthStateListener);
+        isclicked = false;
     }
 
     @Override
@@ -245,6 +265,12 @@ public class HomeActivity extends AppCompatActivity
         if(mAuthStateListener != null){
             FirebaseAuth.getInstance().removeAuthStateListener(mAuthStateListener);
         }
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        isclicked = false;
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -262,6 +288,8 @@ public class HomeActivity extends AppCompatActivity
                 break;
             case R.id.drawer_sign_out:
                 FirebaseAuth.getInstance().signOut();
+                // logout user's google account if user uses google account to login
+                mGoogleSignInClient.signOut();
                 break;
         }
 
@@ -284,6 +312,12 @@ public class HomeActivity extends AppCompatActivity
     }
 
     public void gotoRoute(String place) {
+        if( isclicked ){
+            return;
+        }
+        else{
+            isclicked = true;
+        }
         Toast.makeText(HomeActivity.this,
                 "Searching "+ place + "...", Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(HomeActivity.this, RouteActivity.class);
@@ -291,6 +325,9 @@ public class HomeActivity extends AppCompatActivity
         startActivity(intent);
     }
 
+    /**
+     * check if the auth state has changed, if auth logged out, go back to login activity
+     */
     private void setupFirebaseListener(){
         mAuthStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
@@ -310,5 +347,17 @@ public class HomeActivity extends AppCompatActivity
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
         finish();
+    }
+
+    public static boolean getIsClicked(){
+        return isclicked;
+    }
+
+    public static void setisClickedTrue(){
+        isclicked = true;
+    }
+
+    public static void setIsclickedFalse(){
+        isclicked = false;
     }
 }
