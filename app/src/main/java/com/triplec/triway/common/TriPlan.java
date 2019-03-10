@@ -1,17 +1,17 @@
 package com.triplec.triway.common;
 
-import android.os.Parcelable;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TriPlan {
+public class TriPlan implements Serializable{
     private List<TriPlace> list;
     //private TriPlace triPlace;
     private String name;
     private String planId;
+    private TriPlan() {
 
+    }
     private TriPlan(TriPlanBuilder builder){
         //name = p;
         planId = "";
@@ -19,6 +19,9 @@ public class TriPlan {
     }
     public List<TriPlace> getPlaceList() {
         return this.list;
+    }
+    public void setList(List<TriPlace> newList) {
+        list = newList;
     }
     private List<TriPlace> getTopFive(List<TriPlace> allPlaces){
         if (allPlaces.size() < 5)
@@ -77,7 +80,7 @@ public class TriPlan {
     public static class TriPlanBuilder {
         private List<TriPlace> list;
         public TriPlanBuilder() {
-            list = new ArrayList<TriPlace>();
+            list = new ArrayList<>();
         }
         public TriPlanBuilder addPlace(TriPlace p){
             list.add(p);

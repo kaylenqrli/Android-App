@@ -2,8 +2,12 @@ package com.triplec.triway.route;
 
 import android.content.Context;
 
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.triplec.triway.common.TriPlace;
 import com.triplec.triway.common.TriPlan;
+
+import java.util.List;
 
 class RoutePresenter implements RouteContract.Presenter {
     private RouteModel model;
@@ -61,6 +65,18 @@ class RoutePresenter implements RouteContract.Presenter {
     }
 
     @Override
+    public void fetchRoutes(List<LatLng> allMarkerPoints) {
+        this.model.fetchRoutes(allMarkerPoints);
+    }
+
+    @Override
+    public void addPolyline(PolylineOptions lineOptions) {
+        if (view != null) {
+            view.addPolyline(lineOptions);
+        }
+    }
+
+    @Override
     public void onCreate() {
 
     }
@@ -75,9 +91,8 @@ class RoutePresenter implements RouteContract.Presenter {
         this.view = view;
         this.model.setGeocoder(view.getContext());
         if (this.view.getMainPlace() == null || this.view.getMainPlace().length() == 0) {
-            TriPlan.TriPlanBuilder mBuilder= new TriPlan.TriPlanBuilder();
-            // TODO this.view.getPassedPlan() -> Plan
-            this.view.showRoutes(mBuilder.buildPlan());
+            this.model.updatePlan(view.getPassedPlan());
+            this.view.showRoutes(view.getPassedPlan());
         }
         else {
             this.model.fetchData(this.view.getMainPlace());

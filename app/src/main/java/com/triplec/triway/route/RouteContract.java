@@ -2,11 +2,13 @@ package com.triplec.triway.route;
 
 import android.content.Context;
 
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.triplec.triway.common.TriPlace;
 import com.triplec.triway.common.TriPlan;
 import com.triplec.triway.mvp.MvpContract;
 
-import java.util.ArrayList;
+import java.util.List;
 
 
 public interface RouteContract {
@@ -21,9 +23,11 @@ public interface RouteContract {
         String savePlans(String plan_name);
         boolean addPlace(TriPlace newPlace);
 
-        ArrayList<String> getPassedPlan();
+        TriPlan getPassedPlan();
 
         Context getContext();
+
+        void addPolyline(PolylineOptions lineOptions);
     }
 
     interface Presenter extends MvpContract.Presenter<View, Model> {
@@ -34,9 +38,12 @@ public interface RouteContract {
         void onSavedSuccess(String planName);
         boolean addPlace(TriPlace newPlace);
         void setPlanId(String id);
-        void setPlaceId(int i, String id);
 
         Context getContext();
+
+        void fetchRoutes(List<LatLng> allMarkerPoints);
+
+        void addPolyline(PolylineOptions lineOptions);
     }
 
     interface Model extends MvpContract.Model<Presenter> {
@@ -46,6 +53,8 @@ public interface RouteContract {
         String savePlans(String planName);
         void setPlanId(String id);
         boolean addPlace(TriPlace newPlace);
-        void setPlaceId(int i, String id);
+        void updatePlan(TriPlan newPlan);
+
+        void fetchRoutes(List<LatLng> allMarkerPoints);
     }
 }

@@ -4,7 +4,6 @@ import android.app.SearchManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.TextInputEditText;
@@ -18,23 +17,16 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
-
-import com.google.android.libraries.places.api.net.PlacesClient;
-import com.triplec.triway.common.TriPlan;
-import com.triplec.triway.mvp.MvpFragment;
 import com.triplec.triway.route.ListFragment;
 import com.triplec.triway.route.MapFragment;
-
-import java.util.ArrayList;
 
 
 public class RouteActivity extends AppCompatActivity {
@@ -68,7 +60,12 @@ public class RouteActivity extends AppCompatActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
+        toolbar.setNavigationOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
         actionbar = getSupportActionBar();
         actionbar.setHomeAsUpIndicator(R.drawable.ic_arrow_back_white_24dp);
         actionbar.setDisplayHomeAsUpEnabled(true);
@@ -154,6 +151,7 @@ public class RouteActivity extends AppCompatActivity {
         final TextInputEditText plan_rename = inflator.findViewById(R.id.plan_rename_text);
         final TextInputLayout plan_rename_layout = inflator.findViewById(R.id.plan_rename_layout);
         plan_rename.setText("My Plan");
+        plan_rename.requestFocusFromTouch();
         plan_rename.setSelection(0, plan_rename.getText().length());
         alert.setPositiveButton("Save", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton)
@@ -184,7 +182,9 @@ public class RouteActivity extends AppCompatActivity {
                 dialog.cancel();
             }
         });
-        alert.show();
+        AlertDialog alertDialog = alert.create();
+        alertDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+        alertDialog.show();
     }
     private Fragment findFragmentByPosition(int position) {
         FragmentPagerAdapter fragmentPagerAdapter = getFragmentPagerAdapter();

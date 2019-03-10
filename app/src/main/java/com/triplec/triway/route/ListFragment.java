@@ -15,18 +15,17 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.triplec.triway.PlaceListAdapter;
 import com.triplec.triway.R;
 import com.triplec.triway.common.TriPlace;
 import com.triplec.triway.common.TriPlan;
 import com.triplec.triway.mvp.MvpFragment;
 
-import java.util.ArrayList;
-
 /**
  * A simple {@link Fragment} subclass.
  */
-public class ListFragment extends MvpFragment<RouteContract.Presenter> implements RouteContract.View{
+        public class ListFragment extends MvpFragment<RouteContract.Presenter> implements RouteContract.View{
     PlaceListAdapter adapter;
     ListView list;
 
@@ -113,8 +112,7 @@ public class ListFragment extends MvpFragment<RouteContract.Presenter> implement
 
     @Override
     public void onError(String message) {
-        Toast.makeText(getActivity(), "Failed to save plan. "
-                + message, Toast.LENGTH_SHORT).show();
+        Toast.makeText(getActivity(), "Error: " + message, Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -141,9 +139,9 @@ public class ListFragment extends MvpFragment<RouteContract.Presenter> implement
     }
 
     @Override
-    public ArrayList<String> getPassedPlan() {
+    public TriPlan getPassedPlan() {
         if (getArguments() != null)
-            return getArguments().getStringArrayList("plan");
+            return (TriPlan) getArguments().getSerializable("plan");
         else
             return null;
     }
@@ -151,6 +149,11 @@ public class ListFragment extends MvpFragment<RouteContract.Presenter> implement
     @Override
     public Context getContext() {
         return this.getActivity();
+    }
+
+    @Override
+    public void addPolyline(PolylineOptions lineOptions) {
+        return;
     }
 
     public void setTriPlanId(String id) {
