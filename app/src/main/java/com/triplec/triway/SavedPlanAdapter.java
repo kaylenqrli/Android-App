@@ -1,5 +1,6 @@
 package com.triplec.triway;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -93,7 +94,7 @@ public class SavedPlanAdapter extends BaseAdapter implements ListAdapter {
                 Intent intent = new Intent(context, RouteActivity.class);
                 intent.putExtras(bundle);
                 context.startActivity(intent);
-                notifyDataSetChanged();
+                ((Activity)context).finish();
             }
         });
 

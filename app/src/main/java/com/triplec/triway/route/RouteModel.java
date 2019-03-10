@@ -77,7 +77,7 @@ import retrofit2.Response;
                 // longt, lat
         paramMap.put("location", lng + "," +lat);
         //paramMap.put("q", "san diego");
-        paramMap.put("sort", "distance");
+        paramMap.put("sort", "relevance");
         paramMap.put("feedback", "false");
         paramMap.put("key", "eG53wKfQK8DuhGn4xGwc5evrgBpfwx4w");
         // this sets the category to tourist attractions
@@ -120,7 +120,7 @@ import retrofit2.Response;
     public String savePlans(String planName) {
         String userId = user.getUid();
         String key = mTriPlan.getId();
-        System.out.println(key);
+        mTriPlan.setName(planName);
         // This plan has not been saved before
         if (key.length() == 0) {
             key = mDatabase.child("users").child(userId).child("plans").push().getKey();
@@ -136,11 +136,11 @@ import retrofit2.Response;
                         presenter.onSavedSuccess(mTriPlan.getName());
                     }
                 }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                // Write failed
-                presenter.onError(e.getMessage());
-            }
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        // Write failed
+                        presenter.onError(e.getMessage());
+                    }
         });
         mDatabase.child("users").child(userId).child("plans").child(finalKey).child("places")
                 .setValue(mTriPlan.getPlaceList())
@@ -152,11 +152,11 @@ import retrofit2.Response;
                         presenter.onSavedSuccess(mTriPlan.getName());
                     }
                 }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                // Write failed
-                presenter.onError(e.getMessage());
-            }
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        // Write failed
+                        presenter.onError(e.getMessage());
+                    }
         });
         mTriPlan.setId(finalKey);
         return mTriPlan.getId();
