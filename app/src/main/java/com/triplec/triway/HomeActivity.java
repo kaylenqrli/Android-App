@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.location.Address;
 import android.location.Geocoder;
-import android.nfc.Tag;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -14,16 +13,21 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -34,6 +38,13 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.model.AutocompletePrediction;
+import com.google.android.libraries.places.api.model.AutocompleteSessionToken;
+import com.google.android.libraries.places.api.model.RectangularBounds;
+import com.google.android.libraries.places.api.model.TypeFilter;
+import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest;
+import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.triplec.triway.common.RoutePlanner;
@@ -64,13 +75,16 @@ public class HomeActivity extends AppCompatActivity
     NavigationView navigationView;
     AutoSlideViewPager viewPager;
     PagerAdapter adapter;
-    EditText search;
+    AutoCompleteTextView search;
     TextView user_name_tv, user_email_tv;
     boolean updated = false;
     private static boolean isclicked = false;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
     SharedPreferences sp;
     GoogleSignInClient mGoogleSignInClient;
+
+    private PlacesClient placesClient;
+    private ArrayAdapter<String> madapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -127,7 +141,15 @@ public class HomeActivity extends AppCompatActivity
         viewPager.setAutoPlay(true);
 
         // set up searchView
-        search = (EditText) findViewById(R.id.searchView);
+        Places.initialize(getApplicationContext(), getResources().getString(R.string.google_maps_key));
+        placesClient = Places.createClient(this);
+        AutocompleteSessionToken token = AutocompleteSessionToken.newInstance();
+
+        search = (AutoCompleteTextView) findViewById(R.id.searchView);
+        madapter = new ArrayAdapter<String>(HomeActivity.this,
+                android.R.layout.simple_dropdown_item_1line);
+        search.setAdapter(madapter);
+
         search.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -139,6 +161,43 @@ public class HomeActivity extends AppCompatActivity
                 return handled;
             }
         });
+        search.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                // Use the builder to create a FindAutocompletePredictionsRequest.
+                FindAutocompletePredictionsRequest request = FindAutocompletePredictionsRequest.builder()
+                        // Call either setLocationBias() OR setLocationRestriction().
+                        //.setLocationRestriction(bounds)
+                        .setTypeFilter(TypeFilter.CITIES)
+                        .setSessionToken(token)
+                        .setQuery(search.getText().toString())
+                        .build();
+
+                placesClient.findAutocompletePredictions(request).addOnSuccessListener((response) -> {
+                    madapter.clear();
+                    for (AutocompletePrediction prediction : response.getAutocompletePredictions()) {
+                        //Log.i("result: ", prediction.getPlaceId());
+                        madapter.add(prediction.getPrimaryText(null).toString());
+                        Log.i("result", prediction.getPrimaryText(null).toString());
+                    }
+                    madapter.notifyDataSetChanged();
+                }).addOnFailureListener((exception) -> {
+                    if (exception instanceof ApiException) {
+                        ApiException apiException = (ApiException) exception;
+                        Toast.makeText(HomeActivity.this, "Not found :(", Toast.LENGTH_SHORT).show();
+                        Log.e("not found", "Place not found: " + apiException.getMessage());
+                    }
+                });
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {}
+        });
+
     }
 
     private void updateUserInfo() {
