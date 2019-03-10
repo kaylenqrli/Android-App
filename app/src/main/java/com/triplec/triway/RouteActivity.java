@@ -4,7 +4,6 @@ import android.app.SearchManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.TextInputEditText;
@@ -18,25 +17,16 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
-import android.view.inputmethod.InputMethodManager;
-import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
-
-import com.google.android.libraries.places.api.net.PlacesClient;
-import com.triplec.triway.common.TriPlan;
-import com.triplec.triway.mvp.MvpFragment;
 import com.triplec.triway.route.ListFragment;
 import com.triplec.triway.route.MapFragment;
-
-import java.util.ArrayList;
 
 
 public class RouteActivity extends AppCompatActivity {

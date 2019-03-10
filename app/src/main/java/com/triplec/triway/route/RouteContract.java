@@ -6,8 +6,6 @@ import com.triplec.triway.common.TriPlace;
 import com.triplec.triway.common.TriPlan;
 import com.triplec.triway.mvp.MvpContract;
 
-import java.util.ArrayList;
-
 
 public interface RouteContract {
 
@@ -21,7 +19,7 @@ public interface RouteContract {
         String savePlans(String plan_name);
         boolean addPlace(TriPlace newPlace);
 
-        ArrayList<String> getPassedPlan();
+        TriPlan getPassedPlan();
 
         Context getContext();
     }
@@ -45,5 +43,6 @@ public interface RouteContract {
         String savePlans(String planName);
         void setPlanId(String id);
         boolean addPlace(TriPlace newPlace);
+        void upDatePlan(TriPlan newPlan);
     }
 }
