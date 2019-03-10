@@ -80,14 +80,13 @@ class RouteModel implements RouteContract.Model {
         if (coder == null)
             return;
         LatLng latLng = getFromName(place);
-        Map<String, String> paramMap = new HashMap<>();
         if (latLng == null) {
             presenter.onError(place + " can't be found.");
             return;
         }
         double lat = latLng.latitude;
         double lng = latLng.longitude;
-
+        Map<String, String> paramMap = new HashMap<>();
         // longt, lat
         paramMap.put("location", lng + "," +lat);
         //paramMap.put("q", "san diego");
@@ -165,12 +164,11 @@ class RouteModel implements RouteContract.Model {
                         presenter.onError("Failed to save plan. " + e.getMessage());
                     }
         });
-        mTriPlan.setId(finalKey);
+        setPlanId(finalKey);
         return mTriPlan.getId();
     }
 
-    @Override
-    public void setPlaceId(int i, String id) {
+    private void setPlaceId(int i, String id) {
         mTriPlan.getPlaceList().get(i).setId(id);
     }
 

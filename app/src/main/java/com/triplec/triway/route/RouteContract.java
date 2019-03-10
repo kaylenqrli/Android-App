@@ -54,7 +54,6 @@ public interface RouteContract {
         void setPlanId(String id);
         boolean addPlace(TriPlace newPlace);
         void updatePlan(TriPlan newPlan);
-        void setPlaceId(int i, String id);
         void fetchRoutes(List<LatLng> allMarkerPoints);
     }
 }
