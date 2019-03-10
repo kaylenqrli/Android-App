@@ -33,4 +33,7 @@
     <string name="signup_title">Sign up</string>
     <string name="signup_tellus">...Tell us some basic information</string>
     <string name="sign_out">Sign out</string>
+    <string name="facebook_app_id">[APP_ID]</string> <string name="fb_login_protocol_scheme">fb[APP_ID]</string>
+
+
 </resources>
