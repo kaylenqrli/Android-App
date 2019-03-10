@@ -1,8 +1,7 @@
 package com.triplec.triway.route;
 
-import android.content.res.Resources;
 import android.content.Context;
-import android.os.AsyncTask;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -10,12 +9,10 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PagerSnapHelper;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SnapHelper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.util.Log;
-import android.os.AsyncTask;
-import android.widget.AdapterView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -27,23 +24,12 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.triplec.triway.MapListAdapter;
-import com.triplec.triway.PlaceListAdapter;
 import com.triplec.triway.R;
-import com.triplec.triway.common.DataParser;
 import com.triplec.triway.common.TriPlace;
 import com.triplec.triway.common.TriPlan;
 import com.triplec.triway.mvp.MvpFragment;
 
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
@@ -103,7 +89,6 @@ public class MapFragment extends MvpFragment<RouteContract.Presenter> implements
                     // TODO: This is the item that is focused, update marker
                     int itemSelected = ((LinearLayoutManager) layoutManager).findFirstVisibleItemPosition();
                     mMap.moveCamera(CameraUpdateFactory.newLatLng(markerPoints.get(itemSelected)));
-//                    Toast.makeText(getContext(), "Item " + itemSelected + " is selected", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -111,61 +96,6 @@ public class MapFragment extends MvpFragment<RouteContract.Presenter> implements
         snapHelper.attachToRecyclerView(recyclerView);
 
         return view;
-
-    }
-
-    /* following helper methods from: https://github.com/hiteshbpatel/Android_Blog_Projects*/
-    // generate url base on two locations
-    private String getUrl(LatLng origin, LatLng dest) {
-        // Origin of route
-        String str_origin = "origin=" + origin.latitude + "," + origin.longitude;
-        // Destination of route
-        String str_dest = "destination=" + dest.latitude + "," + dest.longitude;
-        // Mode
-        String mode = "mode=" + "driving";
-        // sensor
-        String sensor = "sensor=false";
-        // Building the parameters to the web service
-        String parameters = str_origin + "&" + str_dest + "&" + mode;
-        // Output format
-        String output = "json";
-        // Building the url to the web service
-        String url = "https://maps.googleapis.com/maps/api/directions/" + output + "?"
-                                + parameters + "&key=" + "AIzaSyCmALKlEfyw3eOrW1jPnf6_xrrS7setOFU";
-        return url;
-    }
-
-    /**
-     * A method to download json data from url
-     */
-    private String downloadUrl(String strUrl) throws IOException {
-        String data = "";
-        InputStream iStream = null;
-        HttpURLConnection urlConnection = null;
-        try {
-            URL url = new URL(strUrl);
-            // Creating an http connection to communicate with url
-            urlConnection = (HttpURLConnection) url.openConnection();
-            // Connecting to url
-            urlConnection.connect();
-            // Reading data from url
-            iStream = urlConnection.getInputStream();
-            BufferedReader br = new BufferedReader(new InputStreamReader(iStream));
-            StringBuffer sb = new StringBuffer();
-            String line = "";
-            while ((line = br.readLine()) != null) {
-                sb.append(line);
-            }
-            data = sb.toString();
-            Log.d("downloadUrl", data.toString());
-            br.close();
-        } catch (Exception e) {
-            Log.d("Exception", e.toString());
-        } finally {
-            iStream.close();
-            urlConnection.disconnect();
-        }
-        return data;
     }
 
     @Override
@@ -178,86 +108,71 @@ public class MapFragment extends MvpFragment<RouteContract.Presenter> implements
         // testing data
         markerPoints= new ArrayList<LatLng>();
         List<TriPlace> resultPlaces = placePlan.getPlaceList();
-        if (resultPlaces == null)
+        if (resultPlaces == null || resultPlaces.size() == 0)
             return;
         for (int i=0; i<resultPlaces.size(); i++) {
-            Log.d("Get: ", String.valueOf(resultPlaces.get(i).getLatitude()) + "  " + String.valueOf(resultPlaces.get(i).getLongitude()));
             markerPoints.add(new LatLng(resultPlaces.get(i).getLatitude(),
                                                     resultPlaces.get(i).getLongitude()));
         }
-//        Bundle bundle = getArguments();
-//        ArrayList<String> list = bundle.getStringArrayList("strll");
-//        for(int i=0; i<list.size(); i++) {
-//            String[] ll = list.get(i).split(" ");
-//            double lat = Double.valueOf(ll[0]);
-//            double lng = Double.valueOf(ll[1]);
-//            MarkerPoints.add(new LatLng(lat, lng));
-//        }
 
         mMapView.getMapAsync(new OnMapReadyCallback() {
             @Override
             public void onMapReady(GoogleMap googleMap) {
-              // pin all the places to the map
-              for(int i=0; i< markerPoints.size(); i++){
-                  MarkerOptions options = new MarkerOptions();
-                  options.position(markerPoints.get(i));
-                  Marker marker = mMap.addMarker(options);
-                  marker.setTag(i);
-                  markers[i] = marker;
-              }
+                // pin all the places to the map
+                for(int i=0; i< markerPoints.size(); i++){
+                    MarkerOptions options = new MarkerOptions();
+                    options.position(markerPoints.get(i));
+                    Marker marker = mMap.addMarker(options);
+                    marker.setTag(i);
+                    markers[i] = marker;
+                }
 
-              mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
-                  @Override
-                  public void onMapClick(LatLng latLng) {
+                mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+                    @Override
+                    public void onMapClick(LatLng latLng) {
                       recyclerView.setVisibility(recyclerView.INVISIBLE);
                       mMap.setPadding(0,0,0,0);
-                  }
-              });
+                    }
+                });
 
-              mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-                  @Override
-                  public boolean onMarkerClick(Marker marker) {
+                mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+                    @Override
+                    public boolean onMarkerClick(Marker marker) {
                       int markerPosition = 0;
                       try {
                           markerPosition = (Integer) marker.getTag();
                       } catch (NullPointerException e) {
                           Toast.makeText(getContext(), "Marker has no Tag", Toast.LENGTH_SHORT).show();
                       }
-      //                Toast.makeText(getContext(), "Marker " + markerPosition + " is selected", Toast.LENGTH_SHORT).show();
+                    //                Toast.makeText(getContext(), "Marker " + markerPosition + " is selected", Toast.LENGTH_SHORT).show();
                       recyclerView.setVisibility(recyclerView.VISIBLE);
                       mMap.setPadding(0,0,0,(int) (200 * Resources.getSystem().getDisplayMetrics().density));
                       recyclerView.scrollToPosition(markerPosition);
                       return false;
-                  }
-              });
+                    }
+                });
+                fetchRoutes(markerPoints);
 
-              for(int i=0; i< markerPoints.size()-1; i++){
-                  LatLng from = markerPoints.get(i);
-                  LatLng to = markerPoints.get(i+1);
-                  String url = getUrl(from,to);
-                  FetchUrl fetch = new FetchUrl();
-                  fetch.execute(url);
-              }
-              mMap.moveCamera(CameraUpdateFactory.newLatLng(markerPoints.get(0)));
-              mMap.animateCamera(CameraUpdateFactory.zoomTo(10));
+                mMap.moveCamera(CameraUpdateFactory.newLatLng(markerPoints.get(0)));
+                mMap.animateCamera(CameraUpdateFactory.zoomTo(10));
 
-              TriPlan.TriPlanBuilder builder = new TriPlan.TriPlanBuilder();
-              builder.addPlaceList(placePlan.getPlaceList());
-              TriPlan plan = builder.buildPlan();
-              mapListAdapter = new MapListAdapter(plan.getPlaceList());
-              recyclerView.setAdapter(mapListAdapter);
+                TriPlan.TriPlanBuilder builder = new TriPlan.TriPlanBuilder();
+                builder.addPlaceList(placePlan.getPlaceList());
+                TriPlan plan = builder.buildPlan();
+                mapListAdapter = new MapListAdapter(plan.getPlaceList());
+                recyclerView.setAdapter(mapListAdapter);
 
-              if (markerPoints.size() > 0) {
-                  mMap.moveCamera(CameraUpdateFactory.newLatLng(markerPoints.get(0)));
-                  mMap.animateCamera(CameraUpdateFactory.zoomTo(10));
-              }
+                if (markerPoints.size() > 0) {
+                    mMap.moveCamera(CameraUpdateFactory.newLatLng(markerPoints.get(0)));
+                    mMap.animateCamera(CameraUpdateFactory.zoomTo(10));
+                }
             }
         });
 
     }
     @Override
     public void onError(String message) {
-        Toast.makeText(getActivity(), "Failed to save plan. "
+        Toast.makeText(getActivity(), "Error: "
                                     + message, Toast.LENGTH_SHORT).show();
     }
 
@@ -266,7 +181,9 @@ public class MapFragment extends MvpFragment<RouteContract.Presenter> implements
         Toast.makeText(getActivity(), "Plan saved as "
                                     + planName, Toast.LENGTH_SHORT).show();
     }
-
+    private void fetchRoutes(List<LatLng> allMarkerPoints) {
+        this.presenter.fetchRoutes(allMarkerPoints);
+    }
     @Override
     public String getMainPlace() {
         if (getArguments() != null)
@@ -302,103 +219,20 @@ public class MapFragment extends MvpFragment<RouteContract.Presenter> implements
         return this.getActivity();
     }
 
+
+    @Override
+    public void addPolyline(PolylineOptions lineOptions) {
+        mMap.addPolyline(lineOptions);
+    }
+
     @Override
     public void onMapReady(GoogleMap googleMap) {
 
     }
 
-    // Fetches data from url passed
 
-    private class FetchUrl extends AsyncTask<String, Void, String> {
-        @Override
-        protected String doInBackground(String... url) {
-            // For storing data from web service
-            String data = "";
-            try {
-                // Fetching the data from web service
-                data = downloadUrl(url[0]);
-                Log.d("Background Task data", data.toString());
-            } catch (Exception e) {
-                Log.d("Background Task", e.toString());
-            }
-            return data;
-        }
-        @Override
-        protected void onPostExecute(String result) {
-            super.onPostExecute(result);
-            ParserTask parserTask = new ParserTask();
-            // Invokes the thread for parsing the JSON data
-            parserTask.execute(result);
-        }
-    }
 
-    /**
 
-     * A class to parse the Google Places in JSON format
-
-     */
-
-    private class ParserTask extends AsyncTask<String, Integer, List<List<HashMap<String, String>>>> {
-        // Parsing the data in non-ui thread
-        @Override
-        protected List<List<HashMap<String, String>>> doInBackground(String... jsonData) {
-            JSONObject jObject;
-            List<List<HashMap<String, String>>> routes = null;
-
-            try {
-                jObject = new JSONObject(jsonData[0]);
-                Log.d("ParserTask",jsonData[0].toString());
-                DataParser parser = new DataParser();
-                Log.d("ParserTask", parser.toString());
-
-                // Starts parsing data
-                routes = parser.parse(jObject);
-                Log.d("ParserTask","Executing routes");
-                Log.d("ParserTask",routes.toString());
-            } catch (Exception e) {
-                Log.d("ParserTask",e.toString());
-                e.printStackTrace();
-            }
-            return routes;
-        }
-
-        // Executes in UI thread, after the parsing process
-        @Override
-        protected void onPostExecute(List<List<HashMap<String, String>>> result) {
-            ArrayList<LatLng> points;
-            PolylineOptions lineOptions = null;
-            Log.d("onPostExecute ", ""+result.size());
-            // Traversing through all the routes
-            for (int i = 0; i < result.size(); i++) {
-                points = new ArrayList<>();
-                lineOptions = new PolylineOptions();
-                // Fetching i-th route
-                List<HashMap<String, String>> path = result.get(i);
-                // Fetching all the points in i-th route
-                for (int j = 0; j < path.size(); j++) {
-                    HashMap<String, String> point = path.get(j);
-                    double lat = Double.parseDouble(point.get("lat"));
-                    double lng = Double.parseDouble(point.get("lng"));
-                    LatLng position = new LatLng(lat, lng);
-                    points.add(position);
-                }
-
-                // Adding all the points in the route to LineOptions
-                lineOptions.addAll(points);
-                lineOptions.width(20);
-                lineOptions.color(R.color.road);
-                Log.d("onPostExecute","onPostExecute  lineoptions decoded");
-            }
-
-            // Drawing polyline in the Google Map for the i-th route
-            if(lineOptions != null) {
-                mMap.addPolyline(lineOptions);
-            }
-            else {
-                Log.d("onPostExecute","without Polylines drawn");
-            }
-        }
-    }
 
 
 

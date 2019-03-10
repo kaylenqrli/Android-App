@@ -80,7 +80,7 @@ public class TriPlan implements Serializable{
     public static class TriPlanBuilder {
         private List<TriPlace> list;
         public TriPlanBuilder() {
-            list = new ArrayList<TriPlace>();
+            list = new ArrayList<>();
         }
         public TriPlanBuilder addPlace(TriPlace p){
             list.add(p);

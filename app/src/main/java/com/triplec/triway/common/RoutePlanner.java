@@ -87,7 +87,7 @@ public class RoutePlanner {
 			if(currCost < minCost) {
 				minCost = currCost;
 				for(int i = 0; i < num; i++) {
-					result[i] = list.get(i);
+					result[i] = list.get(index[i]);
 				}
 			}
 		}
