@@ -59,6 +59,7 @@ public class SavedPlanActivity extends Activity {
                         mPlace.setPostalCode(snapPlace.child("postalCode").getValue(String.class));
                         mPlace.setStateCode(snapPlace.child("stateCode").getValue(String.class));
                         mPlace.setStreet(snapPlace.child("street").getValue(String.class));
+                        mPlace.setId(snapPlace.child("id").getValue(String.class));
                         newList.add(mPlace);
                     }
                     mPlan.setList(newList);
