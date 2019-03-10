@@ -13,6 +13,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.triplec.triway.common.RoutePlanner;
 import com.triplec.triway.common.TriPlace;
 import com.triplec.triway.common.TriPlan;
 import com.triplec.triway.retrofit.PlaceRequestApi;
@@ -92,9 +93,6 @@ public class RouteModel implements RouteContract.Model {
                 }
                 List<TriPlace> mPlaceList = response.body().getPlaces();
 
-                for(int i=0; i<mPlaceList.size(); i++) {
-//                    System.out.println(mPlaceList.get(i).getName() + " : " + mPlaceList.get(i).getCity());
-                }
 
                 TriPlan.TriPlanBuilder myBuilder = new TriPlan.TriPlanBuilder();
                 myBuilder.addPlaceList(response.body().getPlaces());
@@ -102,11 +100,11 @@ public class RouteModel implements RouteContract.Model {
                 TriPlan newPlan = myBuilder.buildPlan();
                 List<TriPlace> newList = newPlan.getPlaceList();
 
-//                RoutePlanner.setRoutePlanner(newList);
-//                TriPlan sortedPlan = RoutePlanner.planRoute(); // sorted plan by algorithm
-//                List<TriPlace> sortedList = sortedPlan.getPlaceList();
-                mTriPlan = newPlan;
-                presenter.showRoutes(newPlan);
+                RoutePlanner planner = new RoutePlanner(newList);
+                TriPlan sortedPlan = planner.planRoute(); // sorted plan by algorithm
+
+                mTriPlan = sortedPlan;
+                presenter.showRoutes(sortedPlan);
             }
 
             @Override
