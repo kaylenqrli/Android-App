@@ -6,7 +6,6 @@ import android.location.Geocoder;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.PolylineOptions;
@@ -37,7 +36,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -181,6 +179,8 @@ class RouteModel implements RouteContract.Model {
     @Override
     public boolean addPlace(TriPlace newPlace) {
         // TODO add place to current plan
+        mTriPlan.getPlaceList().add(newPlace);
+        presenter.showRoutes(mTriPlan);
         return true;
     }
     /* following helper methods from: https://github.com/hiteshbpatel/Android_Blog_Projects*/

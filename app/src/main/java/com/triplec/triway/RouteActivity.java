@@ -25,7 +25,6 @@ import android.widget.Toast;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.libraries.places.api.model.Place;
-import com.google.android.libraries.places.api.model.TypeFilter;
 import com.google.android.libraries.places.widget.Autocomplete;
 import com.google.android.libraries.places.widget.AutocompleteActivity;
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
@@ -141,6 +140,7 @@ public class RouteActivity extends AppCompatActivity {
                 // return after the user has made a selection.
                 List<Place.Field> fields = Arrays.asList(Place.Field.ID,
                                                          Place.Field.NAME,
+                                                         Place.Field.LAT_LNG,
                                                          Place.Field.PHOTO_METADATAS);
 
 
