@@ -162,7 +162,7 @@ public class MapFragment extends MvpFragment<RouteContract.Presenter> implements
                 mMap.animateCamera(CameraUpdateFactory.zoomTo(10));
 
 
-                fetchRoutes(markerPoints);
+                fetchRoutes(placePlan);
 
                 if (markerPoints.size() > 0) {
                     mMap.moveCamera(CameraUpdateFactory.newLatLng(markerPoints.get(0)));
@@ -183,8 +183,8 @@ public class MapFragment extends MvpFragment<RouteContract.Presenter> implements
         Toast.makeText(getActivity(), "Plan saved as "
                                     + planName, Toast.LENGTH_SHORT).show();
     }
-    private void fetchRoutes(List<LatLng> allMarkerPoints) {
-        this.presenter.fetchRoutes(allMarkerPoints);
+    private void fetchRoutes(TriPlan placePlan) {
+        this.presenter.fetchRoutes(placePlan);
     }
     @Override
     public String getMainPlace() {

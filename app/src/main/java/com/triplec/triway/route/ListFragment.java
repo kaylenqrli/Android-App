@@ -102,7 +102,7 @@ public class ListFragment extends MvpFragment<RouteContract.Presenter> implement
             markerPoints.add(new LatLng(resultPlaces.get(i).getLatitude(),
                     resultPlaces.get(i).getLongitude()));
         }
-        this.presenter.fetchRoutes(markerPoints);
+        this.presenter.fetchRoutes(placePlan);
 
         TriPlan.TriPlanBuilder builder = new TriPlan.TriPlanBuilder();
         builder.addPlaceList(placePlan.getPlaceList());
