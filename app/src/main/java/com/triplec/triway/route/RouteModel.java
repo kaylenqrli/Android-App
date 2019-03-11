@@ -24,6 +24,8 @@ import com.triplec.triway.retrofit.PlaceRequestApi;
 import com.triplec.triway.retrofit.RetrofitClient;
 import com.triplec.triway.retrofit.response.PlaceResponse;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -50,7 +52,6 @@ class RouteModel implements RouteContract.Model {
     private FirebaseAuth mAuth;
     private FirebaseUser user;
     private Geocoder coder;
-    private int index = 0;
     RouteModel() {
         placesRequestApi = RetrofitClient.getInstance().create(PlaceRequestApi.class);
         mDatabase = FirebaseDatabase.getInstance().getReference();
@@ -220,6 +221,54 @@ class RouteModel implements RouteContract.Model {
         return url;
     }
 
+    private String getPlaceIdUrl(LatLng curLatLng) {
+        // Origin of route
+        String str_location = "location=" + curLatLng.latitude + "," + curLatLng.longitude;
+        // Destination of route
+        String str_radius = "radius=500";
+        // Building the parameters to the web service
+        String parameters = str_location + "&" + str_radius;
+        // Output format
+        String output = "json";
+        // Building the url to the web service
+        String url = "https://maps.googleapis.com/maps/api/place/nearbysearch/" + output + "?"
+                + parameters + "&key=" + "AIzaSyCmALKlEfyw3eOrW1jPnf6_xrrS7setOFU";
+        return url;
+    }
+
+    // Fetches data from url passed
+
+    private class FetchPlaceIdUrl extends AsyncTask<String, Void, String> {
+        private int index = 0;
+        @Override
+        protected String doInBackground(String... url) {
+            // For storing data from web service
+            String data = "";
+            try {
+                // Fetching the data from web service
+                data = downloadUrl(url[0]);
+                index = Integer.parseInt(url[1]);
+                Log.d("Background Task data", data);
+            } catch (Exception e) {
+                Log.d("Background Task", e.toString());
+            }
+            return data;
+        }
+        @Override
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+            JSONObject jObject;
+            try {
+                jObject = new JSONObject(result);
+                JSONArray jgeocoders = jObject.getJSONArray("results");
+                String id = jgeocoders.getJSONObject(0).getString("place_id");
+                mTriPlan.getPlaceList().get(index).setId(id);
+                Log.d("get ID", id + " with: " + index);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    }
     /**
      * A method to download json data from url
      */
@@ -298,11 +347,6 @@ class RouteModel implements RouteContract.Model {
                 // Starts parsing data
                 routes = parser.parse(jObject);
 
-                ArrayList<String> currid = parser.getIDs();
-                setPlaceId(index,currid.get(0));
-                setPlaceId(index+1,currid.get(1));
-                index++;
-
                 Log.d("ParserTask","Executing routes");
                 Log.d("ParserTask",routes.toString());
             } catch (Exception e) {
@@ -356,13 +400,18 @@ class RouteModel implements RouteContract.Model {
 
     @Override
     public void fetchRoutes(List<LatLng> allMarkerPoints) {
-        Log.d("Total", String.valueOf(allMarkerPoints.size()));
         for(int i=0; i< allMarkerPoints.size()-1; i++){
             LatLng from = allMarkerPoints.get(i);
             LatLng to = allMarkerPoints.get(i+1);
             String url = getUrl(from,to);
             FetchUrl fetch = new FetchUrl();
             fetch.execute(url);
+        }
+        for(int i=0; i< allMarkerPoints.size(); i++){
+            LatLng place = allMarkerPoints.get(i);
+            String placeUrl = getPlaceIdUrl(place);
+            FetchPlaceIdUrl fetch = new FetchPlaceIdUrl();
+            fetch.execute(placeUrl, String.valueOf(i));
         }
     }
     private void addPolyline(PolylineOptions lineOptions) {

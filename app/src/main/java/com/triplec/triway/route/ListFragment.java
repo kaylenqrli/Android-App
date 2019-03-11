@@ -15,6 +15,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.triplec.triway.PlaceListAdapter;
 import com.triplec.triway.R;
@@ -22,12 +23,16 @@ import com.triplec.triway.common.TriPlace;
 import com.triplec.triway.common.TriPlan;
 import com.triplec.triway.mvp.MvpFragment;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * A simple {@link Fragment} subclass.
  */
 public class ListFragment extends MvpFragment<RouteContract.Presenter> implements RouteContract.View{
     PlaceListAdapter adapter;
     ListView list;
+    List<LatLng> markerPoints;
 
     public static ListFragment newInstance() {
 
@@ -89,6 +94,16 @@ public class ListFragment extends MvpFragment<RouteContract.Presenter> implement
     @Override
     public void showRoutes(TriPlan placePlan) {
         //TODO
+        markerPoints= new ArrayList<LatLng>();
+        List<TriPlace> resultPlaces = placePlan.getPlaceList();
+        if (resultPlaces == null || resultPlaces.size() == 0)
+            return;
+        for (int i=0; i<resultPlaces.size(); i++) {
+            markerPoints.add(new LatLng(resultPlaces.get(i).getLatitude(),
+                    resultPlaces.get(i).getLongitude()));
+        }
+        this.presenter.fetchRoutes(markerPoints);
+
         TriPlan.TriPlanBuilder builder = new TriPlan.TriPlanBuilder();
         builder.addPlaceList(placePlan.getPlaceList());
         TriPlan plan = builder.buildPlan();
@@ -154,7 +169,6 @@ public class ListFragment extends MvpFragment<RouteContract.Presenter> implement
     @Override
     public void notifyDataSetChanged() {
         adapter.notifyDataSetChanged();
-
     }
 
     public void setTriPlanId(String id) {

@@ -160,7 +160,7 @@ public class TriPlace implements Serializable {
             Place place = response.getPlace();
             // Get the photo metadata.
             if (place.getPhotoMetadatas() == null) {
-                Log.e("Photo not found ", getName());
+                Log.e("Photo not found ", getName() + placeId);
                 return;
             }
 
@@ -172,7 +172,7 @@ public class TriPlace implements Serializable {
             // Create a FetchPhotoRequest.
             FetchPhotoRequest photoRequest = FetchPhotoRequest.builder(photoMetadata).build();
             placesClient.fetchPhoto(photoRequest).addOnSuccessListener((fetchPhotoResponse) -> {
-                Log.d("Found photo", getName());
+                Log.e("Photo found ", getName() + placeId);
                 Bitmap bitmap = fetchPhotoResponse.getBitmap();
                 setPhoto(bitmap);
                 photoSetup = true;
@@ -219,7 +219,7 @@ public class TriPlace implements Serializable {
             Place place = response.getPlace();
             // Get the photo metadata.
             if (place.getPhotoMetadatas() == null) {
-                Log.e("Photo not found ", getName());
+                Log.e("Photo not found ", getName() + placeId);
                 return;
             }
             PhotoMetadata photoMetadata = place.getPhotoMetadatas().get(0);
@@ -230,6 +230,7 @@ public class TriPlace implements Serializable {
             // Create a FetchPhotoRequest.
             FetchPhotoRequest photoRequest = FetchPhotoRequest.builder(photoMetadata).build();
             placesClient.fetchPhoto(photoRequest).addOnSuccessListener((fetchPhotoResponse) -> {
+                Log.e("Photo found ", getName() + placeId);
                 Bitmap bitmap = fetchPhotoResponse.getBitmap();
                 setPhoto(bitmap);
                 photoSetup = true;

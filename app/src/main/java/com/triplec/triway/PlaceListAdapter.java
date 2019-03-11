@@ -2,8 +2,6 @@ package com.triplec.triway;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.location.Geocoder;
-import android.location.Location;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,7 +12,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.triplec.triway.common.TriPlace;
-import com.triplec.triway.common.TriPlan;
 
 import java.util.List;
 
@@ -26,23 +23,13 @@ public class PlaceListAdapter extends ArrayAdapter<TriPlace> {
     View convert;
 
     /*----- Place Id for getPhoto() -----*/
-    private final String[] placeIdsSanDiego = {
-            "ChIJyYB_SZVU2YARR-I1Jjf08F0",  // San Diego Zoo
-            "ChIJA8tw-pZU2YARxPYVsDwL8-0",  // Balboa Park
-            "ChIJ7-bxRDmr3oARawtVV_lGLtw",  // Airport
-            "ChIJ54O2gpEG3IAR0YlUGyNK1GQ",  // Black's Beach
-            "ChIJT69MQcQG3IARpz6Rifyqtu8"   // UCSD
-    };
-
-    private final String[] placesIdsNewYork = {
-            "ChIJ48y8-TxawokROJTPwB3cxz8",  // South Street Seaport
-            "ChIJp-jxqBhawokR0V8J9TUkSjU",  // City Hall
-            "ChIJUSBl7RhawokR1uWCCvWriXQ",  // WoodWorth Building
-            "ChIJm4LEJxpawokRHYuOmc08zGw",  // World Trade Center
-            "ChIJIzH1VxdawokR_r1xf38gNeU"   // The Oculus
-    };
-
-    //private  final String[] placesIds
+//    private final String[] placeIds = {
+//            "ChIJyYB_SZVU2YARR-I1Jjf08F0",  // San Diego Zoo
+//            "ChIJA8tw-pZU2YARxPYVsDwL8-0",  // Balboa Park
+//            "ChIJ7-bxRDmr3oARawtVV_lGLtw",  // Airport
+//            "ChIJ54O2gpEG3IAR0YlUGyNK1GQ",  // Black's Beach
+//            "ChIJT69MQcQG3IARpz6Rifyqtu8"   // UCSD
+//    };
     /*----- Place Id for getPhoto() -----*/
 
     public PlaceListAdapter (Context context, int resourceId, List<TriPlace> places) {
@@ -79,8 +66,8 @@ public class PlaceListAdapter extends ArrayAdapter<TriPlace> {
         holder.name.setText(places.get(position).getName());
         holder.description.setText(places.get(position).getDescription());
         // set photo
-        //if(position < 5)
-        //   places.get(position).setId(placeIds[position]);
+//        if(position < 5)
+//            places.get(position).setId(placeIds[position]);
         Bitmap bitmap = places.get(position).getPhoto(mContext, this);
         holder.photo.setImageBitmap(bitmap);
         notifyDataSetChanged();
