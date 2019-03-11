@@ -42,7 +42,6 @@ public class MapFragment extends MvpFragment<RouteContract.Presenter> implements
     private MapView mMapView;
     private GoogleMap mMap;
     List<LatLng> markerPoints;
-    Marker markers[];
     MapListAdapter mapListAdapter;
     RecyclerView.LayoutManager layoutManager;
     RecyclerView recyclerView;
@@ -94,7 +93,6 @@ public class MapFragment extends MvpFragment<RouteContract.Presenter> implements
         });
         SnapHelper snapHelper = new PagerSnapHelper();
         snapHelper.attachToRecyclerView(recyclerView);
-        markers = new Marker[5];
         return view;
     }
 
@@ -112,12 +110,15 @@ public class MapFragment extends MvpFragment<RouteContract.Presenter> implements
             return;
         for (int i=0; i<resultPlaces.size(); i++) {
             markerPoints.add(new LatLng(resultPlaces.get(i).getLatitude(),
-                                                    resultPlaces.get(i).getLongitude()));
+                                resultPlaces.get(i).getLongitude()));
         }
+        Marker markers[] = new Marker[resultPlaces.size()];
 
+        Log.d("SHOWING PLAN::", String.valueOf(placePlan.getPlaceList().size()));
         mMapView.getMapAsync(new OnMapReadyCallback() {
             @Override
             public void onMapReady(GoogleMap googleMap) {
+                mMap.clear();
                 // pin all the places to the map
                 for(int i=0; i< markerPoints.size(); i++){
                     MarkerOptions options = new MarkerOptions();
@@ -126,7 +127,11 @@ public class MapFragment extends MvpFragment<RouteContract.Presenter> implements
                     marker.setTag(i);
                     markers[i] = marker;
                 }
-
+                TriPlan.TriPlanBuilder builder = new TriPlan.TriPlanBuilder();
+                builder.addPlaceList(placePlan.getPlaceList());
+                TriPlan plan = builder.buildPlan();
+                mapListAdapter = new MapListAdapter(plan.getPlaceList());
+                recyclerView.setAdapter(mapListAdapter);
                 mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
                     @Override
                     public void onMapClick(LatLng latLng) {
@@ -151,16 +156,12 @@ public class MapFragment extends MvpFragment<RouteContract.Presenter> implements
                       return false;
                     }
                 });
-                fetchRoutes(markerPoints);
 
                 mMap.moveCamera(CameraUpdateFactory.newLatLng(markerPoints.get(0)));
                 mMap.animateCamera(CameraUpdateFactory.zoomTo(10));
 
-                TriPlan.TriPlanBuilder builder = new TriPlan.TriPlanBuilder();
-                builder.addPlaceList(placePlan.getPlaceList());
-                TriPlan plan = builder.buildPlan();
-                mapListAdapter = new MapListAdapter(plan.getPlaceList());
-                recyclerView.setAdapter(mapListAdapter);
+
+                fetchRoutes(markerPoints);
 
                 if (markerPoints.size() > 0) {
                     mMap.moveCamera(CameraUpdateFactory.newLatLng(markerPoints.get(0)));
@@ -201,6 +202,7 @@ public class MapFragment extends MvpFragment<RouteContract.Presenter> implements
 
     @Override
     public boolean addPlace(TriPlace newPlace) {
+        Toast.makeText(getContext(), "Add a new place: " + newPlace.getName(), Toast.LENGTH_SHORT).show();
         return this.presenter.addPlace(newPlace);
     }
 

@@ -2,6 +2,8 @@ package com.triplec.triway;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.location.Geocoder;
+import android.location.Location;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.triplec.triway.common.TriPlace;
+import com.triplec.triway.common.TriPlan;
 
 import java.util.List;
 
@@ -66,7 +69,8 @@ public class PlaceListAdapter extends ArrayAdapter<TriPlace> {
         holder.name.setText(places.get(position).getName());
         holder.description.setText(places.get(position).getDescription());
         // set photo
-        places.get(position).setId(placeIds[position]);
+        if(position < 5)
+            places.get(position).setId(placeIds[position]);
         Bitmap bitmap = places.get(position).getPhoto(mContext, this);
         holder.photo.setImageBitmap(bitmap);
         notifyDataSetChanged();
@@ -81,6 +85,12 @@ public class PlaceListAdapter extends ArrayAdapter<TriPlace> {
     @Override
     public void remove(TriPlace p) {
         places.remove(p);
+        notifyDataSetChanged();
+    }
+
+    @Override
+    public void add(TriPlace p){
+        places.add(p);
         notifyDataSetChanged();
     }
 

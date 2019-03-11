@@ -79,12 +79,6 @@ import com.triplec.triway.mvp.MvpFragment;
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_list, container, false);
 
-        //TriPlan plan = ((RouteActivity)getActivity()).getPlan();
-
-        /*----- pseudo plan for testing -----*/
-
-        /*----- pseudo plan for testing -----*/
-
         // set up list with adapter
         list = (ListView)view.findViewById(R.id.route_list);
 
@@ -135,6 +129,8 @@ import com.triplec.triway.mvp.MvpFragment;
 
     @Override
     public boolean addPlace(TriPlace newPlace) {
+        adapter.add(newPlace);
+        Toast.makeText(getContext(), "Add a new place: " + newPlace.getName(), Toast.LENGTH_SHORT).show();
         return this.presenter.addPlace(newPlace);
     }
 

@@ -2,8 +2,6 @@ package com.triplec.triway.common;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.os.Parcel;
-import android.os.Parcelable;
 import android.util.Log;
 
 import com.google.android.gms.common.api.ApiException;
@@ -16,8 +14,6 @@ import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.gson.annotations.SerializedName;
 import com.triplec.triway.PlaceListAdapter;
 import com.triplec.triway.R;
-
-import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -66,9 +62,6 @@ public class TriPlace implements Serializable {
         this.mPlaceDetail.mTriPoint.coordinates = new ArrayList<Double>();
         this.mPlaceDetail.mTriPoint.coordinates.add(0.0);
         this.mPlaceDetail.mTriPoint.coordinates.add(0.0);
-    }
-    public TriPlace(String n){
-        name = n;
     }
 
 //    private void setAddress(String a){
@@ -146,17 +139,19 @@ public class TriPlace implements Serializable {
     public void setId(String id){
         placeId = id;
     }
+    public String getId(){
+        return placeId;
+    }
 
     private void fetchPhoto(Context context, PlaceListAdapter adapter) {
         Places.initialize(context,  context.getResources().getString(R.string.google_maps_key));
         PlacesClient placesClient = Places.createClient(context);
-
+        Log.d("PlaceID: ", placeId);
         List<Place.Field> fields = Arrays.asList(Place.Field.PHOTO_METADATAS);
         FetchPlaceRequest placeRequest = FetchPlaceRequest.builder(placeId, fields).build();
 
         placesClient.fetchPlace(placeRequest).addOnSuccessListener((response) -> {
             Place place = response.getPlace();
-
             // Get the photo metadata.
             PhotoMetadata photoMetadata = place.getPhotoMetadatas().get(0);
 

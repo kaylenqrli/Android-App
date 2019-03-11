@@ -6,7 +6,6 @@
         android:id="@+id/Tabs_menu_add"
         android:orderInCategory="100"
         android:title="Add"
-        app:actionViewClass="android.support.v7.widget.SearchView"
         android:icon="@drawable/ic_add_white_24dp"
         app:showAsAction="collapseActionView|ifRoom" />
     <item
