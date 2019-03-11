@@ -33,6 +33,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -139,7 +140,36 @@ class RouteModel implements RouteContract.Model {
                     @Override
                     public void onSuccess(Void aVoid) {
                         // Write was successful!
-                        presenter.onSavedSuccess(mTriPlan.getName());
+                        mDatabase.child("users").child(userId).child("plans").child(finalKey).child("createdAt")
+                                .setValue(new Date().toString())
+                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
+                                        // Write was successful!
+                                        mDatabase.child("users").child(userId).child("plans").child(finalKey).child("places")
+                                                .setValue(mTriPlan.getPlaceList())
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        // Write was successful!
+                                                        mTriPlan.setId(finalKey);
+                                                        presenter.onSavedSuccess(mTriPlan.getName());
+                                                    }
+                                                }).addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+                                                // Write failed
+                                                presenter.onError("Failed to save plan. " + e.getMessage());
+                                            }
+                                        });
+                                    }
+                                }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                // Write failed
+                                presenter.onError("Failed to save plan. " + e.getMessage());
+                            }
+                        });
                     }
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override
@@ -148,22 +178,7 @@ class RouteModel implements RouteContract.Model {
                         presenter.onError("Failed to save plan. " + e.getMessage());
                     }
         });
-        mDatabase.child("users").child(userId).child("plans").child(finalKey).child("places")
-                .setValue(mTriPlan.getPlaceList())
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        // Write was successful!
-                        mTriPlan.setId(finalKey);
-                        presenter.onSavedSuccess(mTriPlan.getName());
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        // Write failed
-                        presenter.onError("Failed to save plan. " + e.getMessage());
-                    }
-        });
+
         setPlanId(finalKey);
         return mTriPlan.getId();
     }
