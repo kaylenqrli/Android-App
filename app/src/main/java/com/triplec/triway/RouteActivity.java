@@ -1,8 +1,5 @@
 package com.triplec.triway;
 
-import android.app.SearchManager;
-import android.content.ComponentName;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -16,7 +13,6 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -24,24 +20,19 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.libraries.places.api.model.Place;
-import com.google.android.libraries.places.api.model.RectangularBounds;
 import com.google.android.libraries.places.api.model.TypeFilter;
 import com.google.android.libraries.places.widget.Autocomplete;
 import com.google.android.libraries.places.widget.AutocompleteActivity;
-import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
 import com.triplec.triway.common.TriPlace;
 import com.triplec.triway.common.TriPlan;
-import com.triplec.triway.mvp.MvpContract;
 import com.triplec.triway.route.ListFragment;
 import com.triplec.triway.route.MapFragment;
-import com.triplec.triway.route.RouteContract;
 
 import java.util.Arrays;
 import java.util.List;
@@ -67,8 +58,6 @@ public class RouteActivity extends AppCompatActivity {
      */
     private ViewPager mViewPager;
     private ActionBar actionbar;
-    private ListFragment lf;
-    private MapFragment mf;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -189,11 +178,19 @@ public class RouteActivity extends AppCompatActivity {
     }
 
     private void addPlace(Place place){
-        TriPlace newPlace = new TriPlace(place.getName());
+        LatLng latLng = place.getLatLng();
+        if (latLng == null) {
+            Toast.makeText(RouteActivity.this,
+                    place.getName() + " can't be found.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        TriPlace newPlace = new TriPlace();
+        newPlace.setLatitude(latLng.latitude);
+        newPlace.setLongitude(latLng.longitude);
+        newPlace.setName(place.getName());
         newPlace.setId(place.getId());
-
-        mf = (MapFragment) findFragmentByPosition(0);
-        lf = (ListFragment) findFragmentByPosition(1);
+        ListFragment lf = (ListFragment) findFragmentByPosition(1);;
+        MapFragment mf = (MapFragment) findFragmentByPosition(0);
         mf.addPlace(newPlace);
         lf.addPlace(newPlace);
     }

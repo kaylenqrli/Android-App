@@ -63,9 +63,6 @@ public class TriPlace implements Serializable {
         this.mPlaceDetail.mTriPoint.coordinates.add(0.0);
         this.mPlaceDetail.mTriPoint.coordinates.add(0.0);
     }
-    public TriPlace(String n){
-        name = n;
-    }
 
 //    private void setAddress(String a){
 //        address = a;
