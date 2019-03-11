@@ -103,7 +103,7 @@ class RouteModel implements RouteContract.Model {
                     presenter.onError(response.message());
                 }
                 TriPlan.TriPlanBuilder myBuilder = new TriPlan.TriPlanBuilder();
-                myBuilder.addPlaceList(response.body().getPlaces());
+                myBuilder.addPlaceList(response.body().getPlaces().subList(0, 5));
 
                 TriPlan newPlan = myBuilder.buildPlan();
                 List<TriPlace> newList = newPlan.getPlaceList();
@@ -169,6 +169,7 @@ class RouteModel implements RouteContract.Model {
     }
 
     private void setPlaceId(int i, String id) {
+        Log.d("ADD id to:", i + "With id:" + id);
         mTriPlan.getPlaceList().get(i).setId(id);
     }
 
@@ -340,6 +341,7 @@ class RouteModel implements RouteContract.Model {
 
     @Override
     public void fetchRoutes(List<LatLng> allMarkerPoints) {
+        Log.d("Total", String.valueOf(allMarkerPoints.size()));
         for(int i=0; i< allMarkerPoints.size()-1; i++){
             LatLng from = allMarkerPoints.get(i);
             LatLng to = allMarkerPoints.get(i+1);
