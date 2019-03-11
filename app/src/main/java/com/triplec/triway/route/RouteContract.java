@@ -28,6 +28,8 @@ public interface RouteContract {
         Context getContext();
 
         void addPolyline(PolylineOptions lineOptions);
+
+        void notifyDataSetChanged();
     }
 
     interface Presenter extends MvpContract.Presenter<View, Model> {

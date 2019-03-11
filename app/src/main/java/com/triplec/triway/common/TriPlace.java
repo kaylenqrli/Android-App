@@ -12,6 +12,7 @@ import com.google.android.libraries.places.api.net.FetchPhotoRequest;
 import com.google.android.libraries.places.api.net.FetchPlaceRequest;
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.gson.annotations.SerializedName;
+import com.triplec.triway.MapListAdapter;
 import com.triplec.triway.PlaceListAdapter;
 import com.triplec.triway.R;
 
@@ -146,13 +147,80 @@ public class TriPlace implements Serializable {
     private void fetchPhoto(Context context, PlaceListAdapter adapter) {
         Places.initialize(context,  context.getResources().getString(R.string.google_maps_key));
         PlacesClient placesClient = Places.createClient(context);
-        Log.d("PlaceID: ", placeId);
+        if (placeId == null || placeId.length() == 0) {
+            Log.e("PlaceID not found ", getName());
+            return;
+        }
+        Log.d("PlaceList PlaceID: ", placeId);
         List<Place.Field> fields = Arrays.asList(Place.Field.PHOTO_METADATAS);
         FetchPlaceRequest placeRequest = FetchPlaceRequest.builder(placeId, fields).build();
 
         placesClient.fetchPlace(placeRequest).addOnSuccessListener((response) -> {
             Place place = response.getPlace();
             // Get the photo metadata.
+            if (place.getPhotoMetadatas() == null) {
+                Log.e("Photo not found ", getName());
+                return;
+            }
+
+            PhotoMetadata photoMetadata = place.getPhotoMetadatas().get(0);
+
+            // Get the attribution text.
+            String attributions = photoMetadata.getAttributions();
+
+            // Create a FetchPhotoRequest.
+            FetchPhotoRequest photoRequest = FetchPhotoRequest.builder(photoMetadata).build();
+            placesClient.fetchPhoto(photoRequest).addOnSuccessListener((fetchPhotoResponse) -> {
+                Log.d("Found photo", getName());
+                Bitmap bitmap = fetchPhotoResponse.getBitmap();
+                setPhoto(bitmap);
+                photoSetup = true;
+                adapter.notifyDataSetChanged();
+            }).addOnFailureListener((exception) -> {
+                if (exception instanceof ApiException) {
+                    ApiException apiException = (ApiException) exception;
+                    int statusCode = apiException.getStatusCode();
+                    // Handle error with given status code.
+                    Log.e("Photo Setup Failed", "Place not found: " + exception.getMessage());
+                }
+            });
+        });
+    }
+
+    public void setPhoto(Bitmap bitmap){
+        photo = bitmap;
+    }
+
+    public Bitmap getPhoto(Context context, PlaceListAdapter adapter){
+        if(photo == null ) {
+            fetchPhoto(context, adapter);
+        }
+        Log.d("=====", "getPhoto() ");
+        return photo;
+    }
+    public Bitmap getPhoto(Context context, MapListAdapter adapter){
+        if(photo == null) {
+            fetchPhoto(context, adapter);
+        }
+        Log.d("=====", "getPhoto() ");
+        return photo;
+    }
+    private void fetchPhoto(Context context, MapListAdapter adapter) {
+        Places.initialize(context,  context.getResources().getString(R.string.google_maps_key));
+        PlacesClient placesClient = Places.createClient(context);
+        if (placeId == null || placeId.length() == 0)
+            return;
+        Log.d("MapList PlaceID: ", placeId);
+        List<Place.Field> fields = Arrays.asList(Place.Field.PHOTO_METADATAS);
+        FetchPlaceRequest placeRequest = FetchPlaceRequest.builder(placeId, fields).build();
+
+        placesClient.fetchPlace(placeRequest).addOnSuccessListener((response) -> {
+            Place place = response.getPlace();
+            // Get the photo metadata.
+            if (place.getPhotoMetadatas() == null) {
+                Log.e("Photo not found ", getName());
+                return;
+            }
             PhotoMetadata photoMetadata = place.getPhotoMetadatas().get(0);
 
             // Get the attribution text.
@@ -176,15 +244,4 @@ public class TriPlace implements Serializable {
         });
     }
 
-    public void setPhoto(Bitmap bitmap){
-        photo = bitmap;
-    }
-
-    public Bitmap getPhoto(Context context, PlaceListAdapter adapter){
-        if(!photoSetup) {
-            fetchPhoto(context, adapter);
-        }
-        Log.e("=====", "getPhoto() ");
-        return photo;
-    }
 }

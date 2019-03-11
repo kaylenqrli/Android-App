@@ -1,5 +1,6 @@
 package com.triplec.triway;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
@@ -13,6 +14,7 @@ import java.util.List;
 
 public class MapListAdapter extends RecyclerView.Adapter<MapListAdapter.MyViewHolder> {
     private List<TriPlace> places;
+    Context mContext;
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
@@ -45,7 +47,8 @@ public class MapListAdapter extends RecyclerView.Adapter<MapListAdapter.MyViewHo
     }
 
     // Provide a suitable constructor (depends on the kind of dataset)
-    public MapListAdapter(List<TriPlace> places) {
+    public MapListAdapter(Context context, List<TriPlace> places) {
+        this.mContext = context;
         this.places = places;
     }
 
@@ -68,6 +71,9 @@ public class MapListAdapter extends RecyclerView.Adapter<MapListAdapter.MyViewHo
         holder.getNameTV().setText(places.get(position).getName());
         holder.getDescriptionTV().setText(places.get(position).getDescription());
         holder.getPhotoIV().setImageResource(R.drawable.album_city3);
+        if (places.get(position).getId() != null && !places.get(position).getId().isEmpty()) {
+            holder.getPhotoIV().setImageBitmap(places.get(position).getPhoto(mContext, this));
+        }
     }
 
     // Return the size of your dataset (invoked by the layout manager)

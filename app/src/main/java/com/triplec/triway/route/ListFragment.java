@@ -25,7 +25,7 @@ import com.triplec.triway.mvp.MvpFragment;
 /**
  * A simple {@link Fragment} subclass.
  */
-        public class ListFragment extends MvpFragment<RouteContract.Presenter> implements RouteContract.View{
+public class ListFragment extends MvpFragment<RouteContract.Presenter> implements RouteContract.View{
     PlaceListAdapter adapter;
     ListView list;
 
@@ -93,7 +93,7 @@ import com.triplec.triway.mvp.MvpFragment;
         builder.addPlaceList(placePlan.getPlaceList());
         TriPlan plan = builder.buildPlan();
         adapter = new PlaceListAdapter
-                (getActivity().getApplicationContext(), R.layout.fragment_list, plan.getPlaceList());
+                (getActivity(), R.layout.fragment_list, plan.getPlaceList());
         list.setAdapter(adapter);
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -129,7 +129,6 @@ import com.triplec.triway.mvp.MvpFragment;
 
     @Override
     public boolean addPlace(TriPlace newPlace) {
-        adapter.add(newPlace);
         Toast.makeText(getContext(), "Add a new place: " + newPlace.getName(), Toast.LENGTH_SHORT).show();
         return this.presenter.addPlace(newPlace);
     }
@@ -149,7 +148,13 @@ import com.triplec.triway.mvp.MvpFragment;
 
     @Override
     public void addPolyline(PolylineOptions lineOptions) {
-        return;
+        notifyDataSetChanged();
+    }
+
+    @Override
+    public void notifyDataSetChanged() {
+        adapter.notifyDataSetChanged();
+
     }
 
     public void setTriPlanId(String id) {
