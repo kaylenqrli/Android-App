@@ -23,13 +23,13 @@ public class PlaceListAdapter extends ArrayAdapter<TriPlace> {
     View convert;
 
     /*----- Place Id for getPhoto() -----*/
-    private final String[] placeIds = {
-            "ChIJyYB_SZVU2YARR-I1Jjf08F0",  // San Diego Zoo
-            "ChIJA8tw-pZU2YARxPYVsDwL8-0",  // Balboa Park
-            "ChIJ7-bxRDmr3oARawtVV_lGLtw",  // Airport
-            "ChIJ54O2gpEG3IAR0YlUGyNK1GQ",  // Black's Beach
-            "ChIJT69MQcQG3IARpz6Rifyqtu8"   // UCSD
-    };
+//    private final String[] placeIds = {
+//            "ChIJyYB_SZVU2YARR-I1Jjf08F0",  // San Diego Zoo
+//            "ChIJA8tw-pZU2YARxPYVsDwL8-0",  // Balboa Park
+//            "ChIJ7-bxRDmr3oARawtVV_lGLtw",  // Airport
+//            "ChIJ54O2gpEG3IAR0YlUGyNK1GQ",  // Black's Beach
+//            "ChIJT69MQcQG3IARpz6Rifyqtu8"   // UCSD
+//    };
     /*----- Place Id for getPhoto() -----*/
 
     public PlaceListAdapter (Context context, int resourceId, List<TriPlace> places) {
@@ -66,7 +66,8 @@ public class PlaceListAdapter extends ArrayAdapter<TriPlace> {
         holder.name.setText(places.get(position).getName());
         holder.description.setText(places.get(position).getDescription());
         // set photo
-        places.get(position).setId(placeIds[position]);
+//        if(position < 5)
+//            places.get(position).setId(placeIds[position]);
         Bitmap bitmap = places.get(position).getPhoto(mContext, this);
         holder.photo.setImageBitmap(bitmap);
         notifyDataSetChanged();
@@ -81,6 +82,12 @@ public class PlaceListAdapter extends ArrayAdapter<TriPlace> {
     @Override
     public void remove(TriPlace p) {
         places.remove(p);
+        notifyDataSetChanged();
+    }
+
+    @Override
+    public void add(TriPlace p){
+        places.add(p);
         notifyDataSetChanged();
     }
 

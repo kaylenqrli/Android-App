@@ -2,12 +2,9 @@ package com.triplec.triway.route;
 
 import android.content.Context;
 
-import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.triplec.triway.common.TriPlace;
 import com.triplec.triway.common.TriPlan;
-
-import java.util.List;
 
 class RoutePresenter implements RouteContract.Presenter {
     private RouteModel model;
@@ -60,8 +57,8 @@ class RoutePresenter implements RouteContract.Presenter {
     }
 
     @Override
-    public void fetchRoutes(List<LatLng> allMarkerPoints) {
-        this.model.fetchRoutes(allMarkerPoints);
+    public void fetchRoutes(TriPlan placePlan) {
+        this.model.fetchRoutes(placePlan);
     }
 
     @Override

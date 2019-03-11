@@ -42,7 +42,6 @@ public class MapFragment extends MvpFragment<RouteContract.Presenter> implements
     private MapView mMapView;
     private GoogleMap mMap;
     List<LatLng> markerPoints;
-    Marker markers[];
     MapListAdapter mapListAdapter;
     RecyclerView.LayoutManager layoutManager;
     RecyclerView recyclerView;
@@ -76,7 +75,7 @@ public class MapFragment extends MvpFragment<RouteContract.Presenter> implements
         });
 
         recyclerView = view.findViewById(R.id.map_recycler);
-        mapListAdapter = new MapListAdapter(null);
+        mapListAdapter = new MapListAdapter(getActivity(),null);
         recyclerView.setAdapter(mapListAdapter);
         layoutManager = new LinearLayoutManager(getActivity());
         ((LinearLayoutManager) layoutManager).setOrientation(LinearLayoutManager.HORIZONTAL);
@@ -94,7 +93,6 @@ public class MapFragment extends MvpFragment<RouteContract.Presenter> implements
         });
         SnapHelper snapHelper = new PagerSnapHelper();
         snapHelper.attachToRecyclerView(recyclerView);
-        markers = new Marker[5];
         return view;
     }
 
@@ -114,10 +112,17 @@ public class MapFragment extends MvpFragment<RouteContract.Presenter> implements
             markerPoints.add(new LatLng(resultPlaces.get(i).getLatitude(),
                                 resultPlaces.get(i).getLongitude()));
         }
+        Marker markers[] = new Marker[resultPlaces.size()];
 
+        Log.d("SHOWING PLAN::", String.valueOf(placePlan.getPlaceList().size()));
+        TriPlan.TriPlanBuilder builder = new TriPlan.TriPlanBuilder();
+        builder.addPlaceList(placePlan.getPlaceList());
+        TriPlan plan = builder.buildPlan();
+        mapListAdapter = new MapListAdapter(getActivity(), plan.getPlaceList());
         mMapView.getMapAsync(new OnMapReadyCallback() {
             @Override
             public void onMapReady(GoogleMap googleMap) {
+                mMap.clear();
                 // pin all the places to the map
                 for(int i=0; i< markerPoints.size(); i++){
                     MarkerOptions options = new MarkerOptions();
@@ -127,6 +132,7 @@ public class MapFragment extends MvpFragment<RouteContract.Presenter> implements
                     markers[i] = marker;
                 }
 
+                recyclerView.setAdapter(mapListAdapter);
                 mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
                     @Override
                     public void onMapClick(LatLng latLng) {
@@ -151,16 +157,12 @@ public class MapFragment extends MvpFragment<RouteContract.Presenter> implements
                       return false;
                     }
                 });
-                fetchRoutes(markerPoints);
 
                 mMap.moveCamera(CameraUpdateFactory.newLatLng(markerPoints.get(0)));
                 mMap.animateCamera(CameraUpdateFactory.zoomTo(10));
 
-                TriPlan.TriPlanBuilder builder = new TriPlan.TriPlanBuilder();
-                builder.addPlaceList(placePlan.getPlaceList());
-                TriPlan plan = builder.buildPlan();
-                mapListAdapter = new MapListAdapter(plan.getPlaceList());
-                recyclerView.setAdapter(mapListAdapter);
+
+                fetchRoutes(placePlan);
 
                 if (markerPoints.size() > 0) {
                     mMap.moveCamera(CameraUpdateFactory.newLatLng(markerPoints.get(0)));
@@ -181,8 +183,8 @@ public class MapFragment extends MvpFragment<RouteContract.Presenter> implements
         Toast.makeText(getActivity(), "Plan saved as "
                                     + planName, Toast.LENGTH_SHORT).show();
     }
-    private void fetchRoutes(List<LatLng> allMarkerPoints) {
-        this.presenter.fetchRoutes(allMarkerPoints);
+    private void fetchRoutes(TriPlan placePlan) {
+        this.presenter.fetchRoutes(placePlan);
     }
     @Override
     public String getMainPlace() {
@@ -201,6 +203,7 @@ public class MapFragment extends MvpFragment<RouteContract.Presenter> implements
 
     @Override
     public boolean addPlace(TriPlace newPlace) {
+        Toast.makeText(getContext(), "Add a new place: " + newPlace.getName(), Toast.LENGTH_SHORT).show();
         return this.presenter.addPlace(newPlace);
     }
 
@@ -222,5 +225,11 @@ public class MapFragment extends MvpFragment<RouteContract.Presenter> implements
     @Override
     public void addPolyline(PolylineOptions lineOptions) {
         mMap.addPolyline(lineOptions);
+        notifyDataSetChanged();
+    }
+
+    @Override
+    public void notifyDataSetChanged() {
+        mapListAdapter.notifyDataSetChanged();
     }
 }

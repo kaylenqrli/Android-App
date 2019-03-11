@@ -171,7 +171,6 @@ public class HomeActivity extends AppCompatActivity
                 FindAutocompletePredictionsRequest request = FindAutocompletePredictionsRequest.builder()
                         // Call either setLocationBias() OR setLocationRestriction().
                         //.setLocationRestriction(bounds)
-                        .setTypeFilter(TypeFilter.CITIES)
                         .setSessionToken(token)
                         .setQuery(search.getText().toString())
                         .build();
@@ -307,7 +306,6 @@ public class HomeActivity extends AppCompatActivity
 
     public void gotoSavedPlan(View v){
         Intent intent = new Intent(this, SavedPlanActivity.class);
-        intent.putExtra("name", "item 3");
         startActivity(intent);
     }
 

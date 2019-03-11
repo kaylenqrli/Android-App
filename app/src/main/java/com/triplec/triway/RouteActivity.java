@@ -1,9 +1,7 @@
 package com.triplec.triway;
 
-import android.app.SearchManager;
-import android.content.ComponentName;
-import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.TextInputEditText;
@@ -15,19 +13,28 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.widget.Autocomplete;
+import com.google.android.libraries.places.widget.AutocompleteActivity;
+import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
+import com.triplec.triway.common.TriPlace;
 import com.triplec.triway.common.TriPlan;
 import com.triplec.triway.route.ListFragment;
 import com.triplec.triway.route.MapFragment;
+
+import java.util.Arrays;
+import java.util.List;
 
 
 public class RouteActivity extends AppCompatActivity {
@@ -42,8 +49,7 @@ public class RouteActivity extends AppCompatActivity {
      */
     private SectionsPagerAdapter mSectionsPagerAdapter;
 
-    //private AutoCompleteTextView searchAddEditText;
-    private ArrayAdapter<String> madapter;
+    int AUTOCOMPLETE_REQUEST_CODE = 1;
 
     private boolean isSaved = false;
     /**
@@ -57,11 +63,9 @@ public class RouteActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_route);
 
-        /* Autocomplete */
-
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener(){
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onBackPressed();
@@ -84,7 +88,7 @@ public class RouteActivity extends AppCompatActivity {
         mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager));
         Bundle bundle = getIntent().getExtras();
-        TriPlan mPlan = (TriPlan)bundle.getSerializable("plan");
+        TriPlan mPlan = (TriPlan) bundle.getSerializable("plan");
         if (mPlan != null)
             actionbar.setTitle(mPlan.getName());
     }
@@ -96,7 +100,7 @@ public class RouteActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.menu_route, menu);
 
         // Associate searchable configuration with the SearchView
-        SearchManager searchManager =
+        /*SearchManager searchManager =
                 (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         SearchView searchView =
                 (SearchView) menu.findItem(R.id.Tabs_menu_add).getActionView();
@@ -114,7 +118,7 @@ public class RouteActivity extends AppCompatActivity {
             public boolean onQueryTextChange(String s) {
                 return false;
             }
-        });
+        });*/
 
         return true;
     }
@@ -132,6 +136,22 @@ public class RouteActivity extends AppCompatActivity {
                 getDialog();
                 return true;
             case R.id.Tabs_menu_add:
+                // Set the fields to specify which types of place data to
+                // return after the user has made a selection.
+                List<Place.Field> fields = Arrays.asList(Place.Field.ID,
+                                                         Place.Field.NAME,
+                                                         Place.Field.LAT_LNG,
+                                                         Place.Field.ADDRESS,
+                                                         Place.Field.PHOTO_METADATAS);
+
+
+                // Start the autocomplete intent.
+                Intent intent = new Autocomplete.IntentBuilder(
+                        AutocompleteActivityMode.FULLSCREEN, fields)
+                        .build(this);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                startActivityForResult(intent, AUTOCOMPLETE_REQUEST_CODE);
+
                 Toast.makeText(getApplicationContext(), "Add a new place", Toast.LENGTH_SHORT).show();
                 return true;
             case R.id.Tabs_menu_edit:
@@ -143,6 +163,40 @@ public class RouteActivity extends AppCompatActivity {
                 return false;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data){
+        if (requestCode == AUTOCOMPLETE_REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
+                Place place = Autocomplete.getPlaceFromIntent(data);
+                addPlace(place);
+                Log.i("----- autocomplete", "Place: " + place.getName() + ", " + place.getId());
+            } else if (resultCode == AutocompleteActivity.RESULT_ERROR) {
+                Status status = Autocomplete.getStatusFromIntent(data);
+                Log.i("----- autocomplete", status.getStatusMessage());
+            } else if (resultCode == RESULT_CANCELED) {}
+        }
+    }
+
+    private void addPlace(Place place){
+        LatLng latLng = place.getLatLng();
+        if (latLng == null) {
+            Toast.makeText(RouteActivity.this,
+                    place.getName() + " can't be found.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        TriPlace newPlace = new TriPlace();
+        newPlace.setLatitude(latLng.latitude);
+        newPlace.setLongitude(latLng.longitude);
+        newPlace.setName(place.getName());
+        newPlace.setStreet(place.getAddress());
+        newPlace.setCity("");
+        newPlace.setId(place.getId());
+        ListFragment lf = (ListFragment) findFragmentByPosition(1);;
+        MapFragment mf = (MapFragment) findFragmentByPosition(0);
+        mf.addPlace(newPlace);
+        lf.addPlace(newPlace);
     }
 
     private void getDialog() {
