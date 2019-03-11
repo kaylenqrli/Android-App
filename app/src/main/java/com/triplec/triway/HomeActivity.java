@@ -171,7 +171,6 @@ public class HomeActivity extends AppCompatActivity
                 FindAutocompletePredictionsRequest request = FindAutocompletePredictionsRequest.builder()
                         // Call either setLocationBias() OR setLocationRestriction().
                         //.setLocationRestriction(bounds)
-                        .setTypeFilter(TypeFilter.CITIES)
                         .setSessionToken(token)
                         .setQuery(search.getText().toString())
                         .build();

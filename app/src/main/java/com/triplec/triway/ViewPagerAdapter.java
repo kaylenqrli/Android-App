@@ -20,7 +20,7 @@ public class ViewPagerAdapter extends PagerAdapter {
     private Integer[] images = {R.drawable.album_city3,     // jump to images[3]
                                 R.drawable.album_city1, R.drawable.album_city2, R.drawable.album_city3,
                                 R.drawable.album_city1};    // jump to images[1]
-    private String[] cities = {  "Venice", "Beijing", "New York", "Venice", "Beijing"};
+    private String[] cities = {  "Hawaii", "San Diego", "New York", "Hawaii", "San Diego"};
 
     public ViewPagerAdapter(Context context) {
         this.context = context;

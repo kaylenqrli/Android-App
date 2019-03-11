@@ -104,6 +104,8 @@ public class TriPlace implements Serializable {
 
     public String getDescription() {
 //      return "test description for " + this.getName();
+        if (getCity() == null || getCity().length() == 0)
+            return getStreet();
         return getStreet() + ", " + getCity();
     }
     public void setDescription(String description){
@@ -152,7 +154,6 @@ public class TriPlace implements Serializable {
             Log.e("PlaceID not found ", getName());
             return;
         }
-        Log.d("PlaceList PlaceID: ", placeId);
         List<Place.Field> fields = Arrays.asList(Place.Field.PHOTO_METADATAS);
         FetchPlaceRequest placeRequest = FetchPlaceRequest.builder(placeId, fields).build();
 
@@ -211,7 +212,6 @@ public class TriPlace implements Serializable {
         PlacesClient placesClient = Places.createClient(context);
         if (placeId == null || placeId.length() == 0)
             return;
-        Log.d("MapList PlaceID: ", placeId);
         List<Place.Field> fields = Arrays.asList(Place.Field.PHOTO_METADATAS);
         FetchPlaceRequest placeRequest = FetchPlaceRequest.builder(placeId, fields).build();
 
