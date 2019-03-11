@@ -31,7 +31,8 @@ public class PlaceListAdapter extends ArrayAdapter<TriPlace> {
             "ChIJA8tw-pZU2YARxPYVsDwL8-0",  // Balboa Park
             "ChIJ7-bxRDmr3oARawtVV_lGLtw",  // Airport
             "ChIJ54O2gpEG3IAR0YlUGyNK1GQ",  // Black's Beach
-            "ChIJT69MQcQG3IARpz6Rifyqtu8"   // UCSD
+            "ChIJIzH1VxdawokR_r1xf38gNeU"   // The Oculus
+            //"ChIJT69MQcQG3IARpz6Rifyqtu8"   // UCSD
     };
     /*----- Place Id for getPhoto() -----*/
 
@@ -69,7 +70,8 @@ public class PlaceListAdapter extends ArrayAdapter<TriPlace> {
         holder.name.setText(places.get(position).getName());
         holder.description.setText(places.get(position).getDescription());
         // set photo
-        places.get(position).setId(placeIds[position % 5]);
+        //if(position < 5)
+        //   places.get(position).setId(placeIds[position]);
         Bitmap bitmap = places.get(position).getPhoto(mContext, this);
         holder.photo.setImageBitmap(bitmap);
         notifyDataSetChanged();
