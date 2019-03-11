@@ -221,13 +221,14 @@ class RouteModel implements RouteContract.Model {
         return url;
     }
 
-    private String getPlaceIdUrl(LatLng curLatLng) {
+    private String getPlaceIdUrl(LatLng curLatLng, String name) {
         // Origin of route
         String str_location = "location=" + curLatLng.latitude + "," + curLatLng.longitude;
         // Destination of route
-        String str_radius = "radius=500";
+        String str_radius = "radius=5000";
+        String str_name = "name=" + name;
         // Building the parameters to the web service
-        String parameters = str_location + "&" + str_radius;
+        String parameters = str_location + "&" + str_radius + "&" + str_name;
         // Output format
         String output = "json";
         // Building the url to the web service
@@ -399,19 +400,24 @@ class RouteModel implements RouteContract.Model {
     }
 
     @Override
-    public void fetchRoutes(List<LatLng> allMarkerPoints) {
-        for(int i=0; i< allMarkerPoints.size()-1; i++){
-            LatLng from = allMarkerPoints.get(i);
-            LatLng to = allMarkerPoints.get(i+1);
-            String url = getUrl(from,to);
-            FetchUrl fetch = new FetchUrl();
-            fetch.execute(url);
+    public void fetchRoutes(TriPlan placePlan) {
+        ArrayList<LatLng> allMarkerPoints= new ArrayList<LatLng>();
+        List<TriPlace> resultPlaces = placePlan.getPlaceList();
+        for (int i=0; i<resultPlaces.size(); i++) {
+            allMarkerPoints.add(new LatLng(resultPlaces.get(i).getLatitude(),
+                    resultPlaces.get(i).getLongitude()));
         }
         for(int i=0; i< allMarkerPoints.size(); i++){
-            LatLng place = allMarkerPoints.get(i);
-            String placeUrl = getPlaceIdUrl(place);
-            FetchPlaceIdUrl fetch = new FetchPlaceIdUrl();
-            fetch.execute(placeUrl, String.valueOf(i));
+            LatLng from = allMarkerPoints.get(i);
+            if (i < allMarkerPoints.size()-1) {
+                LatLng to = allMarkerPoints.get(i+1);
+                String url = getUrl(from,to);
+                FetchUrl fetch = new FetchUrl();
+                fetch.execute(url);
+            }
+            String placeUrl = getPlaceIdUrl(from, resultPlaces.get(i).getName());
+            FetchPlaceIdUrl fetchPlace = new FetchPlaceIdUrl();
+            fetchPlace.execute(placeUrl, String.valueOf(i));
         }
     }
     private void addPolyline(PolylineOptions lineOptions) {

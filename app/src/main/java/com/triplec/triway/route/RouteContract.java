@@ -2,13 +2,10 @@ package com.triplec.triway.route;
 
 import android.content.Context;
 
-import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.triplec.triway.common.TriPlace;
 import com.triplec.triway.common.TriPlan;
 import com.triplec.triway.mvp.MvpContract;
-
-import java.util.List;
 
 
 public interface RouteContract {
@@ -43,7 +40,7 @@ public interface RouteContract {
 
         Context getContext();
 
-        void fetchRoutes(List<LatLng> allMarkerPoints);
+        void fetchRoutes(TriPlan allMarkerPoints);
 
         void addPolyline(PolylineOptions lineOptions);
     }
@@ -56,6 +53,6 @@ public interface RouteContract {
         void setPlanId(String id);
         boolean addPlace(TriPlace newPlace);
         void updatePlan(TriPlan newPlan);
-        void fetchRoutes(List<LatLng> allMarkerPoints);
+        void fetchRoutes(TriPlan allMarkerPoints);
     }
 }
