@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -180,8 +181,6 @@ class RouteModel implements RouteContract.Model {
     @Override
     public boolean addPlace(TriPlace newPlace) {
         // TODO add place to current plan
-        List<TriPlace> currList = mTriPlan.getPlaceList();
-        //updatePlan(newPlan);
         return true;
     }
     /* following helper methods from: https://github.com/hiteshbpatel/Android_Blog_Projects*/

@@ -201,6 +201,7 @@ public class MapFragment extends MvpFragment<RouteContract.Presenter> implements
 
     @Override
     public boolean addPlace(TriPlace newPlace) {
+        Toast.makeText(getContext(), "Add a new place: " + newPlace.getName(), Toast.LENGTH_SHORT).show();
         return this.presenter.addPlace(newPlace);
     }
 

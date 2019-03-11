@@ -28,10 +28,13 @@ import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
 import com.google.android.gms.common.api.Status;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.api.model.RectangularBounds;
 import com.google.android.libraries.places.api.model.TypeFilter;
 import com.google.android.libraries.places.widget.Autocomplete;
 import com.google.android.libraries.places.widget.AutocompleteActivity;
+import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
 import com.triplec.triway.common.TriPlace;
 import com.triplec.triway.common.TriPlan;
@@ -64,6 +67,8 @@ public class RouteActivity extends AppCompatActivity {
      */
     private ViewPager mViewPager;
     private ActionBar actionbar;
+    private ListFragment lf;
+    private MapFragment mf;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,7 +77,7 @@ public class RouteActivity extends AppCompatActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener(){
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onBackPressed();
@@ -95,7 +100,7 @@ public class RouteActivity extends AppCompatActivity {
         mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager));
         Bundle bundle = getIntent().getExtras();
-        TriPlan mPlan = (TriPlan)bundle.getSerializable("plan");
+        TriPlan mPlan = (TriPlan) bundle.getSerializable("plan");
         if (mPlan != null)
             actionbar.setTitle(mPlan.getName());
     }
@@ -147,6 +152,7 @@ public class RouteActivity extends AppCompatActivity {
                 // return after the user has made a selection.
                 List<Place.Field> fields = Arrays.asList(Place.Field.ID, Place.Field.NAME);
 
+
                 // Start the autocomplete intent.
                 Intent intent = new Autocomplete.IntentBuilder(
                         AutocompleteActivityMode.FULLSCREEN, fields)
@@ -185,10 +191,9 @@ public class RouteActivity extends AppCompatActivity {
     private void addPlace(Place place){
         TriPlace newPlace = new TriPlace(place.getName());
         newPlace.setId(place.getId());
-        //newPlace.setPhoto(place.getPhotoMetadatas().get(0));
 
-        MapFragment mf = (MapFragment) findFragmentByPosition(0);
-        ListFragment lf = (ListFragment) findFragmentByPosition(1);
+        mf = (MapFragment) findFragmentByPosition(0);
+        lf = (ListFragment) findFragmentByPosition(1);
         mf.addPlace(newPlace);
         lf.addPlace(newPlace);
     }

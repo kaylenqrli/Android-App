@@ -2,6 +2,8 @@ package com.triplec.triway;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.location.Geocoder;
+import android.location.Location;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -67,8 +69,8 @@ public class PlaceListAdapter extends ArrayAdapter<TriPlace> {
         holder.description.setText(places.get(position).getDescription());
         // set photo
         places.get(position).setId(placeIds[position]);
-        //Bitmap bitmap = places.get(position).getPhoto(mContext, this);
-        //holder.photo.setImageBitmap(bitmap);
+        Bitmap bitmap = places.get(position).getPhoto(mContext, this);
+        holder.photo.setImageBitmap(bitmap);
         notifyDataSetChanged();
 
         holder.checkBox.setChecked(mSelectedItemsIds.get(position));
