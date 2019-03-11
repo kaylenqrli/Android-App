@@ -103,7 +103,8 @@ public class TriPlace implements Serializable {
     }
 
     public String getDescription() {
-      return "test description for " + this.getName();
+//      return "test description for " + this.getName();
+        return getStreet() + ", " + getCity();
     }
     public void setDescription(String description){
 

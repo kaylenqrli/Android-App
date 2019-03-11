@@ -10,13 +10,22 @@ public class TriPlan implements Serializable{
     private String name;
     private String planId;
     private TriPlan() {
-
+        list = new ArrayList<>();
     }
+    private String dateModified;
     private TriPlan(TriPlanBuilder builder){
         //name = p;
         planId = "";
         list = builder.list;
     }
+
+    public String getDateModified() {
+        return dateModified;
+    }
+    public void setDate(String newDate) {
+        dateModified = newDate;
+    }
+
     public List<TriPlace> getPlaceList() {
         return this.list;
     }
