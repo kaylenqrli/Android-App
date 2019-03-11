@@ -152,7 +152,6 @@ public class TriPlace implements Serializable {
 
         placesClient.fetchPlace(placeRequest).addOnSuccessListener((response) -> {
             Place place = response.getPlace();
-
             // Get the photo metadata.
             PhotoMetadata photoMetadata = place.getPhotoMetadatas().get(0);
 

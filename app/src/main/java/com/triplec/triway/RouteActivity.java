@@ -139,13 +139,14 @@ public class RouteActivity extends AppCompatActivity {
             case R.id.Tabs_menu_add:
                 // Set the fields to specify which types of place data to
                 // return after the user has made a selection.
-                List<Place.Field> fields = Arrays.asList(Place.Field.ID, Place.Field.NAME);
+                List<Place.Field> fields = Arrays.asList(Place.Field.ID,
+                                                         Place.Field.NAME,
+                                                         Place.Field.PHOTO_METADATAS);
 
 
                 // Start the autocomplete intent.
                 Intent intent = new Autocomplete.IntentBuilder(
                         AutocompleteActivityMode.FULLSCREEN, fields)
-                        .setTypeFilter(TypeFilter.ADDRESS)
                         .build(this);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                 startActivityForResult(intent, AUTOCOMPLETE_REQUEST_CODE);
