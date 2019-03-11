@@ -135,8 +135,18 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <ImageButton
+                <com.facebook.login.widget.LoginButton
                     android:id="@+id/login_facebook"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="0dp"
+                    android:layout_marginEnd="298dp"
+                    android:layout_marginBottom="0dp" />
+
+                <ImageButton
+                    android:id="@+id/login_facebookImageButton"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:scaleType="fitXY"
