@@ -50,6 +50,7 @@ public class SavedPlanActivity extends Activity {
                 for (DataSnapshot snapm: dataSnapshot.getChildren()) {
                     TriPlan mPlan = snapm.getValue(TriPlan.class);
                     List<TriPlace> newList = new ArrayList<TriPlace>();
+                    mPlan.setDate(snapm.child("createdAt").getValue(String.class));
                     for ( DataSnapshot snapPlace : snapm.child("places").getChildren() ) {
                         TriPlace mPlace = snapm.getValue(TriPlace.class);
                         mPlace.setLongitude(snapPlace.child("longitude").getValue(Double.class));

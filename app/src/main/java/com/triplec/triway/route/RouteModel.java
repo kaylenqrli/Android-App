@@ -24,6 +24,8 @@ import com.triplec.triway.retrofit.PlaceRequestApi;
 import com.triplec.triway.retrofit.RetrofitClient;
 import com.triplec.triway.retrofit.response.PlaceResponse;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -33,6 +35,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -49,7 +52,6 @@ class RouteModel implements RouteContract.Model {
     private FirebaseAuth mAuth;
     private FirebaseUser user;
     private Geocoder coder;
-    private int index = 0;
     RouteModel() {
         placesRequestApi = RetrofitClient.getInstance().create(PlaceRequestApi.class);
         mDatabase = FirebaseDatabase.getInstance().getReference();
@@ -103,7 +105,7 @@ class RouteModel implements RouteContract.Model {
                     presenter.onError(response.message());
                 }
                 TriPlan.TriPlanBuilder myBuilder = new TriPlan.TriPlanBuilder();
-                myBuilder.addPlaceList(response.body().getPlaces());
+                myBuilder.addPlaceList(response.body().getPlaces().subList(0, 5));
 
                 TriPlan newPlan = myBuilder.buildPlan();
                 List<TriPlace> newList = newPlan.getPlaceList();
@@ -139,7 +141,36 @@ class RouteModel implements RouteContract.Model {
                     @Override
                     public void onSuccess(Void aVoid) {
                         // Write was successful!
-                        presenter.onSavedSuccess(mTriPlan.getName());
+                        mDatabase.child("users").child(userId).child("plans").child(finalKey).child("createdAt")
+                                .setValue(new Date().toString())
+                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
+                                        // Write was successful!
+                                        mDatabase.child("users").child(userId).child("plans").child(finalKey).child("places")
+                                                .setValue(mTriPlan.getPlaceList())
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        // Write was successful!
+                                                        mTriPlan.setId(finalKey);
+                                                        presenter.onSavedSuccess(mTriPlan.getName());
+                                                    }
+                                                }).addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+                                                // Write failed
+                                                presenter.onError("Failed to save plan. " + e.getMessage());
+                                            }
+                                        });
+                                    }
+                                }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                // Write failed
+                                presenter.onError("Failed to save plan. " + e.getMessage());
+                            }
+                        });
                     }
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override
@@ -148,28 +179,9 @@ class RouteModel implements RouteContract.Model {
                         presenter.onError("Failed to save plan. " + e.getMessage());
                     }
         });
-        mDatabase.child("users").child(userId).child("plans").child(finalKey).child("places")
-                .setValue(mTriPlan.getPlaceList())
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        // Write was successful!
-                        mTriPlan.setId(finalKey);
-                        presenter.onSavedSuccess(mTriPlan.getName());
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        // Write failed
-                        presenter.onError("Failed to save plan. " + e.getMessage());
-                    }
-        });
+
         setPlanId(finalKey);
         return mTriPlan.getId();
-    }
-
-    private void setPlaceId(int i, String id) {
-        mTriPlan.getPlaceList().get(i).setId(id);
     }
 
     @Override
@@ -204,6 +216,55 @@ class RouteModel implements RouteContract.Model {
         return url;
     }
 
+    private String getPlaceIdUrl(LatLng curLatLng, String name) {
+        // Origin of route
+        String str_location = "location=" + curLatLng.latitude + "," + curLatLng.longitude;
+        // Destination of route
+        String str_radius = "radius=5000";
+        String str_name = "name=" + name;
+        // Building the parameters to the web service
+        String parameters = str_location + "&" + str_radius + "&" + str_name;
+        // Output format
+        String output = "json";
+        // Building the url to the web service
+        String url = "https://maps.googleapis.com/maps/api/place/nearbysearch/" + output + "?"
+                + parameters + "&key=" + "AIzaSyCmALKlEfyw3eOrW1jPnf6_xrrS7setOFU";
+        return url;
+    }
+
+    // Fetches data from url passed
+
+    private class FetchPlaceIdUrl extends AsyncTask<String, Void, String> {
+        private int index = 0;
+        @Override
+        protected String doInBackground(String... url) {
+            // For storing data from web service
+            String data = "";
+            try {
+                // Fetching the data from web service
+                data = downloadUrl(url[0]);
+                index = Integer.parseInt(url[1]);
+                Log.d("Background Task data", data);
+            } catch (Exception e) {
+                Log.d("Background Task", e.toString());
+            }
+            return data;
+        }
+        @Override
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+            JSONObject jObject;
+            try {
+                jObject = new JSONObject(result);
+                JSONArray jgeocoders = jObject.getJSONArray("results");
+                String id = jgeocoders.getJSONObject(0).getString("place_id");
+                mTriPlan.getPlaceList().get(index).setId(id);
+                Log.d("get ID", id + " with: " + index);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    }
     /**
      * A method to download json data from url
      */
@@ -282,11 +343,6 @@ class RouteModel implements RouteContract.Model {
                 // Starts parsing data
                 routes = parser.parse(jObject);
 
-                ArrayList<String> currid = parser.getIDs();
-                setPlaceId(index,currid.get(0));
-                setPlaceId(index+1,currid.get(1));
-                index++;
-
                 Log.d("ParserTask","Executing routes");
                 Log.d("ParserTask",routes.toString());
             } catch (Exception e) {
@@ -339,13 +395,24 @@ class RouteModel implements RouteContract.Model {
     }
 
     @Override
-    public void fetchRoutes(List<LatLng> allMarkerPoints) {
-        for(int i=0; i< allMarkerPoints.size()-1; i++){
+    public void fetchRoutes(TriPlan placePlan) {
+        ArrayList<LatLng> allMarkerPoints= new ArrayList<LatLng>();
+        List<TriPlace> resultPlaces = placePlan.getPlaceList();
+        for (int i=0; i<resultPlaces.size(); i++) {
+            allMarkerPoints.add(new LatLng(resultPlaces.get(i).getLatitude(),
+                    resultPlaces.get(i).getLongitude()));
+        }
+        for(int i=0; i< allMarkerPoints.size(); i++){
             LatLng from = allMarkerPoints.get(i);
-            LatLng to = allMarkerPoints.get(i+1);
-            String url = getUrl(from,to);
-            FetchUrl fetch = new FetchUrl();
-            fetch.execute(url);
+            if (i < allMarkerPoints.size()-1) {
+                LatLng to = allMarkerPoints.get(i+1);
+                String url = getUrl(from,to);
+                FetchUrl fetch = new FetchUrl();
+                fetch.execute(url);
+            }
+            String placeUrl = getPlaceIdUrl(from, resultPlaces.get(i).getName());
+            FetchPlaceIdUrl fetchPlace = new FetchPlaceIdUrl();
+            fetchPlace.execute(placeUrl, String.valueOf(i));
         }
     }
     private void addPolyline(PolylineOptions lineOptions) {

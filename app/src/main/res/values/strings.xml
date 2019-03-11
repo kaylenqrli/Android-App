@@ -35,5 +35,5 @@
     <string name="sign_out">Sign out</string>
     <string name="facebook_app_id">[APP_ID]</string> <string name="fb_login_protocol_scheme">fb[APP_ID]</string>
 
-
+    <string name="dialog_delete_message">U sure wanna delete this plan?</string>
 </resources>

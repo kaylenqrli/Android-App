@@ -10,21 +10,30 @@ public class TriPlan implements Serializable{
     private String name;
     private String planId;
     private TriPlan() {
-
+        list = new ArrayList<>();
     }
+    private String dateModified;
     private TriPlan(TriPlanBuilder builder){
         //name = p;
         planId = "";
-        list = getTopFive(builder.list);
+        list = builder.list;
     }
+
+    public String getDateModified() {
+        return dateModified;
+    }
+    public void setDate(String newDate) {
+        dateModified = newDate;
+    }
+
     public List<TriPlace> getPlaceList() {
         return this.list;
     }
     public void setList(List<TriPlace> newList) {
         list = newList;
     }
-    private List<TriPlace> getTopFive(List<TriPlace> allPlaces){
-        if (allPlaces.size() < 5)
+    private List<TriPlace> getTopSeven(List<TriPlace> allPlaces){
+        if (allPlaces.size() < 7)
             return allPlaces;
         List<TriPlace> list = allPlaces;
 //        PoiSearch mPoiSearch = PoiSearch.newInstance();
@@ -57,7 +66,7 @@ public class TriPlan implements Serializable{
 //            }
 //        };
 
-        return list.subList(0,5);
+        return list.subList(0,7);
     }
 
     public String getName() {

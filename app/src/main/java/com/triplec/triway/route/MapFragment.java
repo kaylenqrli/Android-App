@@ -75,7 +75,7 @@ public class MapFragment extends MvpFragment<RouteContract.Presenter> implements
         });
 
         recyclerView = view.findViewById(R.id.map_recycler);
-        mapListAdapter = new MapListAdapter(null);
+        mapListAdapter = new MapListAdapter(getActivity(),null);
         recyclerView.setAdapter(mapListAdapter);
         layoutManager = new LinearLayoutManager(getActivity());
         ((LinearLayoutManager) layoutManager).setOrientation(LinearLayoutManager.HORIZONTAL);
@@ -115,6 +115,10 @@ public class MapFragment extends MvpFragment<RouteContract.Presenter> implements
         Marker markers[] = new Marker[resultPlaces.size()];
 
         Log.d("SHOWING PLAN::", String.valueOf(placePlan.getPlaceList().size()));
+        TriPlan.TriPlanBuilder builder = new TriPlan.TriPlanBuilder();
+        builder.addPlaceList(placePlan.getPlaceList());
+        TriPlan plan = builder.buildPlan();
+        mapListAdapter = new MapListAdapter(getActivity(), plan.getPlaceList());
         mMapView.getMapAsync(new OnMapReadyCallback() {
             @Override
             public void onMapReady(GoogleMap googleMap) {
@@ -127,10 +131,7 @@ public class MapFragment extends MvpFragment<RouteContract.Presenter> implements
                     marker.setTag(i);
                     markers[i] = marker;
                 }
-                TriPlan.TriPlanBuilder builder = new TriPlan.TriPlanBuilder();
-                builder.addPlaceList(placePlan.getPlaceList());
-                TriPlan plan = builder.buildPlan();
-                mapListAdapter = new MapListAdapter(plan.getPlaceList());
+
                 recyclerView.setAdapter(mapListAdapter);
                 mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
                     @Override
@@ -161,7 +162,7 @@ public class MapFragment extends MvpFragment<RouteContract.Presenter> implements
                 mMap.animateCamera(CameraUpdateFactory.zoomTo(10));
 
 
-                fetchRoutes(markerPoints);
+                fetchRoutes(placePlan);
 
                 if (markerPoints.size() > 0) {
                     mMap.moveCamera(CameraUpdateFactory.newLatLng(markerPoints.get(0)));
@@ -182,8 +183,8 @@ public class MapFragment extends MvpFragment<RouteContract.Presenter> implements
         Toast.makeText(getActivity(), "Plan saved as "
                                     + planName, Toast.LENGTH_SHORT).show();
     }
-    private void fetchRoutes(List<LatLng> allMarkerPoints) {
-        this.presenter.fetchRoutes(allMarkerPoints);
+    private void fetchRoutes(TriPlan placePlan) {
+        this.presenter.fetchRoutes(placePlan);
     }
     @Override
     public String getMainPlace() {
@@ -224,5 +225,11 @@ public class MapFragment extends MvpFragment<RouteContract.Presenter> implements
     @Override
     public void addPolyline(PolylineOptions lineOptions) {
         mMap.addPolyline(lineOptions);
+        notifyDataSetChanged();
+    }
+
+    @Override
+    public void notifyDataSetChanged() {
+        mapListAdapter.notifyDataSetChanged();
     }
 }
