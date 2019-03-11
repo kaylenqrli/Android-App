@@ -15,7 +15,7 @@ public class TriPlan implements Serializable{
     private TriPlan(TriPlanBuilder builder){
         //name = p;
         planId = "";
-        list = getTopFive(builder.list);
+        list = builder.list;
     }
     public List<TriPlace> getPlaceList() {
         return this.list;
@@ -23,8 +23,8 @@ public class TriPlan implements Serializable{
     public void setList(List<TriPlace> newList) {
         list = newList;
     }
-    private List<TriPlace> getTopFive(List<TriPlace> allPlaces){
-        if (allPlaces.size() < 5)
+    private List<TriPlace> getTopSeven(List<TriPlace> allPlaces){
+        if (allPlaces.size() < 7)
             return allPlaces;
         List<TriPlace> list = allPlaces;
 //        PoiSearch mPoiSearch = PoiSearch.newInstance();
@@ -57,7 +57,7 @@ public class TriPlan implements Serializable{
 //            }
 //        };
 
-        return list.subList(0,5);
+        return list.subList(0,7);
     }
 
     public String getName() {
