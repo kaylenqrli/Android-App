@@ -63,9 +63,6 @@ public class TriPlace implements Serializable {
         this.mPlaceDetail.mTriPoint.coordinates.add(0.0);
         this.mPlaceDetail.mTriPoint.coordinates.add(0.0);
     }
-    public TriPlace(String n){
-        name = n;
-    }
 
 //    private void setAddress(String a){
 //        address = a;
@@ -155,7 +152,6 @@ public class TriPlace implements Serializable {
 
         placesClient.fetchPlace(placeRequest).addOnSuccessListener((response) -> {
             Place place = response.getPlace();
-
             // Get the photo metadata.
             PhotoMetadata photoMetadata = place.getPhotoMetadatas().get(0);
 

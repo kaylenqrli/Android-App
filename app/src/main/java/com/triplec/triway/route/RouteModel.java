@@ -179,6 +179,8 @@ class RouteModel implements RouteContract.Model {
     @Override
     public boolean addPlace(TriPlace newPlace) {
         // TODO add place to current plan
+        mTriPlan.getPlaceList().add(newPlace);
+        presenter.showRoutes(mTriPlan);
         return true;
     }
     /* following helper methods from: https://github.com/hiteshbpatel/Android_Blog_Projects*/
