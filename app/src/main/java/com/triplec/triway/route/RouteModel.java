@@ -184,11 +184,6 @@ class RouteModel implements RouteContract.Model {
         return mTriPlan.getId();
     }
 
-    private void setPlaceId(int i, String id) {
-        Log.d("ADD id to:", i + "With id:" + id);
-        mTriPlan.getPlaceList().get(i).setId(id);
-    }
-
     @Override
     public void setPlanId(String id) {
         mTriPlan.setId(id);
