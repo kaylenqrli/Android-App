@@ -141,6 +141,7 @@ public class RouteActivity extends AppCompatActivity {
                 List<Place.Field> fields = Arrays.asList(Place.Field.ID,
                                                          Place.Field.NAME,
                                                          Place.Field.LAT_LNG,
+                                                         Place.Field.ADDRESS,
                                                          Place.Field.PHOTO_METADATAS);
 
 
@@ -189,6 +190,8 @@ public class RouteActivity extends AppCompatActivity {
         newPlace.setLatitude(latLng.latitude);
         newPlace.setLongitude(latLng.longitude);
         newPlace.setName(place.getName());
+        newPlace.setStreet(place.getAddress());
+        newPlace.setCity("");
         newPlace.setId(place.getId());
         ListFragment lf = (ListFragment) findFragmentByPosition(1);;
         MapFragment mf = (MapFragment) findFragmentByPosition(0);
