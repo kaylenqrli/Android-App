@@ -16,7 +16,7 @@ import com.google.android.libraries.places.widget.listener.PlaceSelectionListene
 
 import java.util.Arrays;
 
-/*public class SearchResultActivity extends AppCompatActivity {
+public class SearchResultActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,4 +69,4 @@ import java.util.Arrays;
             Toast.makeText(this, "Searching query is: " + query, Toast.LENGTH_SHORT).show();
         }
     }
-}*/
+}
