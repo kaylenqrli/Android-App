@@ -126,7 +126,7 @@ public class LoginActivity extends AppCompatActivity implements SessionTimeoutLi
         }
         // Google third party Login
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestIdToken("619574719784-v5pepuomg9gr6mqjkd0grh7dsear8eg0.apps.googleusercontent.com")
                 .requestEmail()
                 .build();
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
