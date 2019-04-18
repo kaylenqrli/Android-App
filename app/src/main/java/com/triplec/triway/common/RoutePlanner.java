@@ -5,23 +5,21 @@ import java.util.List;
 
 
 /**
- * Take an array list of places and give a route with minimum cost
- * @author Qingran Li
+ * Plan a route with min cost for a given list of places
  */
-
 public class RoutePlanner {
 	/* input list of places */
 	private List<TriPlace> list;
-	/* Store places and relative weight */
+	/* selected places and relative weight */
 	private SelectedPlace[] mplaces;
 	private int[] index;
-	/* Store result */
+	/* result */
 	private TriPlan plan;
 	private TriPlace[] result;
 	private double minCost = Integer.MAX_VALUE;
 
 	/**
-	 * Set list and get number of places
+	 * Initialize list of places
 	 *
 	 * @param alist The given list of selected places
 	 */
@@ -32,9 +30,8 @@ public class RoutePlanner {
 
 	/**
 	 * Get the route with minimum cost (shortest distance for now)
-	 * Must call setRoutePlanner() with a nonempty array list before calling this function
 	 *
-	 * @return array list of places with the order such that the route has minimum cost
+	 * @return reordered array list of places
 	 */
 	public TriPlan planRoute() {
 		// return empty array list if input list is empty
@@ -44,9 +41,10 @@ public class RoutePlanner {
 			return myBuilder.buildPlan();
 		}
 
-		// initialize selected places, index array, and plan
+		// initialize selected places, index array, and result
 		mplaces = new SelectedPlace[num];
 		index = new int[num];
+		result = new TriPlace[num];
 
 		// set up places with weight and index array
 		for(int i = 0; i < num; i++) {
@@ -57,11 +55,11 @@ public class RoutePlanner {
 				mplaces[i].setNeighbor(list.get(j), j);
 			}
 		}
-		// initialize the result array list and plan
-		result = new TriPlace[num];
+
 		// iterate through all permutations, get best route with minCost
 		permute(index, 0);
 
+		// build the resulting triplan
 		TriPlan.TriPlanBuilder myBuilder = new TriPlan.TriPlanBuilder();
 		for(int i = 0; i < num; i++) {
 			myBuilder.addPlace(result[i]);

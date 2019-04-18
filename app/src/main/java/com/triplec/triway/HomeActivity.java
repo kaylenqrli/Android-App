@@ -68,7 +68,7 @@ import retrofit2.Response;
 public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    // Views, Layouts, and Adapters
+    /* Views, Layouts, and Adapters */
     Toolbar toolbar;
     DrawerLayout drawer;
     ActionBarDrawerToggle toggle;
@@ -92,7 +92,7 @@ public class HomeActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         setupFirebaseListener();
 
-        // used to logout user's google account if the user uses google acount to login
+        // used to logout user's google account if the user uses google account to login
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestEmail()
                 .build();
@@ -161,6 +161,8 @@ public class HomeActivity extends AppCompatActivity
                 return handled;
             }
         });
+
+        // autocomplete
         search.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
