@@ -147,16 +147,27 @@ public class TriPlace implements Serializable {
         return placeId;
     }
 
+    /**
+     * Fetch photo for current place using Google Place SDK.
+     * Notify adapter to update photo.
+     * @param context
+     * @param adapter for list fragment
+     */
     private void fetchPhoto(Context context, PlaceListAdapter adapter) {
+        // Set up Google PlacesClient
         Places.initialize(context,  context.getResources().getString(R.string.google_maps_key));
         PlacesClient placesClient = Places.createClient(context);
+        // Verify place id
         if (placeId == null || placeId.length() == 0) {
             Log.e("PlaceID not found ", getName());
             return;
         }
-        List<Place.Field> fields = Arrays.asList(Place.Field.PHOTO_METADATAS);
-        FetchPlaceRequest placeRequest = FetchPlaceRequest.builder(placeId, fields).build();
 
+        // Specify fields. Requests for photos must always have the PHOTO_METADATAS field.
+        List<Place.Field> fields = Arrays.asList(Place.Field.PHOTO_METADATAS);
+        // Get a Place object (this example uses fetchPlace(), but you can also use findCurrentPlace())
+        FetchPlaceRequest placeRequest = FetchPlaceRequest.builder(placeId, fields).build();
+        // Set up listener for PlacesClient
         placesClient.fetchPlace(placeRequest).addOnSuccessListener((response) -> {
             Place place = response.getPlace();
             // Get the photo metadata.
@@ -189,10 +200,21 @@ public class TriPlace implements Serializable {
         });
     }
 
+    /**
+     * Store fetched bitmap as photo
+     * @param bitmap
+     */
     public void setPhoto(Bitmap bitmap){
         photo = bitmap;
     }
 
+
+    /**
+     * Get photo for current place. Fetch photo if it's null
+     * @param context
+     * @param adapter for list fragment
+     * @return photo for current place
+     */
     public Bitmap getPhoto(Context context, PlaceListAdapter adapter){
         if(photo == null ) {
             fetchPhoto(context, adapter);
@@ -200,6 +222,13 @@ public class TriPlace implements Serializable {
         Log.d("=====", "getPhoto() ");
         return photo;
     }
+
+    /**
+     * Get photo for current place. Fetch photo if it's null
+     * @param context
+     * @param adapter for map fragment
+     * @return photo for current place
+     */
     public Bitmap getPhoto(Context context, MapListAdapter adapter){
         if(photo == null) {
             fetchPhoto(context, adapter);
@@ -207,14 +236,26 @@ public class TriPlace implements Serializable {
         Log.d("=====", "getPhoto() ");
         return photo;
     }
+
+    /**
+     * Fetch photo for current place using Google Place SDK.
+     * Notify adapter to update photo.
+     * @param context
+     * @param adapter for map fragment
+     */
     private void fetchPhoto(Context context, MapListAdapter adapter) {
+        // Set up Google PlacesClient
         Places.initialize(context,  context.getResources().getString(R.string.google_maps_key));
         PlacesClient placesClient = Places.createClient(context);
+        // Verify place id
         if (placeId == null || placeId.length() == 0)
             return;
-        List<Place.Field> fields = Arrays.asList(Place.Field.PHOTO_METADATAS);
-        FetchPlaceRequest placeRequest = FetchPlaceRequest.builder(placeId, fields).build();
 
+        // Specify fields. Requests for photos must always have the PHOTO_METADATAS field.
+        List<Place.Field> fields = Arrays.asList(Place.Field.PHOTO_METADATAS);
+        // Get a Place object (this example uses fetchPlace(), but you can also use findCurrentPlace())
+        FetchPlaceRequest placeRequest = FetchPlaceRequest.builder(placeId, fields).build();
+        // Set up listener for PlacesClient
         placesClient.fetchPlace(placeRequest).addOnSuccessListener((response) -> {
             Place place = response.getPlace();
             // Get the photo metadata.

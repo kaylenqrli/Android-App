@@ -1,20 +1,17 @@
 package com.triplec.triway.common;
 
 /**
- * Connect one selected place to its neighbors, and calculate the weight
- * @author Qingran Li
+ * Set up relative weight of selected place
  */
 public class SelectedPlace {
-	/*----- Constant for distance calculation -----*/
+	/* earth radius */
 	private static final int EARTH_RADIUS = 6378137;
 
-	/* Private fields */
 	private TriPlace p;
 	private double[] weights;
 
 	/**
-	 * Constructor
-	 * Initialize weights to empty arrays
+	 * Initialize weight array to be empty
 	 *
 	 * @param place				Current place
 	 * @param numOfNeighbor		The number of choices of next stop from current place
@@ -25,7 +22,7 @@ public class SelectedPlace {
 	}
 
 	/**
-	 * Add neighbor to array and calculate the weight of route from current place to neighbor
+	 * Add neighbor and set the weight of edge from current place to neighbor
 	 *
 	 * @param neighbor		The next stop from current place
 	 * @param index			The index of neighbor in array
@@ -44,7 +41,7 @@ public class SelectedPlace {
 	}
 
 	/**
-	 * Get weight of route from current place to neighbor at given index
+	 * Get weight of edge from current place to neighbor at given index
 	 *
 	 * @param index		The index of neighbor in array
 	 * @return			Weight
@@ -55,9 +52,9 @@ public class SelectedPlace {
 
 
 	/**
-	 * Set weight of route from current place to neighbor with the formula:
+	 * Set weight of edge from current place to neighbor with the formula:
 	 * 			weight = distance
-	 * Might add more factors later
+	 * (Will update)
 	 *
 	 * @param neighbor	The next stop from current place
 	 * @param index		The index of neighbor in array
@@ -92,7 +89,6 @@ public class SelectedPlace {
 	}
 
 	/**
-	 * Helper method
 	 * Convert angle to radius with the formula:
 	 * 			r = d * PI / 180
 	 *
@@ -104,7 +100,6 @@ public class SelectedPlace {
 	}
 
 	/**
-	 * Helper method
 	 * Calculate haversine of given angle with the formula:
 	 * 			hav(theta) = sin(theta / 2)^2
 	 *

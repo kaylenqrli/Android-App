@@ -46,6 +46,7 @@ public class ListFragment extends MvpFragment<RouteContract.Presenter> implement
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // handle deleting in list fragment
         setHasOptionsMenu(true);
     }
 
@@ -63,6 +64,7 @@ public class ListFragment extends MvpFragment<RouteContract.Presenter> implement
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            // remove selected place and update adapter
             case R.id.Tabs_menu_delete:
                 //  delete all selected places
                 SparseBooleanArray selected = adapter.getSelectedIds();
@@ -113,7 +115,7 @@ public class ListFragment extends MvpFragment<RouteContract.Presenter> implement
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                // toggle selected status
+                // toggle selection status
                 adapter.toggleSelection(position);
             }
         });

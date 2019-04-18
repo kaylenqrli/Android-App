@@ -15,6 +15,10 @@ import com.triplec.triway.common.TriPlace;
 
 import java.util.List;
 
+/**
+ * Adapter for list fragment. Allows multi-selection and multi-deletion.
+ * source: https://www.androidbegin.com/tutorial/android-delete-multiple-selected-items-listview-tutorial/
+ */
 public class PlaceListAdapter extends ArrayAdapter<TriPlace> {
     List<TriPlace> places;
     Context mContext;
@@ -66,12 +70,11 @@ public class PlaceListAdapter extends ArrayAdapter<TriPlace> {
         holder.name.setText(places.get(position).getName());
         holder.description.setText(places.get(position).getDescription());
         // set photo
-//        if(position < 5)
-//            places.get(position).setId(placeIds[position]);
         Bitmap bitmap = places.get(position).getPhoto(mContext, this);
         holder.photo.setImageBitmap(bitmap);
         notifyDataSetChanged();
 
+        // toggle checkbox and remove animation
         holder.checkBox.setChecked(mSelectedItemsIds.get(position));
         holder.checkBox.jumpDrawablesToCurrentState();
 

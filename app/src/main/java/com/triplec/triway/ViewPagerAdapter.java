@@ -11,7 +11,10 @@ import android.widget.ImageView;
 
 import java.util.Timer;
 
-
+/**
+ * Adapter for ViewPager in HomeActivity
+ * source: https://www.jianshu.com/p/58f356eaa6e9
+ */
 public class ViewPagerAdapter extends PagerAdapter {
 
     private Context context;
@@ -44,7 +47,7 @@ public class ViewPagerAdapter extends PagerAdapter {
         ImageView imageView = (ImageView) view.findViewById(R.id.imageView);
         imageView.setImageResource(images[position]);
 
-        // add onClickListener to image
+        // add onClickListener for each image
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

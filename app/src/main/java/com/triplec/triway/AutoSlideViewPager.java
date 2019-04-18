@@ -15,7 +15,11 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
-
+/**
+ * Auto scrolling and recycling ViewPager
+ * Source: https://www.jianshu.com/p/58f356eaa6e9
+ * @param <T>
+ */
 public class AutoSlideViewPager<T extends PagerAdapter> extends FrameLayout {
     private ViewPager viewPager;
     private PagerAdapter mAdapter;
@@ -103,7 +107,7 @@ public class AutoSlideViewPager<T extends PagerAdapter> extends FrameLayout {
             return;
         }
 
-        // set current image, number of cached image, and image oargin
+        // set current image, number of cached image, and image margin
         viewPager.setCurrentItem(currentIndex);
         viewPager.setOffscreenPageLimit(1);
         viewPager.setPageMargin(pageMargin);
@@ -111,22 +115,21 @@ public class AutoSlideViewPager<T extends PagerAdapter> extends FrameLayout {
         // add page change listener
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
-            public void onPageScrolled(int position, float positionOffset,int positionOffsetPixels) {
-            }
+            public void onPageScrolled(int position, float positionOffset,int positionOffsetPixels) {}
 
             @Override
             public void onPageSelected(int position) {
                 // recycle through images
-                if (position==0){
-                    currentIndex = mAdapter.getCount()-2 ; // [x][1][2][3][4] --> [0][1][2][x][4]
-                }else if (position == mAdapter.getCount()-1){
+                if (position == 0){
+                    currentIndex = mAdapter.getCount() - 2; // [x][1][2][3][4] --> [0][1][2][x][4]
+                }else if (position == mAdapter.getCount() - 1){
                     currentIndex = 1; // [0][1][2][3][x] --> [0][x][2][3][4]
                 }else {
                     currentIndex = position;
                 }
                 // recycle through dots
                 mLinearLayout.getChildAt(oldPosition).setEnabled(false); // disable last dot
-                mLinearLayout.getChildAt(currentIndex-1).setEnabled(true); // currentIndex: 1,2,3
+                mLinearLayout.getChildAt(currentIndex - 1).setEnabled(true); // currentIndex: 1,2,3
                 oldPosition = currentIndex - 1; // currentIndex: 1,2,3
             }
 
@@ -148,7 +151,7 @@ public class AutoSlideViewPager<T extends PagerAdapter> extends FrameLayout {
     }
 
     /**
-     * Start playing if autoPlay is true
+     * Start auto scrolling if autoPlay is true
      */
     public void play(){
         if (autoPlay){
@@ -159,7 +162,7 @@ public class AutoSlideViewPager<T extends PagerAdapter> extends FrameLayout {
     }
 
     /**
-     * Cancel sutoPlay
+     * Cancel autoPlay
      */
     public void cancel(){
         handler.removeCallbacks(runnable);
@@ -169,7 +172,7 @@ public class AutoSlideViewPager<T extends PagerAdapter> extends FrameLayout {
      * Set up dots
      */
     private void setIndicatorDot() {
-        // add one dot for each actual image
+        // add one dot for three images
         for (int i = 0; i < mAdapter.getCount() - 2; i++){
             // add gray dot
             View v = new View(mContext);
