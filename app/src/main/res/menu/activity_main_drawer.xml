@@ -1,25 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/test_menu"
     xmlns:tools="http://schemas.android.com/tools"
     tools:showIn="navigation_view">
 
-    <group android:checkableBehavior="single">
-        <item
-            android:id="@+id/nav_camera"
-            android:icon="@drawable/ic_menu_trip"
-            android:title="My Plan 1" />
-        <item
-            android:id="@+id/nav_gallery"
-            android:icon="@drawable/ic_menu_trip"
-            android:title="My Plan 2" />
-        <item
-            android:id="@+id/nav_slideshow"
-            android:icon="@drawable/ic_menu_trip"
-            android:title="My Plan 3" />
-        <item
-            android:id="@+id/nav_manage"
-            android:icon="@drawable/ic_menu_trip"
-            android:title="My Plan 4" />
-    </group>
+    <item
+        android:id="@+id/drawer_saved_plan"
+        android:icon="@drawable/ic_menu_trip"
+        android:title="Saved Plans" />
+    <item
+        android:id="@+id/drawer_sign_out"
+        android:icon="@drawable/ic_exit_to_app_black_24dp"
+        android:title="Sign out" />
 
 </menu>
