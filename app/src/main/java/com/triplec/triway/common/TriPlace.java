@@ -2,9 +2,11 @@ package com.triplec.triway.common;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.os.AsyncTask;
 import android.util.Log;
 
 import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.PhotoMetadata;
 import com.google.android.libraries.places.api.model.Place;
@@ -16,7 +18,17 @@ import com.triplec.triway.MapListAdapter;
 import com.triplec.triway.PlaceListAdapter;
 import com.triplec.triway.R;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.Serializable;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -56,6 +68,23 @@ public class TriPlace implements Serializable {
         }
     }
     public String address;
+
+    // new constructor base on given latlng
+    public TriPlace(double lat, double lng){
+        //old code copied from the default constructor
+        this.mPlaceDetail = new PlaceDetails();
+        this.mPlaceDetail.mTriAddress = new PlaceDetails.TriAddress();
+        this.mPlaceDetail.mTriPoint = new PlaceDetails.TriPoint();
+        this.mPlaceDetail.mTriPoint.coordinates = new ArrayList<Double>();
+        this.mPlaceDetail.mTriPoint.coordinates.add(0.0);
+        this.mPlaceDetail.mTriPoint.coordinates.add(0.0);
+
+        //set latlng by given values
+        this.setLatitude(lat);
+        this.setLongitude(lng);
+    }
+
+
     public TriPlace() {
         this.mPlaceDetail = new PlaceDetails();
         this.mPlaceDetail.mTriAddress = new PlaceDetails.TriAddress();
@@ -63,6 +92,89 @@ public class TriPlace implements Serializable {
         this.mPlaceDetail.mTriPoint.coordinates = new ArrayList<Double>();
         this.mPlaceDetail.mTriPoint.coordinates.add(0.0);
         this.mPlaceDetail.mTriPoint.coordinates.add(0.0);
+    }
+
+
+    private String getPlaceIdUrl(LatLng curLatLng, String name) {
+        // Origin of route
+        String str_location = "location=" + getLatitude() + "," + getLongitude();
+        // Destination of route
+        String str_radius = "radius=5000";
+        // Building the parameters to the web service
+        String parameters = str_location + "&" + str_radius;
+        // Output format
+        String output = "json";
+        // Building the url to the web service
+        String url = "https://maps.googleapis.com/maps/api/place/nearbysearch/" + output + "?"
+                + parameters + "&key=" + "AIzaSyCmALKlEfyw3eOrW1jPnf6_xrrS7setOFU";
+        return url;
+    }
+
+    // Fetches data from url passed
+
+    private class FetchPlaceIdUrl extends AsyncTask<String, Void, String> {
+        private int index = 0;
+        @Override
+        protected String doInBackground(String... url) {
+            // For storing data from web service
+            String data = "";
+            try {
+                // Fetching the data from web service
+                data = downloadUrl(url[0]);
+                index = Integer.parseInt(url[1]);
+                Log.d("Background Task data", data);
+            } catch (Exception e) {
+                Log.d("Background Task", e.toString());
+            }
+            return data;
+        }
+        @Override
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+            JSONObject jObject;
+            try {
+                jObject = new JSONObject(result);
+                JSONArray jgeocoders = jObject.getJSONArray("results");
+                String id = jgeocoders.getJSONObject(0).getString("place_id");
+                setId(id);
+                Log.d("get ID", id);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * A method to download json data from url
+     */
+    private String downloadUrl(String strUrl) throws IOException {
+        String data = "";
+        InputStream iStream = null;
+        HttpURLConnection urlConnection = null;
+        try {
+            URL url = new URL(strUrl);
+            // Creating an http connection to communicate with url
+            urlConnection = (HttpURLConnection) url.openConnection();
+            // Connecting to url
+            urlConnection.connect();
+            // Reading data from url
+            iStream = urlConnection.getInputStream();
+            BufferedReader br = new BufferedReader(new InputStreamReader(iStream));
+            StringBuffer sb = new StringBuffer();
+            String line = "";
+            while ((line = br.readLine()) != null) {
+                sb.append(line);
+            }
+            data = sb.toString();
+            Log.d("downloadUrl", data);
+            br.close();
+        } catch (Exception e) {
+            Log.d("Exception", e.toString());
+        } finally {
+            iStream.close();
+            urlConnection.disconnect();
+        }
+        return data;
     }
 
 //    private void setAddress(String a){
