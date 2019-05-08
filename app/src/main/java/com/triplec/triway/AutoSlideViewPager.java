@@ -73,8 +73,9 @@ public class AutoSlideViewPager<T extends PagerAdapter> extends FrameLayout {
         // set up ViewPager layout to match parent with 0 margin
         viewPager = new ViewPager(mContext);
         LayoutParams vparams = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                650);
+                ViewGroup.LayoutParams.MATCH_PARENT);
         viewPager.setLayoutParams(vparams);
+
         addView(viewPager);
 
         // set up layout for dots
@@ -111,6 +112,7 @@ public class AutoSlideViewPager<T extends PagerAdapter> extends FrameLayout {
         viewPager.setCurrentItem(currentIndex);
         viewPager.setOffscreenPageLimit(1);
         viewPager.setPageMargin(pageMargin);
+
 
         // add page change listener
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {

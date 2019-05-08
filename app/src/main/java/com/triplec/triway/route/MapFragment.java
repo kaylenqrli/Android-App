@@ -23,7 +23,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
-import com.triplec.triway.MapListAdapter;
 import com.triplec.triway.R;
 import com.triplec.triway.common.TriPlace;
 import com.triplec.triway.common.TriPlan;
