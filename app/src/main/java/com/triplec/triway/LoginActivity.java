@@ -76,6 +76,8 @@ public class LoginActivity extends AppCompatActivity implements SessionTimeoutLi
     private final int PASSWORD_LENGTH = 8;
     private boolean loginClicked;
     private Timer timer;
+    private boolean forgetClicked;
+    private TextView forgetPassword;
     private SessionTimeoutListener timeoutListener;
     private CallbackManager mCallbackManager;   // facebook
     GoogleSignInClient mGoogleSignInClient;
@@ -109,6 +111,7 @@ public class LoginActivity extends AppCompatActivity implements SessionTimeoutLi
         setContentView(R.layout.activity_login);
 
         loginInButton = findViewById(R.id.loginButton);
+        forgetPassword = findViewById(R.id.forget_password_view);
         signUpButton = findViewById(R.id.signupButton);
         mAuth = FirebaseAuth.getInstance();
         user = mAuth.getCurrentUser();
@@ -124,6 +127,12 @@ public class LoginActivity extends AppCompatActivity implements SessionTimeoutLi
         if(sp.getBoolean("logged",false)){
             openHomeActivity();
         }
+        forgetPassword.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                openForgetActivity();
+            }
+        });
         // Google third party Login
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
@@ -146,20 +155,6 @@ public class LoginActivity extends AppCompatActivity implements SessionTimeoutLi
         mail_layout = findViewById(R.id.login_email_layout);
         password_layout = findViewById(R.id.login_password_layout);
         mail_et = findViewById(R.id.login_email);
-//        mail_et.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-//            @Override
-//            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
-//                if ((keyEvent != null) && (keyEvent.getKeyCode() == KeyEvent.KEYCODE_ENTER)
-//                        || (i == EditorInfo.IME_ACTION_NEXT)){
-//                    String email = mail_et.getText().toString();
-//                    Matcher matcher= Pattern.compile(validEmail).matcher(email);
-//                    if (matcher.matches()){
-//                        mail_layout.setError(null);
-//                    }
-//                }
-//                return false;
-//            }
-//        });
         password_et = findViewById(R.id.login_password);
 
         // check if user has saved their email and password_et before
@@ -171,8 +166,6 @@ public class LoginActivity extends AppCompatActivity implements SessionTimeoutLi
             password_et.setText(rememberSp.getString("userPassword",""));
             checkBox.setChecked(true);
         }
-
-
         // make done the default button when user has input password_et
         password_et.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -208,6 +201,7 @@ public class LoginActivity extends AppCompatActivity implements SessionTimeoutLi
         loginInButton.setEnabled(true);
         signUpButton.setEnabled(true);
         loginClicked = false;
+        forgetClicked = false;
     }
     /**
      * Login method, first check email&password_et are in valid form, if yes, attempt to login.
@@ -304,6 +298,18 @@ public class LoginActivity extends AppCompatActivity implements SessionTimeoutLi
         Intent intent = new Intent(this, HomeActivity.class);
         startActivity(intent);
         finish();               // terminate LoginActivity after login
+    }
+
+    public void openForgetActivity(){
+        if(forgetClicked){
+            return;
+        }
+        else{
+            forgetClicked = true;
+        }
+        Intent intent = new Intent(this, ForgetPasswordActivity.class);
+        startActivity(intent);
+
     }
 
     // check if the password_et length is greater than or equal than 8
