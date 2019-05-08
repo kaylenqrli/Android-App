@@ -82,6 +82,8 @@ public class TriPlace implements Serializable {
         //set latlng by given values
         this.setLatitude(lat);
         this.setLongitude(lng);
+
+        setIDfromLL(lat,lng);
     }
 
 
@@ -94,8 +96,15 @@ public class TriPlace implements Serializable {
         this.mPlaceDetail.mTriPoint.coordinates.add(0.0);
     }
 
+    // wrapper for setting id from ll
+    private void setIDfromLL(double lat, double lng){
+        String url = getPlaceIdUrl(new LatLng(lat,lng));
+        FetchPlaceIdUrl fetchPlaceIdUrl = new FetchPlaceIdUrl();
+        fetchPlaceIdUrl.execute(url);
+    }
 
-    private String getPlaceIdUrl(LatLng curLatLng, String name) {
+
+    private String getPlaceIdUrl(LatLng curLatLng) {
         // Origin of route
         String str_location = "location=" + getLatitude() + "," + getLongitude();
         // Destination of route
@@ -253,6 +262,7 @@ public class TriPlace implements Serializable {
 //    }
 
     public void setId(String id){
+
         placeId = id;
     }
     public String getId(){
