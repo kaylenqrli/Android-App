@@ -8,6 +8,7 @@ import android.util.Log;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.model.OpeningHours;
 import com.google.android.libraries.places.api.model.PhotoMetadata;
 import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.api.net.FetchPhotoRequest;
@@ -43,9 +44,11 @@ public class TriPlace implements Serializable {
     private String placeId;
     private Bitmap photo;
     private boolean photoSetup = false;
+
     static PlacesClient placesClient;
     static final String apiKey = "AIzaSyCmALKlEfyw3eOrW1jPnf6_xrrS7setOFU";
     private Place ggPlace;
+
 
     @SerializedName("place")
     private PlaceDetails mPlaceDetail;
@@ -73,8 +76,8 @@ public class TriPlace implements Serializable {
     }
     public String address;
 
-    // new constructor base on given latlng
-    public TriPlace(double lat, double lng){
+    // new constructor base on given latlng and context
+    public TriPlace(double lat, double lng, Context context){
         //old code copied from the default constructor
         this.mPlaceDetail = new PlaceDetails();
         this.mPlaceDetail.mTriAddress = new PlaceDetails.TriAddress();
@@ -87,7 +90,12 @@ public class TriPlace implements Serializable {
         this.setLatitude(lat);
         this.setLongitude(lng);
 
+        //set ID from given latlng
         setIDfromLL(lat,lng);
+
+        //set ggPlace
+        initializePlacesClient(context);
+        fetchPlaces();
     }
 
 
@@ -252,18 +260,19 @@ public class TriPlace implements Serializable {
     }
 
     public String getName(){
-        return name;
+        return ggPlace.getName();
     }
-    public void setName(String name){
-        this.name = name;
+    public void setName(String Name){
+        this.name = Name;
     }
-//    private void setRating(double r){
-//        rating = r;
-//    }
-//
-//    public double getRating() {
-//        return rating;
-//    }
+
+    public double getRating() {
+        return ggPlace.getRating();
+    }
+
+    public OpeningHours getOpeningHour(){
+        return ggPlace.getOpeningHours();
+    }
 
     public void setId(String id){
 
