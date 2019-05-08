@@ -39,4 +39,5 @@
     <string name="enter_email">Enter your Email address</string>
     <string name="dialog_delete_message">U sure wanna delete this plan?</string>
     <string name="title_activity_forget_password">ForgetPasswordActivity</string>
+    <string name="forget_password">Forget my password ;(</string>
 </resources>
