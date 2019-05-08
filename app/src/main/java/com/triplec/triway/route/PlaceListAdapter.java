@@ -1,4 +1,4 @@
-package com.triplec.triway;
+package com.triplec.triway.route;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -11,6 +11,7 @@ import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.triplec.triway.R;
 import com.triplec.triway.common.TriPlace;
 
 import java.util.List;

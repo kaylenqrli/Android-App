@@ -46,6 +46,7 @@ public class ViewPagerAdapter extends PagerAdapter {
         View view = layoutInflater.inflate(R.layout.album_main, null);
         ImageView imageView = (ImageView) view.findViewById(R.id.imageView);
         imageView.setImageResource(images[position]);
+        imageView.setScaleType(ImageView.ScaleType.FIT_XY);
 
         // add onClickListener for each image
         view.setOnClickListener(new View.OnClickListener() {
