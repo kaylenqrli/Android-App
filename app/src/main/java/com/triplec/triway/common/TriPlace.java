@@ -17,6 +17,7 @@ import com.google.gson.annotations.SerializedName;
 import com.triplec.triway.MapListAdapter;
 import com.triplec.triway.PlaceListAdapter;
 import com.triplec.triway.R;
+import com.triplec.triway.RouteActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -42,6 +43,9 @@ public class TriPlace implements Serializable {
     private String placeId;
     private Bitmap photo;
     private boolean photoSetup = false;
+
+    static PlacesClient placesClient;
+    static final String apiKey = "AIzaSyCmALKlEfyw3eOrW1jPnf6_xrrS7setOFU";
     private Place ggPlace;
 
 
@@ -409,6 +413,28 @@ public class TriPlace implements Serializable {
                     Log.e("Photo Setup Failed", "Place not found: " + exception.getMessage());
                 }
             });
+        });
+    }
+
+    /** initialize the placesClient to fetch places */
+    public void initializePlacesClient(Context context){
+        Places.initialize(context, apiKey);
+        placesClient = Places.createClient(context);
+    }
+
+    private void fetchPlaces(){
+        List<Place.Field> placeField = Arrays.asList(Place.Field.ID, Place.Field.NAME);
+        FetchPlaceRequest request = FetchPlaceRequest.builder(this.getId(), placeField).build();
+        placesClient.fetchPlace(request).addOnSuccessListener((response) -> {
+            ggPlace = response.getPlace();
+            Log.i("TAG", "Place found: " + ggPlace.getName());
+        }).addOnFailureListener((exception) -> {
+            if (exception instanceof ApiException) {
+                ApiException apiException = (ApiException) exception;
+                int statusCode = apiException.getStatusCode();
+                // Handle error with given status code.
+                Log.e("TAG", "Place not found: " + exception.getMessage());
+            }
         });
     }
 
