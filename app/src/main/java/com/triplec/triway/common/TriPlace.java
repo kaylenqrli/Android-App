@@ -42,6 +42,8 @@ public class TriPlace implements Serializable {
     private String placeId;
     private Bitmap photo;
     private boolean photoSetup = false;
+    private Place ggPlace;
+
 
     @SerializedName("place")
     private PlaceDetails mPlaceDetail;
@@ -83,6 +85,7 @@ public class TriPlace implements Serializable {
         this.setLatitude(lat);
         this.setLongitude(lng);
 
+        //set ID from given latlng
         setIDfromLL(lat,lng);
     }
 
