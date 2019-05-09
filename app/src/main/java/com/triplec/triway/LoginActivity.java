@@ -109,7 +109,19 @@ public class LoginActivity extends AppCompatActivity implements SessionTimeoutLi
         setContentView(R.layout.activity_login);
 
         loginInButton = findViewById(R.id.loginButton);
+        loginInButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                login(v);
+            }
+        });
         signUpButton = findViewById(R.id.signupButton);
+        signUpButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openSignUpPage(v);
+            }
+        });
         mAuth = FirebaseAuth.getInstance();
         user = mAuth.getCurrentUser();
         // check if the user logged before, auto-login if true
