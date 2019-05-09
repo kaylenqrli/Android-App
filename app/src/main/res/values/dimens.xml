@@ -10,7 +10,8 @@
     <!-- Home page text -->
     <dimen name="home_text_width">319dp</dimen>
     <dimen name="home_text_height">130dp</dimen>
-    <dimen name="home_text_top_margin">120dp</dimen><!-- Need to change after considering the album-->
+    <dimen name="home_text_top_margin">120dp
+    </dimen><!-- Need to change after considering the album-->
     <dimen name="home_text_left_margin">46dp</dimen>
     <dimen name="home_text_size">37sp</dimen>
 
