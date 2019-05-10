@@ -59,10 +59,10 @@ public class PlaceListAdapter extends ArrayAdapter<TriPlace> {
             holder = new ViewHolder();
             convertView = inflater.inflate(R.layout.route_list_item, null);
             // Locate the TextViews in listview_item.xml
-            holder.checkBox = (CheckBox) convertView.findViewById(R.id.place_checkbox);
-            holder.name = (TextView) convertView.findViewById(R.id.place_name);
-            holder.description = (TextView) convertView.findViewById(R.id.place_description);
-            holder.photo = (ImageView) convertView.findViewById(R.id.place_photo);
+            holder.checkBox = convertView.findViewById(R.id.place_checkbox);
+            holder.name = convertView.findViewById(R.id.place_name);
+            holder.description = convertView.findViewById(R.id.place_description);
+            holder.photo = convertView.findViewById(R.id.place_photo);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();

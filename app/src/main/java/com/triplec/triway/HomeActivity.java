@@ -71,11 +71,11 @@ public class HomeActivity extends AppCompatActivity
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
 
         // set up toolbar
-        toolbar = (Toolbar) findViewById(R.id.toolbar_main);
+        toolbar = findViewById(R.id.toolbar_main);
         setSupportActionBar(toolbar);
 
         // set up drawer
-        drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer = findViewById(R.id.drawer_layout);
         toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open,
                 R.string.navigation_drawer_close) {
@@ -103,11 +103,11 @@ public class HomeActivity extends AppCompatActivity
         });
 
         // set up navigation
-        navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
         // set up album
-        viewPager = (AutoSlideViewPager) findViewById(R.id.viewPager);
+        viewPager = findViewById(R.id.viewPager);
         adapter = new ViewPagerAdapter(this);
         viewPager.setAdapter(adapter);
         viewPager.setAutoPlay(true);
@@ -117,7 +117,7 @@ public class HomeActivity extends AppCompatActivity
         placesClient = Places.createClient(this);
         AutocompleteSessionToken token = AutocompleteSessionToken.newInstance();
 
-        search = (AutoCompleteTextView) findViewById(R.id.searchView);
+        search = findViewById(R.id.searchView);
         madapter = new ArrayAdapter<String>(HomeActivity.this,
                 android.R.layout.simple_dropdown_item_1line);
         search.setAdapter(madapter);

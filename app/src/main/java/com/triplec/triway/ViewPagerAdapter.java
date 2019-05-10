@@ -44,7 +44,7 @@ public class ViewPagerAdapter extends PagerAdapter {
         // fill ImageView with image at given index position
         layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View view = layoutInflater.inflate(R.layout.album_main, null);
-        ImageView imageView = (ImageView) view.findViewById(R.id.imageView);
+        ImageView imageView = view.findViewById(R.id.imageView);
         imageView.setImageResource(images[position]);
         imageView.setScaleType(ImageView.ScaleType.FIT_XY);
 

@@ -299,12 +299,7 @@ public class SignUpActivity extends AppCompatActivity implements SessionTimeoutL
 
         Matcher matcher= Pattern.compile(validEmail).matcher(email);
         if (matcher.matches()){
-            if(isValidPassword && (passW.equals(check))){
-                return true;
-            }
-            else{
-                return false;
-            }
+            return isValidPassword && (passW.equals(check));
         }
         else{
             return false;

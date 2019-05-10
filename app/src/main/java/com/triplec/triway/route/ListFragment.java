@@ -86,7 +86,7 @@ public class ListFragment extends MvpFragment<RouteContract.Presenter> implement
         View view = inflater.inflate(R.layout.fragment_list, container, false);
 
         // set up list with adapter
-        list = (ListView)view.findViewById(R.id.route_list);
+        list = view.findViewById(R.id.route_list);
 
 
         return view;

@@ -63,7 +63,7 @@ public class RouteActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_route);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -80,10 +80,10 @@ public class RouteActivity extends AppCompatActivity {
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
         // Set up the ViewPager with the sections adapter.
-        mViewPager = (ViewPager) findViewById(R.id.container);
+        mViewPager = findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
 
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
+        TabLayout tabLayout = findViewById(R.id.tabs);
 
         mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager));
@@ -193,7 +193,7 @@ public class RouteActivity extends AppCompatActivity {
         newPlace.setStreet(place.getAddress());
         newPlace.setCity("");
         newPlace.setId(place.getId());
-        ListFragment lf = (ListFragment) findFragmentByPosition(1);;
+        ListFragment lf = (ListFragment) findFragmentByPosition(1);
         MapFragment mf = (MapFragment) findFragmentByPosition(0);
         mf.addPlace(newPlace);
         lf.addPlace(newPlace);
