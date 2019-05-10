@@ -2,10 +2,13 @@ package com.triplec.triway.common;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.os.AsyncTask;
 import android.util.Log;
 
 import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.model.OpeningHours;
 import com.google.android.libraries.places.api.model.PhotoMetadata;
 import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.api.net.FetchPhotoRequest;
@@ -15,8 +18,19 @@ import com.google.gson.annotations.SerializedName;
 import com.triplec.triway.route.MapListAdapter;
 import com.triplec.triway.route.PlaceListAdapter;
 import com.triplec.triway.R;
+import com.triplec.triway.RouteActivity;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.Serializable;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -30,6 +44,11 @@ public class TriPlace implements Serializable {
     private String placeId;
     private Bitmap photo;
     private boolean photoSetup = false;
+
+    static PlacesClient placesClient;
+    static final String apiKey = "AIzaSyCmALKlEfyw3eOrW1jPnf6_xrrS7setOFU";
+    private Place ggPlace;
+
 
     @SerializedName("place")
     private PlaceDetails mPlaceDetail;
@@ -56,6 +75,30 @@ public class TriPlace implements Serializable {
         }
     }
     public String address;
+
+    // new constructor base on given latlng and context
+    public TriPlace(double lat, double lng, Context context){
+        //old code copied from the default constructor
+        this.mPlaceDetail = new PlaceDetails();
+        this.mPlaceDetail.mTriAddress = new PlaceDetails.TriAddress();
+        this.mPlaceDetail.mTriPoint = new PlaceDetails.TriPoint();
+        this.mPlaceDetail.mTriPoint.coordinates = new ArrayList<Double>();
+        this.mPlaceDetail.mTriPoint.coordinates.add(0.0);
+        this.mPlaceDetail.mTriPoint.coordinates.add(0.0);
+
+        //set latlng by given values
+        this.setLatitude(lat);
+        this.setLongitude(lng);
+
+        //set ID from given latlng
+        setIDfromLL(lat,lng);
+
+        //set ggPlace
+        initializePlacesClient(context);
+        fetchPlaces();
+    }
+
+
     public TriPlace() {
         this.mPlaceDetail = new PlaceDetails();
         this.mPlaceDetail.mTriAddress = new PlaceDetails.TriAddress();
@@ -63,6 +106,96 @@ public class TriPlace implements Serializable {
         this.mPlaceDetail.mTriPoint.coordinates = new ArrayList<Double>();
         this.mPlaceDetail.mTriPoint.coordinates.add(0.0);
         this.mPlaceDetail.mTriPoint.coordinates.add(0.0);
+    }
+
+    // wrapper for setting id from ll
+    private void setIDfromLL(double lat, double lng){
+        String url = getPlaceIdUrl(new LatLng(lat,lng));
+        FetchPlaceIdUrl fetchPlaceIdUrl = new FetchPlaceIdUrl();
+        fetchPlaceIdUrl.execute(url);
+    }
+
+
+    private String getPlaceIdUrl(LatLng curLatLng) {
+        // Origin of route
+        String str_location = "location=" + getLatitude() + "," + getLongitude();
+        // Destination of route
+        String str_radius = "radius=5000";
+        // Building the parameters to the web service
+        String parameters = str_location + "&" + str_radius;
+        // Output format
+        String output = "json";
+        // Building the url to the web service
+        String url = "https://maps.googleapis.com/maps/api/place/nearbysearch/" + output + "?"
+                + parameters + "&key=" + "AIzaSyCmALKlEfyw3eOrW1jPnf6_xrrS7setOFU";
+        return url;
+    }
+
+    // Fetches data from url passed
+
+    private class FetchPlaceIdUrl extends AsyncTask<String, Void, String> {
+        private int index = 0;
+        @Override
+        protected String doInBackground(String... url) {
+            // For storing data from web service
+            String data = "";
+            try {
+                // Fetching the data from web service
+                data = downloadUrl(url[0]);
+                index = Integer.parseInt(url[1]);
+                Log.d("Background Task data", data);
+            } catch (Exception e) {
+                Log.d("Background Task", e.toString());
+            }
+            return data;
+        }
+        @Override
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+            JSONObject jObject;
+            try {
+                jObject = new JSONObject(result);
+                JSONArray jgeocoders = jObject.getJSONArray("results");
+                String id = jgeocoders.getJSONObject(0).getString("place_id");
+                setId(id);
+                Log.d("get ID", id);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * A method to download json data from url
+     */
+    private String downloadUrl(String strUrl) throws IOException {
+        String data = "";
+        InputStream iStream = null;
+        HttpURLConnection urlConnection = null;
+        try {
+            URL url = new URL(strUrl);
+            // Creating an http connection to communicate with url
+            urlConnection = (HttpURLConnection) url.openConnection();
+            // Connecting to url
+            urlConnection.connect();
+            // Reading data from url
+            iStream = urlConnection.getInputStream();
+            BufferedReader br = new BufferedReader(new InputStreamReader(iStream));
+            StringBuffer sb = new StringBuffer();
+            String line = "";
+            while ((line = br.readLine()) != null) {
+                sb.append(line);
+            }
+            data = sb.toString();
+            Log.d("downloadUrl", data);
+            br.close();
+        } catch (Exception e) {
+            Log.d("Exception", e.toString());
+        } finally {
+            iStream.close();
+            urlConnection.disconnect();
+        }
+        return data;
     }
 
 //    private void setAddress(String a){
@@ -127,20 +260,22 @@ public class TriPlace implements Serializable {
     }
 
     public String getName(){
-        return name;
+        return ggPlace.getName();
     }
-    public void setName(String name){
-        this.name = name;
+    public void setName(String Name){
+        this.name = Name;
     }
-//    private void setRating(double r){
-//        rating = r;
-//    }
-//
-//    public double getRating() {
-//        return rating;
-//    }
+
+    public double getRating() {
+        return ggPlace.getRating();
+    }
+
+    public OpeningHours getOpeningHour(){
+        return ggPlace.getOpeningHours();
+    }
 
     public void setId(String id){
+
         placeId = id;
     }
     public String getId(){
@@ -284,6 +419,28 @@ public class TriPlace implements Serializable {
                     Log.e("Photo Setup Failed", "Place not found: " + exception.getMessage());
                 }
             });
+        });
+    }
+
+    /** initialize the placesClient to fetch places */
+    public void initializePlacesClient(Context context){
+        Places.initialize(context, apiKey);
+        placesClient = Places.createClient(context);
+    }
+
+    private void fetchPlaces(){
+        List<Place.Field> placeField = Arrays.asList(Place.Field.ID, Place.Field.NAME);
+        FetchPlaceRequest request = FetchPlaceRequest.builder(this.getId(), placeField).build();
+        placesClient.fetchPlace(request).addOnSuccessListener((response) -> {
+            ggPlace = response.getPlace();
+            Log.i("TAG", "Place found: " + ggPlace.getName());
+        }).addOnFailureListener((exception) -> {
+            if (exception instanceof ApiException) {
+                ApiException apiException = (ApiException) exception;
+                int statusCode = apiException.getStatusCode();
+                // Handle error with given status code.
+                Log.e("TAG", "Place not found: " + exception.getMessage());
+            }
         });
     }
 
