@@ -15,8 +15,8 @@ import com.google.android.libraries.places.api.net.FetchPhotoRequest;
 import com.google.android.libraries.places.api.net.FetchPlaceRequest;
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.gson.annotations.SerializedName;
-import com.triplec.triway.MapListAdapter;
-import com.triplec.triway.PlaceListAdapter;
+import com.triplec.triway.route.MapListAdapter;
+import com.triplec.triway.route.PlaceListAdapter;
 import com.triplec.triway.R;
 import com.triplec.triway.RouteActivity;
 
