@@ -32,6 +32,9 @@ public class ListFragment extends MvpFragment<RouteContract.Presenter> implement
     PlaceListAdapter adapter;
     ListView list;
     List<LatLng> markerPoints;
+    private Boolean isEditing = false;
+    private Menu menu;
+    private MenuInflater menuInflater;
 
     public static ListFragment newInstance() {
 
@@ -57,13 +60,37 @@ public class ListFragment extends MvpFragment<RouteContract.Presenter> implement
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
+        this.menu = menu;
+        if (isEditing) {
+            menu.findItem(R.id.Tabs_menu_add).setVisible(false);
+            menu.findItem(R.id.Tabs_menu_save).setVisible(false);
+            menu.findItem(R.id.Tabs_menu_edit).setVisible(false);
+            menu.findItem(R.id.Tabs_menu_delete).setVisible(false);
+            menu.findItem(R.id.Tabs_menu_delete_place).setVisible(true);
+            menu.findItem(R.id.Tabs_menu_cancel_delete).setVisible(true);
+        }
+    }
+
+    public void setEdit() {
+        isEditing = true;
+        if (adapter != null) {
+            adapter.beginEdit();
+        }
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             // remove selected place and update adapter
-            case R.id.Tabs_menu_delete:
+            case R.id.Tabs_menu_delete_place:
+                isEditing = false;
+                adapter.finishEdit();
+                menu.findItem(R.id.Tabs_menu_add).setVisible(true);
+                menu.findItem(R.id.Tabs_menu_save).setVisible(true);
+                menu.findItem(R.id.Tabs_menu_edit).setVisible(true);
+                menu.findItem(R.id.Tabs_menu_delete).setVisible(true);
+                menu.findItem(R.id.Tabs_menu_delete_place).setVisible(false);
+                menu.findItem(R.id.Tabs_menu_cancel_delete).setVisible(false);
                 //  delete all selected places
                 SparseBooleanArray selected = adapter.getSelectedIds();
                 for(int i = selected.size() - 1; i >= 0; i--){
@@ -73,6 +100,17 @@ public class ListFragment extends MvpFragment<RouteContract.Presenter> implement
                     }
                 }
                 adapter.removeSelection();
+                return true;
+            case R.id.Tabs_menu_cancel_delete:
+                isEditing = false;
+                adapter.finishEdit();
+                adapter.removeSelection();
+                menu.findItem(R.id.Tabs_menu_add).setVisible(true);
+                menu.findItem(R.id.Tabs_menu_save).setVisible(true);
+                menu.findItem(R.id.Tabs_menu_edit).setVisible(true);
+                menu.findItem(R.id.Tabs_menu_delete).setVisible(true);
+                menu.findItem(R.id.Tabs_menu_delete_place).setVisible(false);
+                menu.findItem(R.id.Tabs_menu_cancel_delete).setVisible(false);
                 return true;
             default:
                 return false;
@@ -85,7 +123,7 @@ public class ListFragment extends MvpFragment<RouteContract.Presenter> implement
         View view = inflater.inflate(R.layout.fragment_list, container, false);
 
         // set up list with adapter
-        list = (ListView)view.findViewById(R.id.route_list);
+        list = view.findViewById(R.id.route_list);
 
 
         return view;
@@ -107,7 +145,7 @@ public class ListFragment extends MvpFragment<RouteContract.Presenter> implement
         builder.addPlaceList(placePlan.getPlaceList());
         TriPlan plan = builder.buildPlan();
         adapter = new PlaceListAdapter
-                (getActivity(), R.layout.fragment_list, plan.getPlaceList());
+                (getActivity(), R.layout.fragment_list, plan.getPlaceList(), this.isEditing);
         list.setAdapter(adapter);
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override

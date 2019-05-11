@@ -63,6 +63,7 @@
                     android:layout_alignParentRight="true"
                     android:buttonTint="@color/colorAccent"
                     android:clickable="false"
+                    android:visibility="invisible"
                     android:focusable="false" />
 
             </RelativeLayout>

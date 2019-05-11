@@ -94,6 +94,12 @@ public class SignUpActivity extends AppCompatActivity implements SessionTimeoutL
         actionbar.setDisplayHomeAsUpEnabled(true);
         // find each view on this activity
         signUp = findViewById(R.id.signUpButton);
+        signUp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                submit(v);
+            }
+        });
         mAuth = FirebaseAuth.getInstance();
         first_name = findViewById(R.id.first_name);
         last_name = findViewById(R.id.last_name);
@@ -293,12 +299,7 @@ public class SignUpActivity extends AppCompatActivity implements SessionTimeoutL
 
         Matcher matcher= Pattern.compile(validEmail).matcher(email);
         if (matcher.matches()){
-            if(isValidPassword && (passW.equals(check))){
-                return true;
-            }
-            else{
-                return false;
-            }
+            return isValidPassword && (passW.equals(check));
         }
         else{
             return false;
