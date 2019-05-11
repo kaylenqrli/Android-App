@@ -31,7 +31,7 @@ public class SavedPlanActivity extends Activity {
         listItems = new ArrayList<TriPlan>();
         adapter = new SavedPlanAdapter(listItems, this);
 
-        listView = (ListView) findViewById(R.id.listView);
+        listView = findViewById(R.id.listView);
         listView.setAdapter(adapter);
 
 //        Intent intent = getIntent();

@@ -58,9 +58,9 @@ public class SavedPlanAdapter extends BaseAdapter implements ListAdapter {
         }
 
         //Handle TextView and display string from your list
-        TextView listItemText = (TextView)view.findViewById(R.id.card_title);
+        TextView listItemText = view.findViewById(R.id.card_title);
         listItemText.setText(list.get(position).getName());
-        TextView listItemDescription = (TextView)view.findViewById(R.id.card_description);
+        TextView listItemDescription = view.findViewById(R.id.card_description);
         listItemDescription.setText(list.get(position).getDateModified());
         //Handle buttons and add onClickListeners
         MaterialButton deleteBtn = view.findViewById(R.id.card_delete);

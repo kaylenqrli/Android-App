@@ -1,4 +1,4 @@
-package com.triplec.triway;
+package com.triplec.triway.route;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -11,6 +11,7 @@ import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.triplec.triway.R;
 import com.triplec.triway.common.TriPlace;
 
 import java.util.List;
@@ -25,6 +26,7 @@ public class PlaceListAdapter extends ArrayAdapter<TriPlace> {
     LayoutInflater inflater;
     private SparseBooleanArray mSelectedItemsIds;
     View convert;
+    private boolean isEditing = false;
 
     /*----- Place Id for getPhoto() -----*/
 //    private final String[] placeIds = {
@@ -36,12 +38,13 @@ public class PlaceListAdapter extends ArrayAdapter<TriPlace> {
 //    };
     /*----- Place Id for getPhoto() -----*/
 
-    public PlaceListAdapter (Context context, int resourceId, List<TriPlace> places) {
+    public PlaceListAdapter (Context context, int resourceId, List<TriPlace> places, boolean isEditing) {
         super(context, resourceId, places);
         this.mContext = context;
         mSelectedItemsIds = new SparseBooleanArray();
         inflater = LayoutInflater.from(context);
         this.places = places;
+        this.isEditing = isEditing;
     }
 
     private class ViewHolder {
@@ -58,10 +61,10 @@ public class PlaceListAdapter extends ArrayAdapter<TriPlace> {
             holder = new ViewHolder();
             convertView = inflater.inflate(R.layout.route_list_item, null);
             // Locate the TextViews in listview_item.xml
-            holder.checkBox = (CheckBox) convertView.findViewById(R.id.place_checkbox);
-            holder.name = (TextView) convertView.findViewById(R.id.place_name);
-            holder.description = (TextView) convertView.findViewById(R.id.place_description);
-            holder.photo = (ImageView) convertView.findViewById(R.id.place_photo);
+            holder.checkBox = convertView.findViewById(R.id.place_checkbox);
+            holder.name = convertView.findViewById(R.id.place_name);
+            holder.description = convertView.findViewById(R.id.place_description);
+            holder.photo = convertView.findViewById(R.id.place_photo);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
@@ -74,9 +77,15 @@ public class PlaceListAdapter extends ArrayAdapter<TriPlace> {
         holder.photo.setImageBitmap(bitmap);
         notifyDataSetChanged();
 
-        // toggle checkbox and remove animation
-        holder.checkBox.setChecked(mSelectedItemsIds.get(position));
-        holder.checkBox.jumpDrawablesToCurrentState();
+        if (isEditing) {
+            holder.checkBox.setVisibility(View.VISIBLE);
+            // toggle checkbox and remove animation
+            holder.checkBox.setChecked(mSelectedItemsIds.get(position));
+            holder.checkBox.jumpDrawablesToCurrentState();
+        }
+        else {
+            holder.checkBox.setVisibility(View.INVISIBLE);
+        }
 
         convert = convertView;
         return convertView;
@@ -104,8 +113,10 @@ public class PlaceListAdapter extends ArrayAdapter<TriPlace> {
     }
 
     public void toggleSelection(int position) {
-        selectView(position, !mSelectedItemsIds.get(position));
-        notifyDataSetChanged();
+        if (isEditing) {
+            selectView(position, !mSelectedItemsIds.get(position));
+            notifyDataSetChanged();
+        }
     }
 
     public SparseBooleanArray getSelectedIds() {
@@ -114,6 +125,16 @@ public class PlaceListAdapter extends ArrayAdapter<TriPlace> {
 
     public void removeSelection() {
         mSelectedItemsIds = new SparseBooleanArray();
+        notifyDataSetChanged();
+    }
+
+    public void beginEdit() {
+        isEditing = true;
+        notifyDataSetChanged();
+    }
+
+    public void finishEdit() {
+        isEditing = false;
         notifyDataSetChanged();
     }
 

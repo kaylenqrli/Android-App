@@ -23,7 +23,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
-import com.triplec.triway.MapListAdapter;
 import com.triplec.triway.R;
 import com.triplec.triway.common.TriPlace;
 import com.triplec.triway.common.TriPlan;
@@ -62,7 +61,7 @@ public class MapFragment extends MvpFragment<RouteContract.Presenter> implements
         View view = inflater.inflate(R.layout.fragment_map, container, false);
         // parsing plan(list)
 
-        mMapView = (MapView) view.findViewById(R.id.mapView);
+        mMapView = view.findViewById(R.id.mapView);
         mMapView.onCreate(savedInstanceState);
         mMapView.onResume(); // needed to get the map to display immediately
         mMapView.getMapAsync(new OnMapReadyCallback() {
@@ -112,7 +111,7 @@ public class MapFragment extends MvpFragment<RouteContract.Presenter> implements
             markerPoints.add(new LatLng(resultPlaces.get(i).getLatitude(),
                                 resultPlaces.get(i).getLongitude()));
         }
-        Marker markers[] = new Marker[resultPlaces.size()];
+        Marker[] markers = new Marker[resultPlaces.size()];
 
         Log.d("SHOWING PLAN::", String.valueOf(placePlan.getPlaceList().size()));
         TriPlan.TriPlanBuilder builder = new TriPlan.TriPlanBuilder();
@@ -136,7 +135,7 @@ public class MapFragment extends MvpFragment<RouteContract.Presenter> implements
                 mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
                     @Override
                     public void onMapClick(LatLng latLng) {
-                      recyclerView.setVisibility(recyclerView.INVISIBLE);
+                      recyclerView.setVisibility(View.INVISIBLE);
                       mMap.setPadding(0,0,0,0);
                     }
                 });
@@ -151,7 +150,7 @@ public class MapFragment extends MvpFragment<RouteContract.Presenter> implements
                           Toast.makeText(getContext(), "Marker has no Tag", Toast.LENGTH_SHORT).show();
                       }
                     //                Toast.makeText(getContext(), "Marker " + markerPosition + " is selected", Toast.LENGTH_SHORT).show();
-                      recyclerView.setVisibility(recyclerView.VISIBLE);
+                      recyclerView.setVisibility(View.VISIBLE);
                       mMap.setPadding(0,0,0,(int) (200 * Resources.getSystem().getDisplayMetrics().density));
                       recyclerView.scrollToPosition(markerPosition);
                       return false;

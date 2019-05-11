@@ -1,14 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_marginTop="?attr/actionBarSize"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="horizontal">
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
 
         <View
             android:layout_width="0dp"
@@ -17,14 +13,18 @@
 
         <LinearLayout
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="8"
             android:orientation="vertical">
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"/>
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="30dp"
                 android:text="Travel"
                 android:textColor="@color/colorPrimary"
                 android:fontFamily="Karla"
@@ -49,11 +49,15 @@
                 android:textSize="37sp"
                 />
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"/>
+
             <android.support.design.widget.TextInputLayout
                 android:id="@+id/login_email_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="30dp"
                 app:errorEnabled="true"
                 android:hint="Email">
 
@@ -96,10 +100,14 @@
                 android:textColor="@color/colorPrimaryDark"
                 android:text="@string/forget_password" />
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"/>
+
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="30dp">
+                android:layout_height="wrap_content">
 
                 <android.support.design.button.MaterialButton
                     android:id="@+id/loginButton"
@@ -125,11 +133,14 @@
 
             </RelativeLayout>
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="0.5"/>
+
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="30dp"
-                android:layout_marginBottom="20dp">
+                android:layout_height="wrap_content">
 
                 <com.facebook.login.widget.LoginButton
                     android:id="@+id/login_facebook"
@@ -171,6 +182,11 @@
 
             </RelativeLayout>
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"/>
+
         </LinearLayout>
 
         <View
@@ -178,6 +194,4 @@
             android:layout_height="match_parent"
             android:layout_weight="1"/>
 
-    </LinearLayout>
-
-</ScrollView>
+</LinearLayout>
