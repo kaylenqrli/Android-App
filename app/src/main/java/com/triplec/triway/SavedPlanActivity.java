@@ -17,6 +17,7 @@ import com.triplec.triway.common.TriPlan;
 import java.util.ArrayList;
 import java.util.List;
 
+// TODO: change database structure[
 public class SavedPlanActivity extends Activity {
     ArrayList<TriPlan> listItems;
     ListView listView;
@@ -34,11 +35,6 @@ public class SavedPlanActivity extends Activity {
         listView = (ListView) findViewById(R.id.listView);
         listView.setAdapter(adapter);
 
-//        Intent intent = getIntent();
-//        String name = intent.getStringExtra("name");
-//        if(name != null){
-//            addItem(name);
-//        }
         mAuth = FirebaseAuth.getInstance();
         user = mAuth.getCurrentUser();
         String userId = user.getUid();
@@ -77,8 +73,4 @@ public class SavedPlanActivity extends Activity {
 
     }
 
-//    private void addItem(String name) {
-//        listItems.add(name);
-//        adapter.notifyDataSetChanged();
-//    }
 }

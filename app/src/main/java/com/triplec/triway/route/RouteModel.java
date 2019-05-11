@@ -124,6 +124,7 @@ class RouteModel implements RouteContract.Model {
         });
     }
 
+    // TODO: change database structure
     @Override
     public String savePlans(String planName) {
         String userId = user.getUid();
@@ -190,7 +191,7 @@ class RouteModel implements RouteContract.Model {
     }
     @Override
     public boolean addPlace(TriPlace newPlace) {
-        // TODO add place to current plan
+        // add place to current plan
         mTriPlan.getPlaceList().add(newPlace);
         presenter.showRoutes(mTriPlan);
         return true;
