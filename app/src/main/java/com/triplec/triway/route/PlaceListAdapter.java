@@ -26,6 +26,7 @@ public class PlaceListAdapter extends ArrayAdapter<TriPlace> {
     LayoutInflater inflater;
     private SparseBooleanArray mSelectedItemsIds;
     View convert;
+    private boolean isEditing = false;
 
     /*----- Place Id for getPhoto() -----*/
 //    private final String[] placeIds = {
@@ -37,12 +38,13 @@ public class PlaceListAdapter extends ArrayAdapter<TriPlace> {
 //    };
     /*----- Place Id for getPhoto() -----*/
 
-    public PlaceListAdapter (Context context, int resourceId, List<TriPlace> places) {
+    public PlaceListAdapter (Context context, int resourceId, List<TriPlace> places, boolean isEditing) {
         super(context, resourceId, places);
         this.mContext = context;
         mSelectedItemsIds = new SparseBooleanArray();
         inflater = LayoutInflater.from(context);
         this.places = places;
+        this.isEditing = isEditing;
     }
 
     private class ViewHolder {
@@ -75,9 +77,15 @@ public class PlaceListAdapter extends ArrayAdapter<TriPlace> {
         holder.photo.setImageBitmap(bitmap);
         notifyDataSetChanged();
 
-        // toggle checkbox and remove animation
-        holder.checkBox.setChecked(mSelectedItemsIds.get(position));
-        holder.checkBox.jumpDrawablesToCurrentState();
+        if (isEditing) {
+            holder.checkBox.setVisibility(View.VISIBLE);
+            // toggle checkbox and remove animation
+            holder.checkBox.setChecked(mSelectedItemsIds.get(position));
+            holder.checkBox.jumpDrawablesToCurrentState();
+        }
+        else {
+            holder.checkBox.setVisibility(View.INVISIBLE);
+        }
 
         convert = convertView;
         return convertView;
@@ -105,8 +113,10 @@ public class PlaceListAdapter extends ArrayAdapter<TriPlace> {
     }
 
     public void toggleSelection(int position) {
-        selectView(position, !mSelectedItemsIds.get(position));
-        notifyDataSetChanged();
+        if (isEditing) {
+            selectView(position, !mSelectedItemsIds.get(position));
+            notifyDataSetChanged();
+        }
     }
 
     public SparseBooleanArray getSelectedIds() {
@@ -115,6 +125,16 @@ public class PlaceListAdapter extends ArrayAdapter<TriPlace> {
 
     public void removeSelection() {
         mSelectedItemsIds = new SparseBooleanArray();
+        notifyDataSetChanged();
+    }
+
+    public void beginEdit() {
+        isEditing = true;
+        notifyDataSetChanged();
+    }
+
+    public void finishEdit() {
+        isEditing = false;
         notifyDataSetChanged();
     }
 

@@ -58,6 +58,8 @@ public class RouteActivity extends AppCompatActivity {
     private ViewPager mViewPager;
     private ActionBar actionbar;
 
+    private Menu menu;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -97,6 +99,7 @@ public class RouteActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
+        this.menu = menu;
         getMenuInflater().inflate(R.menu.menu_route, menu);
 
         // Associate searchable configuration with the SearchView
@@ -156,6 +159,19 @@ public class RouteActivity extends AppCompatActivity {
                 return true;
             case R.id.Tabs_menu_edit:
                 Toast.makeText(getApplicationContext(), "Editing plan", Toast.LENGTH_SHORT).show();
+                if (getViewPager().getCurrentItem() == 1) {
+                    ((ListFragment)mSectionsPagerAdapter.getItem(1)).setEdit();
+                    menu.findItem(R.id.Tabs_menu_add).setVisible(false);
+                    menu.findItem(R.id.Tabs_menu_save).setVisible(false);
+                    menu.findItem(R.id.Tabs_menu_edit).setVisible(false);
+                    menu.findItem(R.id.Tabs_menu_delete).setVisible(false);
+                    menu.findItem(R.id.Tabs_menu_delete_place).setVisible(true);
+                    menu.findItem(R.id.Tabs_menu_cancel_delete).setVisible(true);
+                }
+                else {
+                    ((ListFragment)mSectionsPagerAdapter.getItem(1)).setEdit();
+                    getViewPager().setCurrentItem(1);
+                }
                 return true;
             case R.id.Tabs_menu_delete:
                 Toast.makeText(getApplicationContext(), "Plan deleted", Toast.LENGTH_SHORT).show();
@@ -269,6 +285,9 @@ public class RouteActivity extends AppCompatActivity {
      */
     private class SectionsPagerAdapter extends FragmentPagerAdapter {
 
+        private MapFragment mapFragment;
+        private ListFragment listFragment;
+
         private SectionsPagerAdapter(FragmentManager fm) {
             super(fm);
         }
@@ -281,13 +300,17 @@ public class RouteActivity extends AppCompatActivity {
             Bundle bundle = getIntent().getExtras();
             switch (position) {
                 case 0:
-                    MapFragment mf = new MapFragment().newInstance();
-                    mf.setArguments(bundle);
-                    return mf;
+                    if (mapFragment == null) {
+                        mapFragment = new MapFragment().newInstance();
+                    }
+                    mapFragment.setArguments(bundle);
+                    return mapFragment;
                 case 1:
-                    ListFragment lf = new ListFragment().newInstance();
-                    lf.setArguments(bundle);
-                    return lf;
+                    if (listFragment == null) {
+                        listFragment = new ListFragment().newInstance();
+                    }
+                    listFragment.setArguments(bundle);
+                    return listFragment;
             }
             return null;
         }
