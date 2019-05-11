@@ -44,7 +44,7 @@ public class SearchResultActivity extends AppCompatActivity {
                 Log.i("", "An error occurred: " + status);
             }
         });
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
