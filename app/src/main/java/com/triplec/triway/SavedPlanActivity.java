@@ -17,7 +17,7 @@ import com.triplec.triway.common.TriPlan;
 import java.util.ArrayList;
 import java.util.List;
 
-// TODO: change database structure[
+// TODO: change database structure
 public class SavedPlanActivity extends Activity {
     ArrayList<TriPlan> listItems;
     ListView listView;
