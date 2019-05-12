@@ -267,15 +267,15 @@ public class TriPlace implements Serializable {
     }
 
     public double getRating() {
-        return ggPlace.getRating();
+        return 0;
+        //return ggPlace.getRating();
     }
 
-    public OpeningHours getOpeningHour(){
+    /*public OpeningHours getOpeningHour(){
         return ggPlace.getOpeningHours();
-    }
+    }*/
 
     public void setId(String id){
-
         placeId = id;
     }
     public String getId(){

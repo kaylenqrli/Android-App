@@ -52,12 +52,12 @@ class RouteModel implements RouteContract.Model {
     private PlaceRequestApi placesRequestApi;
     private DatabaseReference mDatabase;
     private TriPlan mTriPlan;
-    private List<TriPlan> mTriPlans;
     private FirebaseAuth mAuth;
     private FirebaseUser user;
     private Geocoder coder;
 
     boolean owner = false;
+    private ArrayList<ArrayList<TriPlace>> mTriPlans;
 
     RouteModel() {
         placesRequestApi = RetrofitClient.getInstance().create(PlaceRequestApi.class);
@@ -139,6 +139,13 @@ class RouteModel implements RouteContract.Model {
         String key = mTriPlan.getId();
 
         mTriPlan.setName(planName);
+        // TODO: delete mTriPlans after done testing
+        mTriPlans = new ArrayList<ArrayList<TriPlace>>();
+        ArrayList<TriPlace> tempPlans = new ArrayList<TriPlace>();
+        for(TriPlace p: mTriPlan.getPlaceList()){
+            tempPlans.add(p);
+        }
+        mTriPlans.add(tempPlans);
 
         // This plan does not exist in plans table
         if(key.length() == 0) {
@@ -162,56 +169,57 @@ class RouteModel implements RouteContract.Model {
                                     public void onSuccess(Void aVoid) {
 
                                         // Write timestamp was successful! Continue to set data
-                                        /*DatabaseReference dataRef = mDatabase.child("plans").child(finalKey).child("data");
-                                        // add TriPlan for each single day
-                                        for(TriPlan singleDay: mTriPlans){
-                                            String singleDayKey = dataRef.push().getKey();
-                                            dataRef.child(singleDayKey).setValue(singleDay.getPlaceList()).addOnFailureListener(new OnFailureListener() {
-                                                @Override
-                                                public void onFailure(@NonNull Exception e) {
-                                                    // Write failed
-                                                    presenter.onError("Failed to save plan. " + e.getMessage());
-                                                }
-                                            });
-                                        }*/
-
-                                        // Write data was successful! Continue to check user
-                                        DatabaseReference usersRef = mDatabase.child("plans").child(finalKey).child("users");
-                                        usersRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                                        DatabaseReference dataRef = mDatabase.child("plans").child(finalKey).child("data");
+                                        dataRef.setValue(mTriPlans).addOnSuccessListener(new OnSuccessListener<Void>() {
                                             @Override
-                                            public void onDataChange(DataSnapshot dataSnapshot) {
-                                                // add current user to users list in plans table
-                                                List<String> userIds = new ArrayList<String>();
-                                                userIds.add(userId);
+                                            public void onSuccess(Void aVoid) {
 
-                                                for(DataSnapshot snapUserId: dataSnapshot.getChildren()){
-                                                    String currUserId = snapUserId.getValue(String.class);
-                                                    if(!currUserId.equals(userId)){
-                                                        userIds.add(currUserId);
-                                                    } else {
-                                                        owner = true;
-                                                    }
-                                                }
-
-                                                usersRef.setValue(userIds).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                // Write data was successful! Continue to check user
+                                                DatabaseReference usersRef = mDatabase.child("plans").child(finalKey).child("users");
+                                                usersRef.addListenerForSingleValueEvent(new ValueEventListener() {
                                                     @Override
-                                                    public void onSuccess(Void aVoid) {
-                                                        // Write was successful!
-                                                        mTriPlan.setId(finalKey);
-                                                        presenter.onSavedSuccess(mTriPlan.getName());
-                                                    }
-                                                }).addOnFailureListener(new OnFailureListener() {
-                                                    @Override
-                                                    public void onFailure(@NonNull Exception e) {
-                                                        // Write failed
-                                                        Log.e("** add user **", e.getMessage());
-                                                        presenter.onError("Failed to save plan. " + e.getMessage());
-                                                    }
-                                                });;
+                                                    public void onDataChange(DataSnapshot dataSnapshot) {
+                                                        // add current user to users list in plans table
+                                                        List<String> userIds = new ArrayList<String>();
+                                                        userIds.add(userId);
 
+                                                        for(DataSnapshot snapUserId: dataSnapshot.getChildren()){
+                                                            String currUserId = snapUserId.getValue(String.class);
+                                                            if(!currUserId.equals(userId)){
+                                                                userIds.add(currUserId);
+                                                            } else {
+                                                                owner = true;
+                                                            }
+                                                        }
+
+                                                        usersRef.setValue(userIds).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                            @Override
+                                                            public void onSuccess(Void aVoid) {
+                                                                // Write was successful!
+                                                                mTriPlan.setId(finalKey);
+                                                                presenter.onSavedSuccess(mTriPlan.getName());
+                                                            }
+                                                        }).addOnFailureListener(new OnFailureListener() {
+                                                            @Override
+                                                            public void onFailure(@NonNull Exception e) {
+                                                                // Write failed
+                                                                Log.e("** add user **", e.getMessage());
+                                                                presenter.onError("Failed to save plan. " + e.getMessage());
+                                                            }
+                                                        });;
+
+                                                    }
+                                                    @Override
+                                                    public void onCancelled(DatabaseError firebaseError) {}
+                                                });
                                             }
+                                        }).addOnFailureListener(new OnFailureListener() {
                                             @Override
-                                            public void onCancelled(DatabaseError firebaseError) {}
+                                            public void onFailure(@NonNull Exception e) {
+                                                // Write failed
+                                                Log.e("** set data **", e.getMessage());
+                                                presenter.onError("Failed to save plan. " + e.getMessage());
+                                            }
                                         });
                                     }
                                 }).addOnFailureListener(new OnFailureListener() {
@@ -272,62 +280,6 @@ class RouteModel implements RouteContract.Model {
 
         setPlanId(finalKey);
         return mTriPlan.getId();
-        /*String userId = user.getUid();
-        String key = mTriPlan.getId();
-        mTriPlan.setName(planName);
-        // This plan has not been saved before
-        if (key.length() == 0) {
-            key = mDatabase.child("users").child(userId).child("plans").push().getKey();
-        }
-        // This plan has been saved before
-        String finalKey = key;
-        mDatabase.child("users").child(userId).child("plans").child(finalKey).child("name")
-                .setValue(planName)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        // Write was successful!
-                        mDatabase.child("users").child(userId).child("plans").child(finalKey).child("createdAt")
-                                .setValue(new Date().toString())
-                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-                                        // Write was successful!
-                                        mDatabase.child("users").child(userId).child("plans").child(finalKey).child("places")
-                                                .setValue(mTriPlan.getPlaceList())
-                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                    @Override
-                                                    public void onSuccess(Void aVoid) {
-                                                        // Write was successful!
-                                                        mTriPlan.setId(finalKey);
-                                                        presenter.onSavedSuccess(mTriPlan.getName());
-                                                    }
-                                                }).addOnFailureListener(new OnFailureListener() {
-                                            @Override
-                                            public void onFailure(@NonNull Exception e) {
-                                                // Write failed
-                                                presenter.onError("Failed to save plan. " + e.getMessage());
-                                            }
-                                        });
-                                    }
-                                }).addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                // Write failed
-                                presenter.onError("Failed to save plan. " + e.getMessage());
-                            }
-                        });
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        // Write failed
-                        presenter.onError("Failed to save plan. " + e.getMessage());
-                    }
-        });
-
-        setPlanId(finalKey);
-        return mTriPlan.getId();*/
     }
 
     @Override
