@@ -260,7 +260,7 @@ public class TriPlace implements Serializable {
     }
 
     public String getName(){
-        return "";//ggPlace.getName();
+        return name;
     }
     public void setName(String Name){
         this.name = Name;
