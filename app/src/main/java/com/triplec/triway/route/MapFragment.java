@@ -15,11 +15,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
@@ -157,16 +159,15 @@ public class MapFragment extends MvpFragment<RouteContract.Presenter> implements
                     }
                 });
 
-                mMap.moveCamera(CameraUpdateFactory.newLatLng(markerPoints.get(0)));
-                mMap.animateCamera(CameraUpdateFactory.zoomTo(10));
-
+                LatLngBounds.Builder builder = new LatLngBounds.Builder();
+                for( Marker marker : markers ){
+                    builder.include(marker.getPosition());
+                }
+                LatLngBounds bounds = builder.build();
+                CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, 100);
+                mMap.animateCamera(cameraUpdate);
 
                 fetchRoutes(placePlan);
-
-                if (markerPoints.size() > 0) {
-                    mMap.moveCamera(CameraUpdateFactory.newLatLng(markerPoints.get(0)));
-                    mMap.animateCamera(CameraUpdateFactory.zoomTo(10));
-                }
             }
         });
 
