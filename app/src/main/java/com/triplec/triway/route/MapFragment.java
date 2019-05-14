@@ -15,15 +15,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.triplec.triway.R;
+import com.triplec.triway.RouteActivity;
 import com.triplec.triway.common.TriPlace;
 import com.triplec.triway.common.TriPlan;
 import com.triplec.triway.mvp.MvpFragment;
@@ -32,6 +35,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
+import static android.view.View.AUTOFILL_FLAG_INCLUDE_NOT_IMPORTANT_VIEWS;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -131,6 +135,7 @@ public class MapFragment extends MvpFragment<RouteContract.Presenter> implements
                     markers[i] = marker;
                 }
 
+                Log.d("TAG", "onMapReady: zoom in animation" + markerPoints.get(0).toString());
                 recyclerView.setAdapter(mapListAdapter);
                 mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
                     @Override
@@ -157,16 +162,15 @@ public class MapFragment extends MvpFragment<RouteContract.Presenter> implements
                     }
                 });
 
-                mMap.moveCamera(CameraUpdateFactory.newLatLng(markerPoints.get(0)));
-                mMap.animateCamera(CameraUpdateFactory.zoomTo(10));
-
-
+                LatLngBounds.Builder builder = new LatLngBounds.Builder();
+                for( Marker marker : markers ){
+                    builder.include(marker.getPosition());
+                }
+                LatLngBounds bounds = builder.build();
+                CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, 100);
+                mMap.animateCamera(cameraUpdate);
                 fetchRoutes(placePlan);
 
-                if (markerPoints.size() > 0) {
-                    mMap.moveCamera(CameraUpdateFactory.newLatLng(markerPoints.get(0)));
-                    mMap.animateCamera(CameraUpdateFactory.zoomTo(10));
-                }
             }
         });
 
