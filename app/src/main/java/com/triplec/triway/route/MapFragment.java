@@ -170,7 +170,6 @@ public class MapFragment extends MvpFragment<RouteContract.Presenter> implements
                 CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, 100);
                 mMap.animateCamera(cameraUpdate);
                 fetchRoutes(placePlan);
-
             }
         });
 
