@@ -27,6 +27,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.common.collect.Lists;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
@@ -36,8 +37,6 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 
 
-import com.facebook.FacebookSdk;
-import com.facebook.appevents.AppEventsLogger;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
@@ -55,7 +54,6 @@ import com.twitter.sdk.android.core.TwitterException;
 import com.twitter.sdk.android.core.TwitterSession;
 import com.twitter.sdk.android.core.identity.TwitterLoginButton;
 */
-import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -69,8 +67,7 @@ public class LoginActivity extends AppCompatActivity implements SessionTimeoutLi
     private Button loginInButton;
     private Button signUpButton;
     private ImageButton googleSigninButton;
-    private LoginButton facebookSigninButton;
-    private ImageButton facebookImageButton;
+    private LoginButton facebookImageButton;
     private ImageButton TwitterSigninButton;
     private CheckBox checkBox;
     private final int PASSWORD_LENGTH = 8;
@@ -268,16 +265,11 @@ public class LoginActivity extends AppCompatActivity implements SessionTimeoutLi
                                     loginInButton.setEnabled(true);
                                     loginClicked = false;
                                     Log.d(TAG, "no verification");
-
-//                                    Toast.makeText(LoginActivity.this, "Please " +
-//                                            "verify your email address",Toast.LENGTH_LONG).show();
                                     displayError(mail_layout, mail_et,"Please check your Email for verification");
                                 }
                             } else {
                                 // If sign in fails, display a message to the user.
                                 Log.w(TAG, "signInWithEmail:failure", task.getException());
-//                                Toast.makeText(getApplicationContext(), "Email and Password doesn't match",
-//                                        Toast.LENGTH_LONG).show();
                                 if (task.getException().getClass().equals(FirebaseAuthInvalidUserException.class)) {
                                     displayError(mail_layout, mail_et, "This Email is not registered");
                                 }
@@ -347,15 +339,11 @@ public class LoginActivity extends AppCompatActivity implements SessionTimeoutLi
                 return true;
             }
             else{
-//                Toast.makeText(getApplicationContext(), "Password length should at least be" +
-//                        "8", Toast.LENGTH_LONG).show();
                 displayError(password_layout, password_et, "Password length should be at least 8");
                 return false;
             }
         }
         else{
-//            Toast.makeText(getApplicationContext(),"Enter Valid Email",
-//                    Toast.LENGTH_LONG).show();
             displayError(mail_layout, mail_et, "Not a valid Email");
             return false;
         }
@@ -438,7 +426,8 @@ public class LoginActivity extends AppCompatActivity implements SessionTimeoutLi
                 // Google Sign In failed, update UI appropriately
                 Log.w(TAG, "Google sign in failed", e);
             }
-        }/*
+        }
+        /*
         else if(requestCode == TwitterAuthConfig.DEFAULT_AUTH_REQUEST_CODE){
             //  twitter related handling
             TwitterSigninButton.onActivityResult(requestCode, resultCode, data);
@@ -458,21 +447,21 @@ public class LoginActivity extends AppCompatActivity implements SessionTimeoutLi
     private void firebaseAuthWithGoogle(GoogleSignInAccount acct){
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
         // create a timer and a listener, after 10s, login session timeout if activity no response
-        registerSessionListner(this);
-        startLoginSession();
+        //registerSessionListner(this);
+        //startLoginSession();
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            timer.cancel();
+                            //timer.cancel();
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithCredential:success");
                             FirebaseUser user = mAuth.getCurrentUser();
                             sp.edit().putBoolean("logged", true).apply();
                             openHomeActivity();
                         } else {
-                            timer.cancel();
+                            //timer.cancel();
                             // If sign in fails, display a message to the user
                             loginClicked = false;
                             Log.w(TAG, "signInWithCredential:failure", task.getException());
@@ -486,7 +475,8 @@ public class LoginActivity extends AppCompatActivity implements SessionTimeoutLi
 
     private void initializeFacebook(){
         mCallbackManager = CallbackManager.Factory.create();
-        facebookImageButton = findViewById(R.id.login_facebookImageButton);
+        facebookImageButton = findViewById(R.id.facebook_login);
+        facebookImageButton.setReadPermissions("email","public_profile");
         facebookImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -514,32 +504,7 @@ public class LoginActivity extends AppCompatActivity implements SessionTimeoutLi
                 });
             }
         });
-        /*
 
-        facebookSigninButton = findViewById(R.id.login_facebook);
-        facebookSigninButton.setReadPermissions("email", "public_profile");
-        facebookSigninButton.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
-            @Override
-            public void onSuccess(LoginResult loginResult) {
-                Log.d(TAG, "facebook:onSuccess:" + loginResult);
-                handleFacebookAccessToken(loginResult.getAccessToken());
-            }
-
-            @Override
-            public void onCancel() {
-                Log.d(TAG, "facebook:onCancel");
-                loginClicked = false;
-                // [END_EXCLUDE]
-            }
-
-            @Override
-            public void onError(FacebookException error) {
-                loginClicked = false;
-                Log.d(TAG, "facebook:onError", error);
-
-            }
-        });*/
-        // [END initialize_fblogin]
     }
 
     private void handleFacebookAccessToken(AccessToken token) {
@@ -569,8 +534,8 @@ public class LoginActivity extends AppCompatActivity implements SessionTimeoutLi
                             loginClicked = false;
                             // If sign in fails, display a message to the user.
                             Log.d(TAG, "signInWithCredential:failure", task.getException());
-                            Toast.makeText(getApplicationContext(), "Authentication failed.",
-                                    Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), task.getException().getMessage(),
+                                    Toast.LENGTH_LONG).show();
                         }
 
                     }

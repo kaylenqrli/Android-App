@@ -26,6 +26,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.triplec.triway.R;
+import com.triplec.triway.RouteActivity;
 import com.triplec.triway.common.TriPlace;
 import com.triplec.triway.common.TriPlan;
 import com.triplec.triway.mvp.MvpFragment;
@@ -34,6 +35,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
+import static android.view.View.AUTOFILL_FLAG_INCLUDE_NOT_IMPORTANT_VIEWS;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -133,6 +135,7 @@ public class MapFragment extends MvpFragment<RouteContract.Presenter> implements
                     markers[i] = marker;
                 }
 
+                Log.d("TAG", "onMapReady: zoom in animation" + markerPoints.get(0).toString());
                 recyclerView.setAdapter(mapListAdapter);
                 mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
                     @Override
@@ -166,7 +169,6 @@ public class MapFragment extends MvpFragment<RouteContract.Presenter> implements
                 LatLngBounds bounds = builder.build();
                 CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, 100);
                 mMap.animateCamera(cameraUpdate);
-
                 fetchRoutes(placePlan);
             }
         });
