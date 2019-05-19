@@ -87,6 +87,35 @@ public class RouteActivity extends AppCompatActivity {
 
         TabLayout tabLayout = findViewById(R.id.tabs);
 
+        int daynum = getIntent().getIntExtra("dayNum", 1);
+        Toast.makeText(this, Integer.toString(daynum), Toast.LENGTH_SHORT).show();
+        TabLayout daysTab = findViewById(R.id.days);
+        if (daynum == 1) {
+            daysTab.setVisibility(View.GONE);
+        }
+        else {
+            daysTab.setVisibility(View.VISIBLE);
+            for (int i = 0; i < daynum; i++) {
+                daysTab.addTab(daysTab.newTab().setText("Day " + (i + 1)), i);
+            }
+            daysTab.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+                @Override
+                public void onTabSelected(TabLayout.Tab tab) {
+                    // TODO: Show plan on day tab.getPosition() <- (begin from 0)
+                }
+
+                @Override
+                public void onTabUnselected(TabLayout.Tab tab) {
+                    // TODO: Hide plan on this days
+                }
+
+                @Override
+                public void onTabReselected(TabLayout.Tab tab) {
+
+                }
+            });
+        }
+
         mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager));
         Bundle bundle = getIntent().getExtras();

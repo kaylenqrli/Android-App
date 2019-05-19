@@ -40,6 +40,33 @@
                 android:singleLine="true"
                 app:backgroundTint="@color/colorPrimary"/>
 
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/main_days_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:text="Select number of days:"
+                    android:textColor="@color/quantum_black_100"
+                    android:gravity="center"/>
+
+                <Spinner
+                    android:id="@+id/main_days_spinner"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent">
+
+                </Spinner>
+
+            </android.support.constraint.ConstraintLayout>
+
             <com.triplec.triway.AutoSlideViewPager
                 android:id="@+id/viewPager"
                 android:layout_height="200dp"

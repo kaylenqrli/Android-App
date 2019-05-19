@@ -19,8 +19,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -50,9 +52,12 @@ public class HomeActivity extends AppCompatActivity
     TextView user_name_tv, user_email_tv;
     boolean updated = false;
     private static boolean isclicked = false;
+
+    private int days = 1;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
     SharedPreferences sp;
     GoogleSignInClient mGoogleSignInClient;
+    Spinner spinner;
 
     private PlacesClient placesClient;
     private ArrayAdapter<String> madapter;
@@ -168,6 +173,21 @@ public class HomeActivity extends AppCompatActivity
 
             @Override
             public void afterTextChanged(Editable s) {}
+        });
+
+        spinner = findViewById(R.id.main_days_spinner);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+                R.array.days_array, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                days = position + 1;
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {}
         });
 
     }
@@ -294,6 +314,7 @@ public class HomeActivity extends AppCompatActivity
                 "Searching "+ place + "...", Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(HomeActivity.this, RouteActivity.class);
         intent.putExtra("place",place );
+        intent.putExtra("dayNum", getDays());
         startActivity(intent);
     }
 
@@ -331,5 +352,13 @@ public class HomeActivity extends AppCompatActivity
 
     public static void setIsclickedFalse(){
         isclicked = false;
+    }
+
+    public int getDays() {
+        return days;
+    }
+
+    public void setDays(int days) {
+        this.days = days;
     }
 }
