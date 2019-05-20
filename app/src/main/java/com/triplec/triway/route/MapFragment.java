@@ -88,9 +88,8 @@ public class MapFragment extends MvpFragment<RouteContract.Presenter> implements
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
                 if (newState == SCROLL_STATE_IDLE) {
-                    // TODO: This is the item that is focused, update marker
                     int itemSelected = ((LinearLayoutManager) layoutManager).findFirstVisibleItemPosition();
-                    mMap.moveCamera(CameraUpdateFactory.newLatLng(markerPoints.get(itemSelected)));
+                    mMap.animateCamera(CameraUpdateFactory.newLatLng(markerPoints.get(itemSelected)));
                 }
             }
         });
@@ -148,17 +147,17 @@ public class MapFragment extends MvpFragment<RouteContract.Presenter> implements
                 mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
                     @Override
                     public boolean onMarkerClick(Marker marker) {
-                      int markerPosition = 0;
-                      try {
-                          markerPosition = (Integer) marker.getTag();
-                      } catch (NullPointerException e) {
-                          Toast.makeText(getContext(), "Marker has no Tag", Toast.LENGTH_SHORT).show();
-                      }
-                    //                Toast.makeText(getContext(), "Marker " + markerPosition + " is selected", Toast.LENGTH_SHORT).show();
-                      recyclerView.setVisibility(View.VISIBLE);
-                      mMap.setPadding(0,0,0,(int) (200 * Resources.getSystem().getDisplayMetrics().density));
-                      recyclerView.scrollToPosition(markerPosition);
-                      return false;
+                        int markerPosition = 0;
+                        try {
+                            markerPosition = (Integer) marker.getTag();
+                        } catch (NullPointerException e) {
+                            Toast.makeText(getContext(), "Marker has no Tag", Toast.LENGTH_SHORT).show();
+                        }
+                        //                Toast.makeText(getContext(), "Marker " + markerPosition + " is selected", Toast.LENGTH_SHORT).show();
+                        recyclerView.setVisibility(View.VISIBLE);
+                        mMap.setPadding(0,0,0,(int) (200 * Resources.getSystem().getDisplayMetrics().density));
+                        recyclerView.scrollToPosition(markerPosition);
+                        return false;
                     }
                 });
 
@@ -168,7 +167,7 @@ public class MapFragment extends MvpFragment<RouteContract.Presenter> implements
                 }
                 LatLngBounds bounds = builder.build();
                 CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, 100);
-                mMap.animateCamera(cameraUpdate);
+                mMap.moveCamera(cameraUpdate);
                 fetchRoutes(placePlan);
             }
         });
